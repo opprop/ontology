@@ -1,5 +1,6 @@
-package ontology.solver;
+package ontology.solvers.classic;
 
+import ontology.solver.SequenceSolution;
 import ontology.util.OntologyUtils;
 
 import java.util.Collection;

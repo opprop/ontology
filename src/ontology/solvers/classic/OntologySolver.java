@@ -1,6 +1,10 @@
-package ontology.solver;
+package ontology.solvers.classic;
 
 import ontology.qual.Ontology;
+import ontology.solver.OntologySerializer;
+import ontology.solver.OntologySolution;
+import ontology.solver.SequenceSolution;
+import ontology.solver.SequenceSolver;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.framework.type.QualifierHierarchy;
