@@ -11,8 +11,6 @@ import org.sat4j.maxsat.WeightedMaxSatDecorator;
 import checkers.inference.InferenceMain;
 import checkers.inference.SlotManager;
 import checkers.inference.model.Constraint;
-import ontology.solver.OntologySerializer;
-import ontology.solver.SequenceSolution;
 
 public class SequenceSolver {
     private final SlotManager slotManager;

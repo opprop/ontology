@@ -27,7 +27,7 @@ public class OntologyUtils {
 
     public static AnnotationMirror genereateOntologyAnnoFromNew(ProcessingEnvironment processingEnv) {
         String className = "sequence";
-        AnnotationMirror ontologyValue = createOntologyAnnotationByValue(convert(className), processingEnv);
+        AnnotationMirror ontologyValue = createOntologyAnnotationByValues(convert(className), processingEnv);
         return ontologyValue;
     }
 
@@ -35,32 +35,14 @@ public class OntologyUtils {
         return typeName;
     }
 
-    public static AnnotationMirror createOntologyAnnotation(Set<String> values,
+    public static AnnotationMirror createOntologyAnnotationByValues(String[] values,
             ProcessingEnvironment processingEnv) {
+        assert values != null : "null value unexpected";
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, Ontology.class);
-        return createOntologyAnnotation(values, builder);
-    }
-
-    private static AnnotationMirror createOntologyAnnotation(final Set<String> values,
-            final AnnotationBuilder builder) {
-        String[] valuesInArray = new String[values.size()];
-        int i = 0;
-        for (String value : values) {
-            valuesInArray[i] = value.toString();
-            i++;
-        }
-        builder.setValue("values", valuesInArray);
+        builder.setValue("values", values);
         return builder.build();
     }
 
-    public static AnnotationMirror createOntologyAnnotationByValue(String[] value,
-            ProcessingEnvironment processingEnv) {
-        assert value != null : "null value unexpected";
-        AnnotationBuilder builder = new AnnotationBuilder(processingEnv, Ontology.class);
-        builder.setValue("values", value);
-        return builder.build();
-    }
-    
     public static String[] getOntologyValue(AnnotationMirror type) {
         List<String> allTypesList = AnnotationUtils.getElementValueArray(type, "values", String.class, true);
         //types in this list is org.checkerframework.framework.util.AnnotationBuilder.
