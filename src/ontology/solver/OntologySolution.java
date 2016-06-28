@@ -71,7 +71,7 @@ public class OntologySolution implements InferenceSolution {
 
     protected AnnotationMirror createAnnotationFromValues(ProcessingEnvironment processingEnv,
             Set<String> values) {
-        return OntologyUtils.createOntologyAnnotation(values, processingEnv);
+        return OntologyUtils.createOntologyAnnotationByValues(values.toArray(new String[values.size()]), processingEnv);
     }
 
 

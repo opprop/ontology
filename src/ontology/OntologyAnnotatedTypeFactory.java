@@ -36,10 +36,10 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     public OntologyAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
-        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValue(OntologyUtils.convert(SpecialQualType.TOP.toString()), processingEnv);
+        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(OntologyUtils.convert(SpecialQualType.TOP.toString()), processingEnv);
         // ONTOLOGY could simple created by AnnotationUtils, because it doesn't need to has a value
         ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
-        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValue(OntologyUtils.convert(SpecialQualType.BOTTOM.toString()), processingEnv);
+        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(OntologyUtils.convert(SpecialQualType.BOTTOM.toString()), processingEnv);
         postInit();
     }
 
