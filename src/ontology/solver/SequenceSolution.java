@@ -3,8 +3,6 @@ package ontology.solver;
 import java.util.HashMap;
 import java.util.Map;
 
-import ontology.solver.SequenceSolution;
-
 public class SequenceSolution {
     private final Map<Integer, Boolean> result;
     private final String value;
