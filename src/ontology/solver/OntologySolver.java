@@ -1,4 +1,4 @@
-package ontology.solvers.classic;
+package ontology.solver;
 
 import ontology.qual.Ontology;
 import ontology.util.OntologyUtils;

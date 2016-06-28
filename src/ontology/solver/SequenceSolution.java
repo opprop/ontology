@@ -1,9 +1,9 @@
-package ontology.solvers.classic;
+package ontology.solver;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import ontology.solvers.classic.SequenceSolution;
+import ontology.solver.SequenceSolution;
 
 public class SequenceSolution {
     private final Map<Integer, Boolean> result;
