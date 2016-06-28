@@ -1,4 +1,4 @@
-package ontology.solver;
+package ontology.solvers.classic;
 
 import java.util.Collection;
 import java.util.HashMap;
