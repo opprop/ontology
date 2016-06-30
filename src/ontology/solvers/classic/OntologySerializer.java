@@ -34,7 +34,7 @@ public class OntologySerializer extends CnfVecIntSerializer {
 
     private boolean annoIsPresented(AnnotationMirror anno) {
         EnumSet<OntologyValue> valuesSet = EnumSet.noneOf(OntologyValue.class);
-        valuesSet = EnumSet.copyOf(Arrays.asList(OntologyUtils.getOntologyValues(anno)));
+        valuesSet.addAll(Arrays.asList(OntologyUtils.getOntologyValues(anno)));
         return valuesSet.contains(value) || valuesSet.contains(OntologyValue.BOTTOM);
     }
 
