@@ -1,13 +1,13 @@
 package ontology.util;
 
 import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
 
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
@@ -25,33 +25,22 @@ public class OntologyUtils {
         return false;
     }
 
-    public static AnnotationMirror genereateOntologyAnnoFromNew(ProcessingEnvironment processingEnv) {
-        String className = "sequence";
-        AnnotationMirror ontologyValue = createOntologyAnnotationByValues(convert(className), processingEnv);
-        return ontologyValue;
-    }
+    public static AnnotationMirror createOntologyAnnotationByValues(ProcessingEnvironment processingEnv,
+            OntologyValue... values) {
+        // for varargs the non-null assertion becomes a little tricky:
+        // http://stackoverflow.com/questions/11919076/varargs-and-null-argument
+        assert values != null : "null values unexpected";
+        assert values.length > 0 : "zero size values unexpected";
+        assert values[0] != null : "values array of null unexpected";
 
-    public static String[] convert(String... typeName) {
-        return typeName;
-    }
-
-    public static AnnotationMirror createOntologyAnnotationByValues(String[] values,
-            ProcessingEnvironment processingEnv) {
-        assert values != null : "null value unexpected";
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, Ontology.class);
         builder.setValue("values", values);
         return builder.build();
     }
 
-    public static String[] getOntologyValue(AnnotationMirror type) {
-        List<String> allTypesList = AnnotationUtils.getElementValueArray(type, "values", String.class, true);
-        //types in this list is org.checkerframework.framework.util.AnnotationBuilder.
-        String[] allTypesInArray = new String[allTypesList.size()];
-        int i = 0;
-        for (Object o : allTypesList) {
-            allTypesInArray[i] = o.toString();
-            i++;
-        }
-        return allTypesInArray;
+    public static OntologyValue[] getOntologyValues(AnnotationMirror type) {
+        List<OntologyValue> ontologyValueList = AnnotationUtils.getElementValueEnumArray(type, "values", OntologyValue.class, true);
+        return ontologyValueList.toArray(new OntologyValue[ontologyValueList.size()]);
     }
+
 }

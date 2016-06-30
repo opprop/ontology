@@ -6,7 +6,8 @@ CFI="$ROOT"/checker-framework-inference
 
 CF="$ROOT"/checker-framework
 
-SOLVER=ontology.solvers.classic.OntologySolver
+# SOLVER=ontology.solvers.classic.OntologySolver
+SOLVER=ontology.solvers.backend.OntologyConstraintSolver
 
 DEBUG_SOVLER=checkers.inference.solver.DebugSolver
 
