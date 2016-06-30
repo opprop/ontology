@@ -24,6 +24,7 @@ import checkers.inference.InferrableChecker;
 import checkers.inference.SlotManager;
 import checkers.inference.VariableAnnotator;
 import checkers.inference.model.ConstantSlot;
+import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 
 public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFactory {
@@ -55,7 +56,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
         @Override
         public Void visitNewClass(final NewClassTree newClassTree, final AnnotatedTypeMirror atm) {
             if (OntologyUtils.determineAnnotation(atm.getUnderlyingType())) {
-                AnnotationMirror anno = OntologyUtils.genereateOntologyAnnoFromNew(processingEnv);
+                AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
                 ConstantSlot cs = variableAnnotator.createConstant(anno, newClassTree);
                 atm.replaceAnnotation(cs.getValue());
             }
@@ -65,7 +66,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
 
         @Override
         public Void visitNewArray(final NewArrayTree newArrayTree, final AnnotatedTypeMirror atm) {
-            AnnotationMirror anno = OntologyUtils.genereateOntologyAnnoFromNew(processingEnv);
+            AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
             ConstantSlot cs = variableAnnotator.createConstant(anno, newArrayTree);
             atm.replaceAnnotation(cs.getValue());
             variableAnnotator.visit(atm, newArrayTree);
