@@ -3,16 +3,18 @@ package ontology.solvers.classic;
 import java.util.HashMap;
 import java.util.Map;
 
+import ontology.qual.OntologyValue;
+
 public class SequenceSolution {
     private final Map<Integer, Boolean> result;
-    private final String value;
+    private final OntologyValue value;
 
-    public SequenceSolution(Map<Integer, Boolean> result, String value) {
+    public SequenceSolution(Map<Integer, Boolean> result, OntologyValue value) {
         this.result = result;
         this.value = value;
     }
 
-    private SequenceSolution(String value) {
+    private SequenceSolution(OntologyValue value) {
         this(new HashMap<Integer, Boolean>(), value);
     }
 
@@ -20,11 +22,11 @@ public class SequenceSolution {
         return result;
     }
 
-    public String getValue() {
+    public OntologyValue getValue() {
         return value;
     }
 
-    public static SequenceSolution noSolution(String value) {
+    public static SequenceSolution noSolution(OntologyValue value) {
         return new SequenceSolution(value);
     }
 

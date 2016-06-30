@@ -1,6 +1,7 @@
 package ontology.solvers.classic;
 
 import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.framework.type.QualifierHierarchy;
@@ -49,7 +50,7 @@ public class OntologySolver implements InferenceSolver {
         for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getIndependentPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
             if (AnnotationUtils.areSameIgnoringValues(anno, Ontology)) {
-                String[] ontologyValues = OntologyUtils.getOntologyValue(anno);
+                OntologyValue[] ontologyValues = OntologyUtils.getOntologyValues(anno);
                 if (ontologyValues.length == 1) {
                     SequenceSolver solver = new SequenceSolver(ontologyValues[0], entry.getValue(),getSerializer(ontologyValues[0]));
                     sequenceSolvers.add(solver);
@@ -93,8 +94,8 @@ public class OntologySolver implements InferenceSolver {
         return solutions;
     }
 
-    protected OntologySerializer getSerializer(String datatype) {
-        return new OntologySerializer(datatype);
+    protected OntologySerializer getSerializer(OntologyValue ontologyValue) {
+        return new OntologySerializer(ontologyValue);
     }
 
     protected InferenceSolution getMergedSolution(ProcessingEnvironment processingEnvironment,

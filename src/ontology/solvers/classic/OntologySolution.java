@@ -1,12 +1,13 @@
 package ontology.solvers.classic;
 
+import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
+import util.PrintUtils;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -16,7 +17,7 @@ import checkers.inference.InferenceMain;
 import checkers.inference.InferenceSolution;
 
 public class OntologySolution implements InferenceSolution {
-    private final Map<Integer, Set<String>> results;
+    private final Map<Integer, EnumSet<OntologyValue>> results;
     private final Map<Integer, Boolean> idToExistance;
     private final Map<Integer, AnnotationMirror> annotationResults;
 
@@ -28,7 +29,7 @@ public class OntologySolution implements InferenceSolution {
         merge(solutions);
         createAnnotations(processingEnv);
 
-        System.out.println("FINAL RESULT FROM ONTOLOGYSOVLER: " + annotationResults.toString());
+        PrintUtils.printResult(annotationResults);
     }
 
     public void merge(Collection<SequenceSolution> solutions) {
@@ -41,11 +42,13 @@ public class OntologySolution implements InferenceSolution {
     private void mergeResults(SequenceSolution solution) {
         for (Map.Entry<Integer, Boolean> entry : solution.getResult().entrySet()) {
             boolean shouldContainValue = shouldContainValue(entry);
-            String value = solution.getValue();
-            if (!value.equals("")) {
-                Set<String> values = results.get(entry.getKey());
+            OntologyValue value = solution.getValue();
+            // TODO: what is the meaning of this if-statement?
+//            if (!value.equals("")) {
+              if (!value.equals(OntologyValue.TOP)) {
+                EnumSet<OntologyValue> values = results.get(entry.getKey());
                 if (values == null) {
-                    values = new TreeSet<>();
+                    values = EnumSet.noneOf(OntologyValue.class);
                     results.put(entry.getKey(), values);
                 }
 
@@ -61,19 +64,20 @@ public class OntologySolution implements InferenceSolution {
     }
 
     private void createAnnotations(ProcessingEnvironment processingEnv) {
-        for (Map.Entry<Integer, Set<String>> entry : results.entrySet()) {
+        for (Map.Entry<Integer, EnumSet<OntologyValue>> entry : results.entrySet()) {
             int slotId = entry.getKey();
-            Set<String> values = entry.getValue();
-            AnnotationMirror anno = createAnnotationFromValues(processingEnv, values);
+            EnumSet<OntologyValue> values = entry.getValue();
+            // TODO: this is a workaround of avoid giving empty ontology annotation solutions,
+            // should investigate why empty solution gennerated
+            if (values == null || values.size() == 0) {
+                continue;
+            }
+
+            AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv,
+                    values.toArray(new OntologyValue[values.size()]));
             annotationResults.put(slotId, anno);
         }
     }
-
-    protected AnnotationMirror createAnnotationFromValues(ProcessingEnvironment processingEnv,
-            Set<String> values) {
-        return OntologyUtils.createOntologyAnnotationByValues(values.toArray(new String[values.size()]), processingEnv);
-    }
-
 
     private void mergeIdToExistance(SequenceSolution solution) {
         for (Map.Entry<Integer, Boolean> entry : solution.getResult().entrySet()) {

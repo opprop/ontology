@@ -1,9 +1,10 @@
 package ontology.solvers.backend;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import constraintsolver.BackEnd;
 import constraintsolver.ConstraintSolver;
 import constraintsolver.TwoQualifiersLattice;
 import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import util.PrintUtils;
 
@@ -44,7 +46,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         this.processingEnvironment = processingEnvironment;
         // TODO: move all Ontology related Annotation creation to OntologyUtils
         AnnotationMirror ONTOLOGY = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(), Ontology.class);
-        AnnotationMirror ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(OntologyUtils.convert(""), processingEnvironment);
+        AnnotationMirror ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment, OntologyValue.TOP);
 
         // TODO: is using wildcard safe here?
         List<BackEnd<?, ?>> backEnds = new ArrayList<>();
@@ -57,13 +59,13 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                 continue;
             }
 
-            String[] ontologyValues = OntologyUtils.getOntologyValue(anno);
+            OntologyValue[] ontologyValues = OntologyUtils.getOntologyValues(anno);
 
             if (ontologyValues.length == 0) {
                 continue;
             }
 
-            AnnotationMirror CUR_ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(ontologyValues, processingEnvironment);
+            AnnotationMirror CUR_ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment, ontologyValues);
             TwoQualifiersLattice latticeFor2 = configureLatticeFor2(ONTOLOGY_TOP, CUR_ONTOLOGY_BOTTOM);
             // TODO: is using wildcard here safe?
             Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
@@ -85,29 +87,26 @@ public class OntologyConstraintSolver extends ConstraintSolver {
     @Override
     protected InferenceSolution mergeSolution(List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps) {
         Map<Integer, AnnotationMirror> result = new HashMap<> ();
-        Map<Integer, Set<String>> ontologyResults = new HashMap<> ();
+        Map<Integer, EnumSet<OntologyValue>> ontologyResults = new HashMap<> ();
 
         for (Map<Integer, AnnotationMirror> inferenceSolutionMap : inferenceSolutionMaps) {
             for (Map.Entry<Integer, AnnotationMirror> entry : inferenceSolutionMap.entrySet()) {
                 Integer id = entry.getKey();
                 AnnotationMirror ontologyAnno = entry.getValue();
-                Set<String> ontologyValues = ontologyResults.get(id);
+                EnumSet<OntologyValue> ontologyValues = ontologyResults.get(id);
 
                 if (ontologyValues == null) {
-                    ontologyValues = new HashSet<> ();
+                    ontologyValues = EnumSet.noneOf(OntologyValue.class);
                     ontologyResults.put(id, ontologyValues);
                 }
-
-                for (String value : OntologyUtils.getOntologyValue(ontologyAnno)) {
-                    ontologyValues.add(value);
-                }
+                ontologyValues.addAll(Arrays.asList(OntologyUtils.getOntologyValues(ontologyAnno)));
             }
         }
 
-        for (Map.Entry<Integer, Set<String>> entry : ontologyResults.entrySet()) {
-            Set<String> resultValueSet = entry.getValue();
-            AnnotationMirror resultAnno = OntologyUtils.createOntologyAnnotationByValues(resultValueSet.toArray(new String[resultValueSet.size()]),
-                    processingEnvironment);
+        for (Map.Entry<Integer, EnumSet<OntologyValue>> entry : ontologyResults.entrySet()) {
+            EnumSet<OntologyValue> resultValueSet = entry.getValue();
+            AnnotationMirror resultAnno = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
+                    resultValueSet.toArray(new OntologyValue[resultValueSet.size()]));
             result.put(entry.getKey(), resultAnno);
         }
 

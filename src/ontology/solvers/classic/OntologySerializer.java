@@ -1,9 +1,10 @@
 package ontology.solvers.classic;
 
 import ontology.util.OntologyUtils;
-import ontology.qual.SpecialQualType;
+import ontology.qual.OntologyValue;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -17,11 +18,11 @@ import checkers.inference.model.serialization.CnfVecIntSerializer;
 
 public class OntologySerializer extends CnfVecIntSerializer {
 
-    protected final String value;
+    protected final OntologyValue value;
 
-    public OntologySerializer(String value) {
+    public OntologySerializer(OntologyValue ontologyValue) {
         super(InferenceMain.getInstance().getSlotManager());
-        this.value = value;
+        this.value = ontologyValue;
     }
 
     @Override
@@ -32,8 +33,9 @@ public class OntologySerializer extends CnfVecIntSerializer {
     }
 
     private boolean annoIsPresented(AnnotationMirror anno) {
-        List<String> valuesList = Arrays.asList(OntologyUtils.getOntologyValue(anno));
-        return valuesList.contains(value) || valuesList.contains(SpecialQualType.BOTTOM.toString());
+        EnumSet<OntologyValue> valuesSet = EnumSet.noneOf(OntologyValue.class);
+        valuesSet = EnumSet.copyOf(Arrays.asList(OntologyUtils.getOntologyValues(anno)));
+        return valuesSet.contains(value) || valuesSet.contains(OntologyValue.BOTTOM);
     }
 
     @Override

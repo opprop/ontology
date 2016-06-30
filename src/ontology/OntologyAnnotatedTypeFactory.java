@@ -1,7 +1,7 @@
 package ontology;
 
 import ontology.qual.Ontology;
-import ontology.qual.SpecialQualType;
+import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -36,10 +36,10 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     public OntologyAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
-        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(OntologyUtils.convert(SpecialQualType.TOP.toString()), processingEnv);
+        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
         // ONTOLOGY could simple created by AnnotationUtils, because it doesn't need to has a value
         ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
-        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(OntologyUtils.convert(SpecialQualType.BOTTOM.toString()), processingEnv);
+        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
         postInit();
     }
 
@@ -65,7 +65,14 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             super(f, bottom);
         }
 
-        @Override
+//        @Override
+//        protected Set<AnnotationMirror>
+//        findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+//            Set<AnnotationMirror> newTops = new HashSet<> ();
+//            newTops.add(ONTOLOGY_TOP);
+//            return newTops;
+//        }
+
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
             if (AnnotationUtils.areSameIgnoringValues(rhs, ONTOLOGY)
                     && AnnotationUtils.areSameIgnoringValues(lhs, ONTOLOGY)) {
@@ -73,6 +80,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 String[] lhsValue = getOntologyValue(lhs);
                 Set<String> rSet = new HashSet<String>(Arrays.asList(rhsValue));
                 Set<String> lSet = new HashSet<String>(Arrays.asList(lhsValue));
+
                 if (rSet.containsAll(lSet)) {
                     return true;
                 } else {
@@ -108,7 +116,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         @Override
         public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror type) {
             if (OntologyUtils.determineAnnotation(type.getUnderlyingType())) {
-                AnnotationMirror ontologyValue = OntologyUtils.genereateOntologyAnnoFromNew(processingEnv);
+                AnnotationMirror ontologyValue = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
                 type.replaceAnnotation(ontologyValue);
             }
             return super.visitNewClass(node, type);
@@ -116,7 +124,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         @Override
         public Void visitNewArray(final NewArrayTree newArrayTree, final AnnotatedTypeMirror atm) {
-            AnnotationMirror anno = OntologyUtils.genereateOntologyAnnoFromNew(processingEnv);
+            AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
             atm.replaceAnnotation(anno);
             return super.visitNewArray(newArrayTree, atm);
         }

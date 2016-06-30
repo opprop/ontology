@@ -11,15 +11,16 @@ import org.sat4j.maxsat.WeightedMaxSatDecorator;
 import checkers.inference.InferenceMain;
 import checkers.inference.SlotManager;
 import checkers.inference.model.Constraint;
+import ontology.qual.OntologyValue;
 
 public class SequenceSolver {
     private final SlotManager slotManager;
-    private final String value;
+    private final OntologyValue value;
     private final OntologySerializer serializer;
     private final List<VecInt> clauses;
 
-    public SequenceSolver(String value, Collection<Constraint> constraints, OntologySerializer serializer) {
-        this.value = value;
+    public SequenceSolver(OntologyValue ontologyValue, Collection<Constraint> constraints, OntologySerializer serializer) {
+        this.value = ontologyValue;
         this.serializer = serializer;
         this.slotManager = InferenceMain.getInstance().getSlotManager();
         this.clauses = convertToCNF(constraints);
