@@ -43,4 +43,8 @@ public class OntologyChecker extends BaseInferrableChecker {
         return ontologyInferenceATF;
     }
 
+    @Override
+    public boolean isInsertMainModOfLocalVar() {
+        return true;
+    }
 }
