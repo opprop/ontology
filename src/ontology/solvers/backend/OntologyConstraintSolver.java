@@ -52,7 +52,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         List<BackEnd<?, ?>> backEnds = new ArrayList<>();
         List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps = new LinkedList<>();
 
-        for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getIndependentPath().entrySet()) {
+        for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
 
             if (!AnnotationUtils.areSameIgnoringValues(anno, ONTOLOGY)) {

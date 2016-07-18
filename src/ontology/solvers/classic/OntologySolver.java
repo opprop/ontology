@@ -47,7 +47,7 @@ public class OntologySolver implements InferenceSolver {
 
         List<SequenceSolver> sequenceSolvers = new ArrayList<>();
         // Configure datatype solvers
-        for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getIndependentPath().entrySet()) {
+        for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
             if (AnnotationUtils.areSameIgnoringValues(anno, Ontology)) {
                 OntologyValue[] ontologyValues = OntologyUtils.getOntologyValues(anno);
