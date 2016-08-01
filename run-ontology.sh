@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT=$(cd ../ && pwd)
+ROOT=$(cd $(dirname "$0")/.. && pwd)
 
 CFI="$ROOT"/checker-framework-inference
 
