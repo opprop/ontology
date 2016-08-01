@@ -55,10 +55,17 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
 
         @Override
         public Void visitNewClass(final NewClassTree newClassTree, final AnnotatedTypeMirror atm) {
-            if (OntologyUtils.determineAnnotation(atm.getUnderlyingType())) {
+            switch (OntologyUtils.determineOntologyValue(atm.getUnderlyingType())) {
+            case SEQUENCE: {
                 AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
                 ConstantSlot cs = variableAnnotator.createConstant(anno, newClassTree);
                 atm.replaceAnnotation(cs.getValue());
+                }
+                break;
+
+            case TOP:
+            default:
+                break;
             }
             variableAnnotator.visit(atm, newClassTree.getIdentifier());
             return null;

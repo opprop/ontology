@@ -115,9 +115,16 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         @Override
         public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror type) {
-            if (OntologyUtils.determineAnnotation(type.getUnderlyingType())) {
+            switch (OntologyUtils.determineOntologyValue(type.getUnderlyingType())) {
+            case SEQUENCE: {
                 AnnotationMirror ontologyValue = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
                 type.replaceAnnotation(ontologyValue);
+                }
+                break;
+
+            case TOP:
+            default:
+                break;
             }
             return super.visitNewClass(node, type);
         }
