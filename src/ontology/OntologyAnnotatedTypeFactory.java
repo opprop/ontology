@@ -18,6 +18,7 @@ import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,10 +77,12 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
             if (AnnotationUtils.areSameIgnoringValues(rhs, ONTOLOGY)
                     && AnnotationUtils.areSameIgnoringValues(lhs, ONTOLOGY)) {
-                String[] rhsValue = getOntologyValue(rhs);
-                String[] lhsValue = getOntologyValue(lhs);
-                Set<String> rSet = new HashSet<String>(Arrays.asList(rhsValue));
-                Set<String> lSet = new HashSet<String>(Arrays.asList(lhsValue));
+                OntologyValue[] rhsValue = OntologyUtils.getOntologyValues(rhs);
+                OntologyValue[] lhsValue = OntologyUtils.getOntologyValues(lhs);
+                EnumSet<OntologyValue> rSet = EnumSet.noneOf(OntologyValue.class);
+                rSet.addAll(Arrays.asList(rhsValue));
+                EnumSet<OntologyValue> lSet = EnumSet.noneOf(OntologyValue.class);
+                lSet.addAll(Arrays.asList(lhsValue));
 
                 if (rSet.containsAll(lSet)) {
                     return true;
@@ -89,22 +92,6 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             } else {
                 return super.isSubtype(rhs, lhs);
             }
-        }
-
-        private String[] getOntologyValue(AnnotationMirror type) {
-            @SuppressWarnings("unchecked")
-            List<String> allTypesList = ((List<String>) AnnotationUtils
-                    .getElementValuesWithDefaults(type).get(ontologyValue).getValue());
-            // types in this list is
-            // org.checkerframework.framework.util.AnnotationBuilder.
-            String[] allTypesInArray = new String[allTypesList.size()];
-            int i = 0;
-            for (Object o : allTypesList) {
-                allTypesInArray[i] = o.toString();
-                i++;
-                // System.out.println(o.toString());
-            }
-            return allTypesInArray;
         }
     }
 
