@@ -61,7 +61,9 @@ public class OntologyConstraintSolver extends ConstraintSolver {
 
             OntologyValue[] ontologyValues = OntologyUtils.getOntologyValues(anno);
 
-            if (ontologyValues.length == 0) {
+            if (ontologyValues.length == 0 ||
+                    //does not solve when the bottom is also TOP
+                    EnumSet.copyOf(Arrays.asList(ontologyValues)).contains(OntologyValue.TOP)) {
                 continue;
             }
 
