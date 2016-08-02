@@ -15,16 +15,11 @@ import org.checkerframework.framework.util.GraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.TreeUtils;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.ExecutableElement;
 
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
@@ -32,8 +27,6 @@ import com.sun.source.tree.NewClassTree;
 public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     protected final AnnotationMirror ONTOLOGY, ONTOLOGY_BOTTOM, ONTOLOGY_TOP;
-    private ExecutableElement ontologyValue = TreeUtils.getMethod("ontology.qual.Ontology", "values",
-            0, processingEnv);
 
     public OntologyAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
