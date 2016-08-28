@@ -18,7 +18,6 @@ import org.checkerframework.javacutil.AnnotationUtils;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,9 +64,16 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         @Override
         protected Set<AnnotationMirror>
         findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newTops = new HashSet<> ();
-            newTops.add(ONTOLOGY_TOP);
-            return newTops;
+            Set<AnnotationMirror> tops = super.findTops(supertypes);
+            // substitue ONTOLOGY with ONTOLOGY_TOP in supertypes
+            if (supertypes.containsKey(ONTOLOGY)) {
+                Set<AnnotationMirror> ontologyTopSupers = supertypes.get(ONTOLOGY);
+                supertypes.put(ONTOLOGY_TOP, ontologyTopSupers);
+                supertypes.remove(ONTOLOGY);
+                }
+            tops.remove(ONTOLOGY);
+            tops.add(ONTOLOGY_TOP);
+            return tops;
         }
 
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
