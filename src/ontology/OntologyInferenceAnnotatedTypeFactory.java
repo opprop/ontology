@@ -16,7 +16,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
 
-import checkers.inference.ConstraintManager;
+import checkers.inference.model.ConstraintManager;
 import checkers.inference.InferenceAnnotatedTypeFactory;
 import checkers.inference.InferenceChecker;
 import checkers.inference.InferenceTreeAnnotator;
