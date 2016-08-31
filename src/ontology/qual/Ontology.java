@@ -11,5 +11,8 @@ import java.lang.annotation.Target;
 @SubtypeOf({})
 
 public @interface Ontology {
-    OntologyValue[] values() default {};
+    /**
+     * default qualifier is the top qualifier: Ontology(values=[OntologyValue.TOP])
+     */
+    OntologyValue[] values() default { OntologyValue.TOP };
 }

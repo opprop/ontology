@@ -1,13 +1,19 @@
 package ontology;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.lang.model.element.AnnotationMirror;
 
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
+import org.checkerframework.javacutil.AnnotationUtils;
 
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
@@ -19,21 +25,60 @@ import com.sun.source.util.TreePath;
 import checkers.inference.model.ConstraintManager;
 import checkers.inference.InferenceAnnotatedTypeFactory;
 import checkers.inference.InferenceChecker;
+import checkers.inference.InferenceQualifierHierarchy;
 import checkers.inference.InferenceTreeAnnotator;
 import checkers.inference.InferrableChecker;
 import checkers.inference.SlotManager;
 import checkers.inference.VariableAnnotator;
 import checkers.inference.model.ConstantSlot;
+import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 
 public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFactory {
 
+    protected final AnnotationMirror ONTOLOGY;
+    protected final AnnotationMirror ONTOLOGY_BOTTOM;
+    protected final AnnotationMirror ONTOLOGY_TOP;
+
     public OntologyInferenceAnnotatedTypeFactory(InferenceChecker inferenceChecker, boolean withCombineConstraints,
             BaseAnnotatedTypeFactory realTypeFactory, InferrableChecker realChecker, SlotManager slotManager,
             ConstraintManager constraintManager) {
         super(inferenceChecker, withCombineConstraints, realTypeFactory, realChecker, slotManager, constraintManager);
+        ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
+        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
+        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
         postInit();
+    }
+
+    @Override
+    public QualifierHierarchy createQualifierHierarchy(MultiGraphFactory factory) {
+        return new OntologyInferenceQualifierHierarchy(factory);
+    }
+
+    public class OntologyInferenceQualifierHierarchy extends InferenceQualifierHierarchy {
+
+        public OntologyInferenceQualifierHierarchy(MultiGraphFactory multiGraphFactory) {
+            super(multiGraphFactory);
+        }
+
+        @Override
+        protected Set<AnnotationMirror>
+        findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+            Set<AnnotationMirror> newTops = super.findTops(supertypes);
+            newTops.remove(ONTOLOGY);
+            newTops.add(ONTOLOGY_TOP);
+            return newTops;
+        }
+
+        @Override
+        protected Set<AnnotationMirror>
+        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+            Set<AnnotationMirror> newBottoms = super.findTops(supertypes);
+            newBottoms.remove(ONTOLOGY);
+            newBottoms.add(ONTOLOGY_BOTTOM);
+            return newBottoms;
+        }
     }
 
     @Override

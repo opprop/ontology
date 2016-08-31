@@ -65,15 +65,24 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         protected Set<AnnotationMirror>
         findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
             Set<AnnotationMirror> tops = super.findTops(supertypes);
-            // substitue ONTOLOGY with ONTOLOGY_TOP in supertypes
-            if (supertypes.containsKey(ONTOLOGY)) {
-                Set<AnnotationMirror> ontologyTopSupers = supertypes.get(ONTOLOGY);
-                supertypes.put(ONTOLOGY_TOP, ontologyTopSupers);
-                supertypes.remove(ONTOLOGY);
-                }
+//            // substitue ONTOLOGY with ONTOLOGY_TOP in supertypes
+//            if (supertypes.containsKey(ONTOLOGY)) {
+//                Set<AnnotationMirror> ontologyTopSupers = supertypes.get(ONTOLOGY);
+//                supertypes.put(ONTOLOGY_TOP, ontologyTopSupers);
+//                supertypes.remove(ONTOLOGY);
+//                }
             tops.remove(ONTOLOGY);
             tops.add(ONTOLOGY_TOP);
             return tops;
+        }
+
+        @Override
+        protected Set<AnnotationMirror>
+        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+            Set<AnnotationMirror> newBottoms = super.findTops(supertypes);
+            newBottoms.remove(ONTOLOGY);
+            newBottoms.add(ONTOLOGY_BOTTOM);
+            return newBottoms;
         }
 
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
