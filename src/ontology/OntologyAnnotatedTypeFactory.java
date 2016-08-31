@@ -18,6 +18,7 @@ import org.checkerframework.javacutil.AnnotationUtils;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,26 +64,38 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         @Override
         protected Set<AnnotationMirror>
-        findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> tops = super.findTops(supertypes);
-//            // substitue ONTOLOGY with ONTOLOGY_TOP in supertypes
-//            if (supertypes.containsKey(ONTOLOGY)) {
-//                Set<AnnotationMirror> ontologyTopSupers = supertypes.get(ONTOLOGY);
-//                supertypes.put(ONTOLOGY_TOP, ontologyTopSupers);
-//                supertypes.remove(ONTOLOGY);
-//                }
-            tops.remove(ONTOLOGY);
-            tops.add(ONTOLOGY_TOP);
-            return tops;
+        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+            Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
+            newBottoms.remove(ONTOLOGY);
+            newBottoms.add(ONTOLOGY_BOTTOM);
+
+            //update supertypes
+            Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
+            supertypesOfBtm.add(ONTOLOGY_TOP);
+            supertypes.put(ONTOLOGY_BOTTOM, supertypesOfBtm);
+
+            return newBottoms;
         }
 
         @Override
-        protected Set<AnnotationMirror>
-        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newBottoms = super.findTops(supertypes);
-            newBottoms.remove(ONTOLOGY);
-            newBottoms.add(ONTOLOGY_BOTTOM);
-            return newBottoms;
+        protected void finish(
+                QualifierHierarchy qualHierarchy,
+                Map<AnnotationMirror, Set<AnnotationMirror>> fullMap,
+                Map<AnnotationMirror, AnnotationMirror> polyQualifiers,
+                Set<AnnotationMirror> tops,
+                Set<AnnotationMirror> bottoms,
+                Object... args) {
+            super.finish(qualHierarchy, fullMap, polyQualifiers, tops, bottoms, args);
+
+            // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
+            assert fullMap.containsKey(ONTOLOGY);
+            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(ONTOLOGY);
+            fullMap.put(ONTOLOGY_TOP, ontologyTopSupers);
+            fullMap.remove(ONTOLOGY);
+
+            // update tops
+            tops.remove(ONTOLOGY);
+            tops.add(ONTOLOGY_TOP);
         }
 
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {

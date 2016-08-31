@@ -1,5 +1,6 @@
 package ontology;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
 
+//import checkers.inference.ConstraintManager;
 import checkers.inference.model.ConstraintManager;
 import checkers.inference.InferenceAnnotatedTypeFactory;
 import checkers.inference.InferenceChecker;
@@ -64,20 +66,34 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
 
         @Override
         protected Set<AnnotationMirror>
-        findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newTops = super.findTops(supertypes);
-            newTops.remove(ONTOLOGY);
-            newTops.add(ONTOLOGY_TOP);
-            return newTops;
+        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+            Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
+            newBottoms.remove(ONTOLOGY);
+            newBottoms.add(ONTOLOGY_BOTTOM);
+
+            //update supertypes
+            Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
+            supertypesOfBtm.add(ONTOLOGY_TOP);
+            supertypes.put(ONTOLOGY_BOTTOM, supertypesOfBtm);
+
+            return newBottoms;
         }
 
         @Override
-        protected Set<AnnotationMirror>
-        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newBottoms = super.findTops(supertypes);
-            newBottoms.remove(ONTOLOGY);
-            newBottoms.add(ONTOLOGY_BOTTOM);
-            return newBottoms;
+        protected void finish(
+                QualifierHierarchy qualHierarchy,
+                Map<AnnotationMirror, Set<AnnotationMirror>> fullMap,
+                Map<AnnotationMirror, AnnotationMirror> polyQualifiers,
+                Set<AnnotationMirror> tops,
+                Set<AnnotationMirror> bottoms,
+                Object... args) {
+            super.finish(qualHierarchy, fullMap, polyQualifiers, tops, bottoms, args);
+
+            // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
+            assert fullMap.containsKey(ONTOLOGY);
+            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(ONTOLOGY);
+            fullMap.put(ONTOLOGY_TOP, ontologyTopSupers);
+            fullMap.remove(ONTOLOGY);
         }
     }
 
