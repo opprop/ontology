@@ -64,10 +64,16 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         @Override
         protected Set<AnnotationMirror>
         findTops(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newTops = super.findTops(supertypes);
-            newTops.remove(ONTOLOGY);
-            newTops.add(ONTOLOGY_TOP);
-            return newTops;
+            Set<AnnotationMirror> tops = super.findTops(supertypes);
+            // substitue ONTOLOGY with ONTOLOGY_TOP in supertypes
+            if (supertypes.containsKey(ONTOLOGY)) {
+                Set<AnnotationMirror> ontologyTopSupers = supertypes.get(ONTOLOGY);
+                supertypes.put(ONTOLOGY_TOP, ontologyTopSupers);
+                supertypes.remove(ONTOLOGY);
+                }
+            tops.remove(ONTOLOGY);
+            tops.add(ONTOLOGY_TOP);
+            return tops;
         }
 
         @Override

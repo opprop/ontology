@@ -4,7 +4,7 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.flow.CFTransfer;
 
 import checkers.inference.BaseInferrableChecker;
-import checkers.inference.ConstraintManager;
+import checkers.inference.model.ConstraintManager;
 import checkers.inference.InferenceChecker;
 import checkers.inference.InferrableChecker;
 import checkers.inference.SlotManager;
