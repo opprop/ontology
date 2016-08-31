@@ -33,6 +33,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             BaseAnnotatedTypeFactory realTypeFactory, InferrableChecker realChecker, SlotManager slotManager,
             ConstraintManager constraintManager) {
         super(inferenceChecker, withCombineConstraints, realTypeFactory, realChecker, slotManager, constraintManager);
+        postInit();
     }
 
     @Override
