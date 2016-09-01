@@ -61,8 +61,10 @@ public class OntologyMaxsatSerializer extends MaxSatSerializer {
                         //TODO: TBD
                         return defaultAction();
                     } else {
-                        resultClauses.add(VectorUtils.asVec(
-                                MathUtils.mapIdToMatrixEntry(result.getId(), cDecl.getValue(), lattice)));
+                        if (lattice.getAllTypes().contains(cDecl.getValue())) {
+                            resultClauses.add(VectorUtils.asVec(
+                                    MathUtils.mapIdToMatrixEntry(result.getId(), cDecl.getValue(), lattice)));
+                        }
                     }
                 }
             } else {
