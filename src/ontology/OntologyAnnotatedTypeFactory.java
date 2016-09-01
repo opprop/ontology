@@ -2,6 +2,7 @@ package ontology;
 
 import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
+import ontology.qual.PolyOntology;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -29,26 +30,21 @@ import com.sun.source.tree.NewClassTree;
 
 public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
-    protected final AnnotationMirror ONTOLOGY, ONTOLOGY_BOTTOM, ONTOLOGY_TOP;
-
     public OntologyAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
-        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
-        // ONTOLOGY could simple created by AnnotationUtils, because it doesn't need to has a value
-        ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
-        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
+        OntologyUtils.initOntologyUtils(processingEnv, elements);
         postInit();
     }
 
     @Override
     public QualifierHierarchy createQualifierHierarchy(MultiGraphFactory factory) {
-        return new OntologyQualifierHierarchy(factory, ONTOLOGY_BOTTOM);
+        return new OntologyQualifierHierarchy(factory, OntologyUtils.ONTOLOGY_BOTTOM);
     }
 
     @Override
     protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
         TypeUseLocation[] topLocations = { TypeUseLocation.ALL };
-        defaults.addCheckedCodeDefaults(ONTOLOGY_TOP, topLocations);
+        defaults.addCheckedCodeDefaults(OntologyUtils.ONTOLOGY_TOP, topLocations);
     }
 
     @Override
@@ -66,13 +62,13 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         protected Set<AnnotationMirror>
         findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
             Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
-            newBottoms.remove(ONTOLOGY);
-            newBottoms.add(ONTOLOGY_BOTTOM);
+            newBottoms.remove(OntologyUtils.ONTOLOGY);
+            newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
 
             //update supertypes
             Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
-            supertypesOfBtm.add(ONTOLOGY_TOP);
-            supertypes.put(ONTOLOGY_BOTTOM, supertypesOfBtm);
+            supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
+            supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);
 
             return newBottoms;
         }
@@ -88,19 +84,19 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             super.finish(qualHierarchy, fullMap, polyQualifiers, tops, bottoms, args);
 
             // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
-            assert fullMap.containsKey(ONTOLOGY);
-            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(ONTOLOGY);
-            fullMap.put(ONTOLOGY_TOP, ontologyTopSupers);
-            fullMap.remove(ONTOLOGY);
+            assert fullMap.containsKey(OntologyUtils.ONTOLOGY);
+            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
+            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
+            fullMap.remove(OntologyUtils.ONTOLOGY);
 
             // update tops
-            tops.remove(ONTOLOGY);
-            tops.add(ONTOLOGY_TOP);
+            tops.remove(OntologyUtils.ONTOLOGY);
+            tops.add(OntologyUtils.ONTOLOGY_TOP);
         }
 
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
-            if (AnnotationUtils.areSameIgnoringValues(rhs, ONTOLOGY)
-                    && AnnotationUtils.areSameIgnoringValues(lhs, ONTOLOGY)) {
+            if (AnnotationUtils.areSameIgnoringValues(rhs, OntologyUtils.ONTOLOGY)
+                    && AnnotationUtils.areSameIgnoringValues(lhs, OntologyUtils.ONTOLOGY)) {
                 OntologyValue[] rhsValue = OntologyUtils.getOntologyValues(rhs);
                 OntologyValue[] lhsValue = OntologyUtils.getOntologyValues(lhs);
                 EnumSet<OntologyValue> rSet = EnumSet.noneOf(OntologyValue.class);

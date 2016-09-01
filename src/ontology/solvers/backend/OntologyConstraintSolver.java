@@ -26,6 +26,7 @@ import constraintgraph.ConstraintGraph;
 import constraintgraph.Vertex;
 import constraintsolver.BackEnd;
 import constraintsolver.ConstraintSolver;
+import constraintsolver.Lattice;
 import constraintsolver.TwoQualifiersLattice;
 import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
@@ -42,11 +43,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             Map<String, String> configuration, Collection<Slot> slots,
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
             ProcessingEnvironment processingEnvironment, Serializer<?, ?> defaultSerializer) {
-
         this.processingEnvironment = processingEnvironment;
-        // TODO: move all Ontology related Annotation creation to OntologyUtils
-        AnnotationMirror ONTOLOGY = AnnotationUtils.fromClass(processingEnvironment.getElementUtils(), Ontology.class);
-        AnnotationMirror ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment, OntologyValue.TOP);
 
         // TODO: is using wildcard safe here?
         List<BackEnd<?, ?>> backEnds = new ArrayList<>();
@@ -55,7 +52,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
 
-            if (!AnnotationUtils.areSameIgnoringValues(anno, ONTOLOGY)) {
+            if (!AnnotationUtils.areSameIgnoringValues(anno, OntologyUtils.ONTOLOGY)) {
                 continue;
             }
 
@@ -68,7 +65,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             }
 
             AnnotationMirror CUR_ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment, ontologyValues);
-            TwoQualifiersLattice latticeFor2 = configureLatticeFor2(ONTOLOGY_TOP, CUR_ONTOLOGY_BOTTOM);
+            TwoQualifiersLattice latticeFor2 = configureLatticeFor2(OntologyUtils.ONTOLOGY_TOP, CUR_ONTOLOGY_BOTTOM);
             // TODO: is using wildcard here safe?
             Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
             backEnds.add(createBackEnd(backEndType, configuration, slots, entry.getValue(),
@@ -82,7 +79,6 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-
     return mergeSolution(inferenceSolutionMaps);
     }
 

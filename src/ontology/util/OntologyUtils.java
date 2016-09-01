@@ -2,6 +2,7 @@ package ontology.util;
 
 import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
+import ontology.qual.PolyOntology;
 
 import org.checkerframework.framework.util.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
@@ -14,8 +15,33 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 
 public class OntologyUtils {
+
+    private static OntologyUtils singletonInstance;
+
+    public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
+
+    private OntologyUtils(ProcessingEnvironment processingEnv, Elements elements) {
+        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
+        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
+        ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
+        POLY_ONTOLOGY = AnnotationUtils.fromClass(elements, PolyOntology.class);
+    }
+
+    public static void initOntologyUtils (ProcessingEnvironment processingEnv, Elements elements) {
+        if (singletonInstance == null) {
+            singletonInstance = new OntologyUtils(processingEnv, elements);
+        }
+    }
+
+    public static OntologyUtils getInstance() {
+        if (singletonInstance == null) {
+            ErrorReporter.errorAbort("getInstance() get called without initialization!");
+        }
+        return singletonInstance;
+    }
 
     public static OntologyValue determineOntologyValue(TypeMirror type) {
         if (TypesUtils.isDeclaredOfName(type, "java.util.LinkedList")

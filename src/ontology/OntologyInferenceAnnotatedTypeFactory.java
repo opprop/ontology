@@ -39,17 +39,11 @@ import ontology.util.OntologyUtils;
 
 public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFactory {
 
-    protected final AnnotationMirror ONTOLOGY;
-    protected final AnnotationMirror ONTOLOGY_BOTTOM;
-    protected final AnnotationMirror ONTOLOGY_TOP;
-
     public OntologyInferenceAnnotatedTypeFactory(InferenceChecker inferenceChecker, boolean withCombineConstraints,
             BaseAnnotatedTypeFactory realTypeFactory, InferrableChecker realChecker, SlotManager slotManager,
             ConstraintManager constraintManager) {
         super(inferenceChecker, withCombineConstraints, realTypeFactory, realChecker, slotManager, constraintManager);
-        ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
-        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
-        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
+        OntologyUtils.initOntologyUtils(processingEnv, elements);
         postInit();
     }
 
@@ -68,13 +62,13 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
         protected Set<AnnotationMirror>
         findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
             Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
-            newBottoms.remove(ONTOLOGY);
-            newBottoms.add(ONTOLOGY_BOTTOM);
+            newBottoms.remove(OntologyUtils.ONTOLOGY);
+            newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
 
             //update supertypes
             Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
-            supertypesOfBtm.add(ONTOLOGY_TOP);
-            supertypes.put(ONTOLOGY_BOTTOM, supertypesOfBtm);
+            supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
+            supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);
 
             return newBottoms;
         }
@@ -90,10 +84,10 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             super.finish(qualHierarchy, fullMap, polyQualifiers, tops, bottoms, args);
 
             // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
-            assert fullMap.containsKey(ONTOLOGY);
-            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(ONTOLOGY);
-            fullMap.put(ONTOLOGY_TOP, ontologyTopSupers);
-            fullMap.remove(ONTOLOGY);
+            assert fullMap.containsKey(OntologyUtils.ONTOLOGY);
+            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
+            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
+            fullMap.remove(OntologyUtils.ONTOLOGY);
         }
     }
 
