@@ -1,8 +1,6 @@
 package ontology;
 
-import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
-import ontology.qual.PolyOntology;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;

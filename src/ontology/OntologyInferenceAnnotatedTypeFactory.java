@@ -14,8 +14,6 @@ import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
-import org.checkerframework.javacutil.AnnotationUtils;
-
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.ParameterizedTypeTree;
@@ -33,7 +31,6 @@ import checkers.inference.InferrableChecker;
 import checkers.inference.SlotManager;
 import checkers.inference.VariableAnnotator;
 import checkers.inference.model.ConstantSlot;
-import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 
