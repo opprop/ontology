@@ -51,6 +51,6 @@ public class OntologyChecker extends BaseInferrableChecker {
 
     @Override
     public boolean withCombineConstraints() {
-        return true;
+        return false;
     }
 }
