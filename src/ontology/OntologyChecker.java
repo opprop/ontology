@@ -48,4 +48,9 @@ public class OntologyChecker extends BaseInferrableChecker {
     public boolean isInsertMainModOfLocalVar() {
         return true;
     }
+
+    @Override
+    public boolean withCombineConstraints() {
+        return true;
+    }
 }
