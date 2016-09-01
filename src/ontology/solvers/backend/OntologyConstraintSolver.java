@@ -130,8 +130,15 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                 if (ontologyValues == null) {
                     ontologyValues = EnumSet.noneOf(OntologyValue.class);
                     ontologyResults.put(id, ontologyValues);
+                    ontologyValues.addAll(Arrays.asList(OntologyUtils.getOntologyValues(ontologyAnno)));
+                    continue;
                 }
-                ontologyValues.addAll(Arrays.asList(OntologyUtils.getOntologyValues(ontologyAnno)));
+                EnumSet<OntologyValue> annoValues = EnumSet.noneOf(OntologyValue.class);
+                annoValues.addAll(Arrays.asList(OntologyUtils.getOntologyValues(ontologyAnno)));
+
+                EnumSet<OntologyValue> lub = lubOfOntologyValues(ontologyValues, annoValues);
+                ontologyValues.clear();
+                ontologyValues.addAll(lub);
             }
         }
 
@@ -144,6 +151,26 @@ public class OntologyConstraintSolver extends ConstraintSolver {
 
         PrintUtils.printResult(result);
         return new DefaultInferenceSolution(result);
+    }
+
+    protected EnumSet<OntologyValue> lubOfOntologyValues(EnumSet<OntologyValue> valueSet1, EnumSet<OntologyValue> valueSet2) {
+        EnumSet<OntologyValue> lub = EnumSet.noneOf(OntologyValue.class);
+
+        for (OntologyValue value1 : valueSet1) {
+            if (value1 == OntologyValue.TOP) {
+                lub.clear();
+                break;
+            }
+            if (valueSet2.contains(value1)) {
+                lub.add(value1);
+            }
+        }
+
+        if (lub.isEmpty()) {
+            lub.add(OntologyValue.TOP);
+        }
+
+        return lub;
     }
 
 //    @Override
