@@ -28,7 +28,6 @@ import constraintsolver.BackEnd;
 import constraintsolver.ConstraintSolver;
 import constraintsolver.Lattice;
 import constraintsolver.TwoQualifiersLattice;
-import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import util.PrintUtils;
@@ -80,6 +79,11 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             e.printStackTrace();
         }
     return mergeSolution(inferenceSolutionMaps);
+    }
+
+    @Override
+    protected Serializer<?, ?> createSerializer(String value, Lattice lattice) {
+        return new OntologyConstraintSerializer<>(value, lattice);
     }
 
     @Override
