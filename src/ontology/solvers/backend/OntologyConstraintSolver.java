@@ -1,5 +1,12 @@
 package ontology.solvers.backend;
 
+import ontology.qual.OntologyValue;
+import ontology.util.OntologyUtils;
+
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,10 +22,7 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
-
+import util.PrintUtils;
 import checkers.inference.DefaultInferenceSolution;
 import checkers.inference.InferenceMain;
 import checkers.inference.InferenceSolution;
@@ -30,14 +34,13 @@ import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
 import constraintgraph.ConstraintGraph;
+import constraintgraph.GraphBuilder;
+import constraintgraph.GraphBuilder.SubtypeDirection;
 import constraintgraph.Vertex;
 import constraintsolver.BackEnd;
 import constraintsolver.ConstraintSolver;
 import constraintsolver.Lattice;
 import constraintsolver.TwoQualifiersLattice;
-import ontology.qual.OntologyValue;
-import ontology.util.OntologyUtils;
-import util.PrintUtils;
 
 public class OntologyConstraintSolver extends ConstraintSolver {
 
@@ -148,7 +151,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                     resultValueSet.toArray(new OntologyValue[resultValueSet.size()]));
             result.put(entry.getKey(), resultAnno);
         }
-
+        result = inferMissingConstraint(result);
         PrintUtils.printResult(result);
         return new DefaultInferenceSolution(result);
     }
@@ -171,6 +174,37 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         }
 
         return lub;
+    }
+
+    @Override
+    protected Map<Integer, AnnotationMirror> inferMissingConstraint(Map<Integer, AnnotationMirror> result) {
+        Collection<Constraint> missingConstraints = this.constraintGraph.getMissingConstraints();
+        for (Constraint constraint : missingConstraints) {
+            if (constraint instanceof SubtypeConstraint) {
+                SubtypeConstraint subtypeConstraint = (SubtypeConstraint) constraint;
+                if (!(subtypeConstraint.getSubtype() instanceof ConstantSlot)
+                        && !(subtypeConstraint.getSupertype() instanceof ConstantSlot)) {
+                    VariableSlot subtype = (VariableSlot) subtypeConstraint.getSubtype();
+                    VariableSlot supertype = (VariableSlot) subtypeConstraint.getSupertype();
+                    if (result.keySet().contains(supertype.getId())) {
+                        AnnotationMirror anno = result.get(supertype.getId());
+                        OntologyValue[] ontologyValues = OntologyUtils.getOntologyValues(anno);
+                        if (!(ontologyValues.length == 0 || EnumSet
+                                .copyOf(Arrays.asList(ontologyValues)).contains(OntologyValue.TOP))) {
+                            result.put(subtype.getId(), anno);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected ConstraintGraph generateGraph(Collection<Slot> slots, Collection<Constraint> constraints) {
+        GraphBuilder graphBuilder = new GraphBuilder(slots, constraints, SubtypeDirection.FROMSUBTYPE);
+        ConstraintGraph constraintGraph = graphBuilder.buildGraph();
+        return constraintGraph;
     }
 
 //    @Override
