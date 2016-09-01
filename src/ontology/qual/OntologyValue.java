@@ -16,6 +16,7 @@ public enum OntologyValue {
     POSITION_3D("3DPosition"),
     VELOCITY_3D("3DVelocity"),
     FORCE_3D("3DForce"),
+    TORQUE_3D("3DTorque"),
     BOTTOM("BOTTOM");
 
     private String value;
