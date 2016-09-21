@@ -2,3 +2,11 @@
 
 # eclipse output
 bin/
+
+#gradle config
+.gradle/
+
+#example classes and annotated output
+ontologyExample/**/*.class
+ontologyExample/annotated
+ontologyExample/default.jaif
