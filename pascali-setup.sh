@@ -21,7 +21,7 @@ else
     (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework.git)
 fi
 
-## copy from checker-framework/.travis-build-without-test.sh
+#--- copy from checker-framework/.travis-build-without-test.sh
 
 ## Build annotation-tools (Annotation File Utilities)
 if [ -d $JSR308/annotation-tools ] ; then
@@ -33,7 +33,7 @@ fi
 # This also builds jsr308-langtools
 (cd $JSR308/annotation-tools/ && ./.travis-build-without-test.sh)
 
-## copy from checker-framework/.travis-build-without-test.sh end
+#--- copy from checker-framework/.travis-build-without-test.sh end
 
 ## try only build checker-framework, with jdk
 ant -f $JSR308/checker-framework/checker/ dist
