@@ -79,4 +79,9 @@ sourceSets {
     // TODO: add test src path when have unit tests
 }
 
+tasks.clean {
+    delete += "bin"
+    delete += "dist"
+}
+
 libsDirName="../dist"
