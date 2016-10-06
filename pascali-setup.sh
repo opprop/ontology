@@ -54,7 +54,7 @@ else
     (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/generic-type-inference-solver.git)
 fi
 
-(cd $JSR308/generic-type-inference-solver/scripts && ./compile.sh)
+(cd $JSR308/generic-type-inference-solver/ && gradle build)
 
 ##### build ontology
 (cd $JSR308/ontology && gradle build)
