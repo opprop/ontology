@@ -79,4 +79,4 @@ sourceSets {
     // TODO: add test src path when have unit tests
 }
 
-buildDir = "bin"
+libsDirName="../dist"
