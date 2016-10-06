@@ -9,7 +9,6 @@ export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(dirname $(readlink -f $(/usr
 
 export JSR308=$ROOT
 
-# Note: currently gits are hard-code to pascaliUWat as that one is the most up-to-date one
 export REPO_SITE=opprop
 
 CUR_DIR=$(pwd)
@@ -19,7 +18,7 @@ JSR308=$(cd ../ && pwd)
 if [-d $JSR308/checker-framework] ; then
     (cd $JSR308/checker-framework && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/$REPO_SITE/checker-framework.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework.git)
 fi
 
 ## copy from checker-framework/.travis-build-without-test.sh
@@ -29,7 +28,7 @@ if [ -d $JSR308/annotation-tools ] ; then
     # Older versions of git don't support the -C command-line option
     (cd ../annotation-tools && git pull)
 else
-    (cd .. && git clone --depth 1 https://github.com/$REPO_SITE/annotation-tools.git)
+    (cd .. && git clone --depth 1 https://github.com/"$REPO_SITE"/annotation-tools.git)
 fi
 # This also builds jsr308-langtools
 (cd $JSR308/annotation-tools/ && ./.travis-build-without-test.sh)
@@ -43,7 +42,7 @@ ant -f $JSR308/checker-framework/checker/ dist
 if [-d $JSR308/checker-framework-inference] ; then
     (cd $JSR308/checker-framework-inference && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/$REPO_SITE/checker-framework-inference.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
 fi
 
 (cd $JSR308/checker-framework-inference && gradle dist)
@@ -52,7 +51,7 @@ fi
 if [-d $JSR308/generic-type-inference-solver] ; then
     (cd $JSR308/generic-type-inference-solver && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/pascaliUWat/generic-type-inference-solver.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/generic-type-inference-solver.git)
 fi
 
 (cd $JSR308/generic-type-inference-solver/scripts && ./compile.sh)
