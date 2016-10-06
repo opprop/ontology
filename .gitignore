@@ -6,6 +6,10 @@ bin/
 #gradle config
 .gradle/
 
+# gradle output
+dist/
+build/
+
 #example classes and annotated output
 ontologyExample/**/*.class
 ontologyExample/annotated
