@@ -1,6 +1,6 @@
 language: java
 
-script: ./.travis-build.sh
+script: ./pascali-setup.sh
 
 sudo: false
 
