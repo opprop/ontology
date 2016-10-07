@@ -1,6 +1,8 @@
 language: java
 
-script:
+install: true
+
+script: ./.travis-build.sh
 
 sudo: false
 
