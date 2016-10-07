@@ -1,6 +1,6 @@
 language: java
 
-script: ./pascali-setup.sh
+script:
 
 sudo: false
 
