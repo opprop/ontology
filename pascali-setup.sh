@@ -9,7 +9,7 @@ export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(dirname $(readlink -f $(/usr
 
 export JSR308=$ROOT
 
-export REPO_SITE=opprop
+export REPO_SITE=pascaliUWat
 
 CUR_DIR=$(pwd)
 JSR308=$(cd ../ && pwd)
