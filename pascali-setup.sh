@@ -7,8 +7,6 @@ export SHELLOPTS
 
 export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(dirname $(readlink -f $(/usr/bin/which java)))))}
 
-export JSR308=$ROOT
-
 #TODO: avoid hard coding. maybe get repo from TRAVIS_SLUG
 export REPO_SITE=pascaliUWat
 
