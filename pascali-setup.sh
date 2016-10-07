@@ -31,7 +31,7 @@ fi
 (cd $JSR308/annotation-tools/ && ./.travis-build-without-test.sh)
 
 ## try only build checker-framework, with jdk
-ant -f $JSR308/checker-framework/checker/ jar
+ant -f $JSR308/checker-framework/checker/build.xml jar
 
 ##### build checker-framework-inference
 if [ -d $JSR308/checker-framework-inference ] ; then
