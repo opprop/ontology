@@ -5,8 +5,31 @@ def env         = System.getenv()
 
 def javaHome    = env["JAVA_HOME"]
 
+//TODO: copy from CF Inference, need refactor later on
+//determined based on the the version of the currently running JVM
+def jreVersion  = {
+    def envJreVersion = env["CFI_JRE_VERSION"];
+    if(envJreVersion == null) {
+        def jreVersionStr  = System.getProperty("java.version");
+        def matches        = ( jreVersionStr =~ /^(\d\.\d+)\..*$/ )
+
+        final double jreVer;
+        if(matches.matches()) {
+            jreVer = Double.parseDouble(matches.group(1));
+        } else {
+            throw new RuntimeException("Could not determine version from property java.version=" + jreVersionStr);
+        }
+
+        return jreVer
+    } else {
+        return envJreVersion;
+    }
+}.call()
+
 /************************ jsr308 variables ************************/
 def jsr308Dir   = env["JSR308"] ?: file(new File("..")).absolutePath
+
+def jsr308_langtoolsDir = (jsr308Dir + "/jsr308-langtools")
 
 def checkerFrameworkDir = jsr308Dir + "/checker-framework"
 
@@ -23,13 +46,18 @@ def fromBaseDir   = { baseDir, child -> baseDir ? new File(baseDir, child) : new
 //checkersDir as its parent
 def checkerFrameworkChild = fromBaseDir.curry(checkerFrameworkDir)
 
+def langtoolsChild = fromBaseDir.curry(jsr308_langtoolsDir);
+
 def cfInferenceChild = fromBaseDir.curry(cfInferenceDir)
 
 /************************ build variables ************************/
 //JarsToPackage contains both all members that should be on the classpath for this build
 // should use `+` operation at the end of a line which would means "append" in groovy
 // http://stackoverflow.com/questions/31044673/groovy-postgres-no-signature-of-method-java-lang-string-positive
-def jarsToPackage = [//checker relative paths
+def jarsToPackage = [
+                        "dist/lib/javac.jar",
+                    ].collect { langtoolsChild(it).getAbsolutePath() } +
+                    [//checker relative paths
                         "checker/dist/checker.jar",
                     ].collect { checkerFrameworkChild(it).getAbsolutePath() } +
                     [
@@ -75,6 +103,20 @@ sourceSets {
     }
 
     // TODO: add test src path when have unit tests
+}
+
+//Switch the Javac used to the JSR308
+tasks.compileJava {
+  description = 'Compiles this project using the jsr308 compiler.'
+  options.fork = true
+  options.compilerArgs = [
+      '-Xbootclasspath/p:$jsr308_langtoolsDir/dist/lib/javac.jar',
+      '-implicit:class',
+      '-Awarns', '-Xmaxwarns', '10000']
+  if(jreVersion == 1.7) {
+    options.compilerArgs += ['-source' , '7', '-target', '7']
+  }
+  options.forkOptions.executable="$jsr308_langtoolsDir/dist/bin/javac"
 }
 
 tasks.clean {
