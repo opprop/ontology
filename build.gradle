@@ -46,18 +46,13 @@ def fromBaseDir   = { baseDir, child -> baseDir ? new File(baseDir, child) : new
 //checkersDir as its parent
 def checkerFrameworkChild = fromBaseDir.curry(checkerFrameworkDir)
 
-def langtoolsChild = fromBaseDir.curry(jsr308_langtoolsDir);
-
 def cfInferenceChild = fromBaseDir.curry(cfInferenceDir)
 
 /************************ build variables ************************/
 //JarsToPackage contains both all members that should be on the classpath for this build
 // should use `+` operation at the end of a line which would means "append" in groovy
 // http://stackoverflow.com/questions/31044673/groovy-postgres-no-signature-of-method-java-lang-string-positive
-def jarsToPackage = [
-                        "dist/lib/javac.jar",
-                    ].collect { langtoolsChild(it).getAbsolutePath() } +
-                    [//checker relative paths
+def jarsToPackage = [//checker relative paths
                         "checker/dist/checker.jar",
                     ].collect { checkerFrameworkChild(it).getAbsolutePath() } +
                     [
@@ -110,7 +105,6 @@ tasks.compileJava {
   description = 'Compiles this project using the jsr308 compiler.'
   options.fork = true
   options.compilerArgs = [
-      '-Xbootclasspath/p:$jsr308_langtoolsDir/dist/lib/javac.jar',
       '-implicit:class',
       '-Awarns', '-Xmaxwarns', '10000']
   if(jreVersion == 1.7) {
