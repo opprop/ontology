@@ -3,15 +3,15 @@
 # Fail the whole script if any command fails
 set -e
 
-export SHELLOPTS
+. ./env-setup.sh
 
-export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(dirname $(readlink -f $(/usr/bin/which java)))))}
+export SHELLOPTS
 
 #TODO: avoid hard coding. maybe get repo from TRAVIS_SLUG
 export REPO_SITE=pascaliUWat
 
 CUR_DIR=$(pwd)
-export JSR308=$(cd ../ && pwd)
+
 
 ##### build checker-framework
 if [ -d $JSR308/checker-framework ] ; then
