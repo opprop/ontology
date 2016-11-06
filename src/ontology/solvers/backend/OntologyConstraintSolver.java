@@ -186,4 +186,13 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         ConstraintGraph constraintGraph = graphBuilder.buildGraph();
         return constraintGraph;
     }
+
+    @Override
+    protected void sanitizeConfiguration() {
+        if (!useGraph) {
+            useGraph = true;
+            InferenceMain.getInstance().logger.warning("OntologyConstraintSolver: Don't use graph to solve constraints will "
+                    + "cause wrong answers in Ontology type system. Modified solver argument \"useGraph\" to true.");
+        }
+    }
 }
