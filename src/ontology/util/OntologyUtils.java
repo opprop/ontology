@@ -9,6 +9,7 @@ import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 import org.checkerframework.javacutil.TypesUtils;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -64,6 +65,26 @@ public class OntologyUtils {
     public static OntologyValue[] getOntologyValues(AnnotationMirror type) {
         List<OntologyValue> ontologyValueList = AnnotationUtils.getElementValueEnumArray(type, "values", OntologyValue.class, true);
         return ontologyValueList.toArray(new OntologyValue[ontologyValueList.size()]);
+    }
+
+    public static EnumSet<OntologyValue> lubOfOntologyValues(EnumSet<OntologyValue> valueSet1, EnumSet<OntologyValue> valueSet2) {
+        EnumSet<OntologyValue> lub = EnumSet.noneOf(OntologyValue.class);
+
+        for (OntologyValue value1 : valueSet1) {
+            if (value1 == OntologyValue.TOP) {
+                lub.clear();
+                break;
+            }
+            if (valueSet2.contains(value1)) {
+                lub.add(value1);
+            }
+        }
+
+        if (lub.isEmpty()) {
+            lub.add(OntologyValue.TOP);
+        }
+
+        return lub;
     }
 
     /**
