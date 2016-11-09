@@ -7,11 +7,12 @@ set -e
 
 export SHELLOPTS
 
-#TODO: avoid hard coding. maybe get repo from TRAVIS_SLUG
-export REPO_SITE=pascaliUWat
+#default value is pascaliUWat. REPO_SITE may be set to other value for travis test purpose.
+export REPO_SITE="${REPO_SITE:-pascaliUWat}"
+
+echo "------ Downloading everthing from REPO_SITE: $REPO_SITE ------"
 
 CUR_DIR=$(pwd)
-
 
 ##### build checker-framework
 if [ -d $JSR308/checker-framework ] ; then
