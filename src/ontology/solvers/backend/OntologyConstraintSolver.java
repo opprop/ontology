@@ -95,7 +95,90 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-    return mergeSolution(inferenceSolutionMaps);
+        InferenceSolution mergedSolution = mergeSolution(inferenceSolutionMaps);
+
+        verifyMergedSolution(mergedSolution, constraints, qualHierarchy);
+
+        return mergedSolution;
+    }
+
+    /**
+     * verify the merged solution whether is consistent with constraints
+     * @param mergedSolution
+     * @param constraints
+     * @param qualifierHierarchy
+     */
+    protected void verifyMergedSolution(InferenceSolution mergedSolution,
+            Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy) {
+        List<ConstraintDiagnosticResult> diagnosticList = new ArrayList<>();
+
+        for (Constraint constraint : constraints) {
+            if (!(constraint instanceof SubtypeConstraint)) {
+                continue;
+            }
+            SubtypeConstraint sConstraint = (SubtypeConstraint) constraint;
+            Slot subtypeSlot = sConstraint.getSubtype();
+            Slot supertypeSlot = sConstraint.getSupertype();
+            AnnotationMirror subtype, supertype;
+
+            // currently both suptypeSlot and supertypeSlot should be type of VariableSlot
+            assert subtypeSlot instanceof VariableSlot && supertypeSlot instanceof VariableSlot;
+
+            if (subtypeSlot instanceof ConstantSlot && supertypeSlot instanceof ConstantSlot) {
+                continue;
+
+            } else if (subtypeSlot instanceof ConstantSlot) {
+                subtype = ((ConstantSlot) subtypeSlot).getValue();
+                supertype= mergedSolution.getAnnotation(((VariableSlot) supertypeSlot).getId());
+
+                assert subtype != null;
+
+                if (supertype == null) {
+                    logNoSolution(sConstraint, subtype, supertype);
+                    continue;
+                }
+
+            } else if (supertypeSlot instanceof ConstantSlot) {
+                subtype = mergedSolution.getAnnotation(((VariableSlot) subtypeSlot).getId());
+                supertype = ((ConstantSlot) supertypeSlot).getValue();
+
+                assert supertype != null;
+
+                if (subtype == null) {
+                    logNoSolution(sConstraint, subtype, supertype);
+                    continue;
+                }
+
+            } else {
+                subtype = mergedSolution.getAnnotation(((VariableSlot) subtypeSlot).getId());
+                supertype = mergedSolution.getAnnotation(((VariableSlot) supertypeSlot).getId());
+
+                if (subtype == null || supertype == null) {
+                    logNoSolution(sConstraint, subtype, supertype);
+                    continue;
+                }
+            }
+
+            assert subtype != null && supertype != null;
+
+            if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
+                diagnosticList.add(new ConstraintDiagnosticResult(sConstraint, subtype, supertype));
+            }
+        }
+
+        if (!diagnosticList.isEmpty()) {
+            StringBuilder sBuilder = new StringBuilder();
+            sBuilder.append("solved solution doesn't consistent with below constraints: \n");
+            for (ConstraintDiagnosticResult result : diagnosticList) {
+                sBuilder.append(result + "\n");
+            }
+            ErrorReporter.errorAbort(sBuilder.toString());
+        }
+    }
+
+    private void logNoSolution(SubtypeConstraint subtypeConstraint, AnnotationMirror subtype, AnnotationMirror supertype) {
+        InferenceMain.getInstance().logger.warning("no solution for subtype constraint: " + subtypeConstraint +
+                "\tinferred subtype: " + subtype + "\tinferred supertype: " + supertype);
     }
 
     private void addPreferenceToCurBottom(ConstantSlot curBtm, Set<Constraint> consSet) {
@@ -185,5 +268,25 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         GraphBuilder graphBuilder = new GraphBuilder(slots, constraints, SubtypeDirection.FROMSUBTYPE);
         ConstraintGraph constraintGraph = graphBuilder.buildGraph();
         return constraintGraph;
+    }
+
+    protected class ConstraintDiagnosticResult {
+        SubtypeConstraint subtypeConstraint;
+        AnnotationMirror inferredSubtype;
+        AnnotationMirror inferredSupertype;
+
+        public ConstraintDiagnosticResult(SubtypeConstraint subtypeConstraint,
+                AnnotationMirror subtype, AnnotationMirror supertype) {
+            this.subtypeConstraint = subtypeConstraint;
+            this.inferredSubtype = subtype;
+            this.inferredSupertype = supertype;
+        }
+
+        @Override
+        public String toString() {
+            return subtypeConstraint
+                    + "\tsubtype: " + inferredSubtype
+                    + "\tsupertype: " + inferredSupertype;
+        }
     }
 }
