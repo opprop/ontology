@@ -1,6 +1,7 @@
 package ontology.solvers.backend;
 
 import ontology.qual.OntologyValue;
+import ontology.util.OntologyStatisticUtil;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.framework.type.QualifierHierarchy;
@@ -23,7 +24,6 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 
-import util.PrintUtils;
 import checkers.inference.DefaultInferenceSolution;
 import checkers.inference.InferenceMain;
 import checkers.inference.InferenceSolution;
@@ -255,7 +255,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             result.put(entry.getKey(), resultAnno);
         }
         result = inferMissingConstraint(result);
-        PrintUtils.printResult(result);
+        OntologyStatisticUtil.writeInferenceResult("ontology-inferred-slots-statistic.txt", result);
         return new DefaultInferenceSolution(result);
     }
 
