@@ -2,6 +2,7 @@ package ontology.solvers.backend;
 
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyStatisticUtil;
+import ontology.util.ViolatedConsDiagnostic;
 import ontology.util.OntologyUtils;
 
 import org.checkerframework.framework.type.QualifierHierarchy;
@@ -11,7 +12,6 @@ import org.checkerframework.javacutil.ErrorReporter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -288,40 +288,6 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         GraphBuilder graphBuilder = new GraphBuilder(slots, constraints, SubtypeDirection.FROMSUBTYPE);
         ConstraintGraph constraintGraph = graphBuilder.buildGraph();
         return constraintGraph;
-    }
-
-    protected class ViolatedConsDiagnostic {
-        SubtypeConstraint subtypeConstraint;
-        AnnotationMirror inferredSubtype;
-        AnnotationMirror inferredSupertype;
-        List<AnnotationMirror> subtypeSolutions;
-        List<AnnotationMirror> supertypeSolutions;
-
-        public ViolatedConsDiagnostic(SubtypeConstraint subtypeConstraint,
-                AnnotationMirror subtype, AnnotationMirror supertype) {
-            this.subtypeConstraint = subtypeConstraint;
-            this.inferredSubtype = subtype;
-            this.inferredSupertype = supertype;
-            subtypeSolutions = Collections.emptyList();
-            supertypeSolutions = Collections.emptyList();
-        }
-
-        public void setSubtypeSolutions(List<AnnotationMirror> subtypeSolutions) {
-            this.subtypeSolutions = subtypeSolutions;
-        }
-
-        public void setSupertypeSolutions(List<AnnotationMirror> supertypeSolutions) {
-            this.supertypeSolutions = supertypeSolutions;
-        }
-
-        @Override
-        public String toString() {
-            return subtypeConstraint
-                    + "\tsubtype: " + inferredSubtype
-                    + "\tsupertype: " + inferredSupertype
-                    + "\t\n subtypeSolutions: " + subtypeSolutions
-                    + "\t\n supertypeSolutions: " + supertypeSolutions;
-        }
     }
 
     @Override
