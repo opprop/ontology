@@ -111,7 +111,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
      */
     protected void verifyMergedSolution(InferenceSolution mergedSolution,
             Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy, List<Map<Integer, AnnotationMirror>> solutionMaps) {
-        List<ConstraintDiagnosticResult> diagnosticList = new ArrayList<>();
+        List<ViolatedConsDiagnostic> diagnosticList = new ArrayList<>();
 
         for (Constraint constraint : constraints) {
             if (!(constraint instanceof SubtypeConstraint)) {
@@ -166,7 +166,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             assert subtype != null && supertype != null;
 
             if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
-                ConstraintDiagnosticResult consDiagRes = new ConstraintDiagnosticResult(sConstraint, subtype, supertype);
+                ViolatedConsDiagnostic consDiagRes = new ViolatedConsDiagnostic(sConstraint, subtype, supertype);
 
                 List<AnnotationMirror> subtypeSolutions = new ArrayList<> ();
                 List<AnnotationMirror> supertypeSolutions = new ArrayList<> ();
@@ -189,7 +189,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         if (!diagnosticList.isEmpty()) {
             StringBuilder sBuilder = new StringBuilder();
             sBuilder.append("solved solution doesn't consistent with below constraints: \n");
-            for (ConstraintDiagnosticResult result : diagnosticList) {
+            for (ViolatedConsDiagnostic result : diagnosticList) {
                 sBuilder.append(result + "\n");
             }
             ErrorReporter.errorAbort(sBuilder.toString());
@@ -290,14 +290,14 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         return constraintGraph;
     }
 
-    protected class ConstraintDiagnosticResult {
+    protected class ViolatedConsDiagnostic {
         SubtypeConstraint subtypeConstraint;
         AnnotationMirror inferredSubtype;
         AnnotationMirror inferredSupertype;
         List<AnnotationMirror> subtypeSolutions;
         List<AnnotationMirror> supertypeSolutions;
 
-        public ConstraintDiagnosticResult(SubtypeConstraint subtypeConstraint,
+        public ViolatedConsDiagnostic(SubtypeConstraint subtypeConstraint,
                 AnnotationMirror subtype, AnnotationMirror supertype) {
             this.subtypeConstraint = subtypeConstraint;
             this.inferredSubtype = subtype;
