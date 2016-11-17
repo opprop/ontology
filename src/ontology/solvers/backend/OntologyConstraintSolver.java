@@ -98,7 +98,13 @@ public class OntologyConstraintSolver extends ConstraintSolver {
 
         InferenceSolution mergedSolution = mergeSolution(inferenceSolutionMaps);
 
-        verifyMergedSolution(mergedSolution, constraints, qualHierarchy, inferenceSolutionMaps);
+        try {
+            verifyMergedSolution(mergedSolution, constraints, qualHierarchy, inferenceSolutionMaps);
+        } finally {
+            if (collectStatistic) {
+                OntologyStatisticUtil.getPostVerifyStatRecorder().writeStatistic();
+            }
+        }
 
         return mergedSolution;
     }
@@ -183,6 +189,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                 consDiagRes.setSubtypeSolutions(subtypeSolutions);
                 consDiagRes.setSupertypeSolutions(supertypeSolutions);
                 diagnosticList.add(consDiagRes);
+                OntologyStatisticUtil.getPostVerifyStatRecorder().recordViolatedConsDiags(consDiagRes);
             }
         }
 
@@ -199,6 +206,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
     private void logNoSolution(SubtypeConstraint subtypeConstraint, AnnotationMirror subtype, AnnotationMirror supertype) {
         InferenceMain.getInstance().logger.warning("no solution for subtype constraint: " + subtypeConstraint +
                 "\tinferred subtype: " + subtype + "\tinferred supertype: " + supertype);
+        OntologyStatisticUtil.getPostVerifyStatRecorder().recordMissingSolution(subtypeConstraint);
     }
 
     private void addPreferenceToCurBottom(ConstantSlot curBtm, Set<Constraint> consSet) {
@@ -255,7 +263,11 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             result.put(entry.getKey(), resultAnno);
         }
         result = inferMissingConstraint(result);
-        OntologyStatisticUtil.writeInferenceResult("ontology-inferred-slots-statistic.txt", result);
+
+        if (collectStatistic) {
+            OntologyStatisticUtil.writeInferenceResult("ontology-inferred-slots-statistic.txt", result);
+        }
+
         return new DefaultInferenceSolution(result);
     }
 
