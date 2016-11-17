@@ -13,10 +13,10 @@ public enum OntologyValue {
 
     TOP("TOP"),
     SEQUENCE("sequence"),
-    POSITION_3D("3DPosition"),
-    VELOCITY_3D("3DVelocity"),
-    FORCE_3D("3DForce"),
-    TORQUE_3D("3DTorque"),
+    POSITION_3D("position_3d"),
+    VELOCITY_3D("velocity_3d"),
+    FORCE_3D("force_3d"),
+    TORQUE_3D("torque_3d"),
     BOTTOM("BOTTOM");
 
     private String value;
