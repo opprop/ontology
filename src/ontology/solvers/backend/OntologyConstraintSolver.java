@@ -10,6 +10,7 @@ import org.checkerframework.javacutil.ErrorReporter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +54,6 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
             ProcessingEnvironment processingEnvironment, Serializer<?, ?> defaultSerializer) {
         this.processingEnvironment = processingEnvironment;
-
         // TODO: is using wildcard safe here?
         List<BackEnd<?, ?>> backEnds = new ArrayList<>();
         List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps = new LinkedList<>();
@@ -95,9 +95,10 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
         InferenceSolution mergedSolution = mergeSolution(inferenceSolutionMaps);
 
-        verifyMergedSolution(mergedSolution, constraints, qualHierarchy);
+        verifyMergedSolution(mergedSolution, constraints, qualHierarchy, inferenceSolutionMaps);
 
         return mergedSolution;
     }
@@ -109,7 +110,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
      * @param qualifierHierarchy
      */
     protected void verifyMergedSolution(InferenceSolution mergedSolution,
-            Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy) {
+            Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy, List<Map<Integer, AnnotationMirror>> solutionMaps) {
         List<ConstraintDiagnosticResult> diagnosticList = new ArrayList<>();
 
         for (Constraint constraint : constraints) {
@@ -124,12 +125,15 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             // currently both suptypeSlot and supertypeSlot should be type of VariableSlot
             assert subtypeSlot instanceof VariableSlot && supertypeSlot instanceof VariableSlot;
 
+            final int subtypeId = ((VariableSlot) subtypeSlot).getId();
+            final int supertypeId = ((VariableSlot) supertypeSlot).getId();
+
             if (subtypeSlot instanceof ConstantSlot && supertypeSlot instanceof ConstantSlot) {
                 continue;
 
             } else if (subtypeSlot instanceof ConstantSlot) {
                 subtype = ((ConstantSlot) subtypeSlot).getValue();
-                supertype= mergedSolution.getAnnotation(((VariableSlot) supertypeSlot).getId());
+                supertype= mergedSolution.getAnnotation(supertypeId);
 
                 assert subtype != null;
 
@@ -139,7 +143,7 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                 }
 
             } else if (supertypeSlot instanceof ConstantSlot) {
-                subtype = mergedSolution.getAnnotation(((VariableSlot) subtypeSlot).getId());
+                subtype = mergedSolution.getAnnotation(subtypeId);
                 supertype = ((ConstantSlot) supertypeSlot).getValue();
 
                 assert supertype != null;
@@ -150,8 +154,8 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                 }
 
             } else {
-                subtype = mergedSolution.getAnnotation(((VariableSlot) subtypeSlot).getId());
-                supertype = mergedSolution.getAnnotation(((VariableSlot) supertypeSlot).getId());
+                subtype = mergedSolution.getAnnotation(subtypeId);
+                supertype = mergedSolution.getAnnotation(supertypeId);
 
                 if (subtype == null || supertype == null) {
                     logNoSolution(sConstraint, subtype, supertype);
@@ -162,7 +166,23 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             assert subtype != null && supertype != null;
 
             if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
-                diagnosticList.add(new ConstraintDiagnosticResult(sConstraint, subtype, supertype));
+                ConstraintDiagnosticResult consDiagRes = new ConstraintDiagnosticResult(sConstraint, subtype, supertype);
+
+                List<AnnotationMirror> subtypeSolutions = new ArrayList<> ();
+                List<AnnotationMirror> supertypeSolutions = new ArrayList<> ();
+
+                for (Map<Integer, AnnotationMirror> solutionMap : solutionMaps) {
+                    if (solutionMap.containsKey(subtypeId)) {
+                        subtypeSolutions.add(solutionMap.get(subtypeId));
+                    }
+                    if (solutionMap.containsKey(supertypeId)) {
+                        supertypeSolutions.add(solutionMap.get(supertypeId));
+                    }
+                }
+
+                consDiagRes.setSubtypeSolutions(subtypeSolutions);
+                consDiagRes.setSupertypeSolutions(supertypeSolutions);
+                diagnosticList.add(consDiagRes);
             }
         }
 
@@ -274,19 +294,33 @@ public class OntologyConstraintSolver extends ConstraintSolver {
         SubtypeConstraint subtypeConstraint;
         AnnotationMirror inferredSubtype;
         AnnotationMirror inferredSupertype;
+        List<AnnotationMirror> subtypeSolutions;
+        List<AnnotationMirror> supertypeSolutions;
 
         public ConstraintDiagnosticResult(SubtypeConstraint subtypeConstraint,
                 AnnotationMirror subtype, AnnotationMirror supertype) {
             this.subtypeConstraint = subtypeConstraint;
             this.inferredSubtype = subtype;
             this.inferredSupertype = supertype;
+            subtypeSolutions = Collections.emptyList();
+            supertypeSolutions = Collections.emptyList();
+        }
+
+        public void setSubtypeSolutions(List<AnnotationMirror> subtypeSolutions) {
+            this.subtypeSolutions = subtypeSolutions;
+        }
+
+        public void setSupertypeSolutions(List<AnnotationMirror> supertypeSolutions) {
+            this.supertypeSolutions = supertypeSolutions;
         }
 
         @Override
         public String toString() {
             return subtypeConstraint
                     + "\tsubtype: " + inferredSubtype
-                    + "\tsupertype: " + inferredSupertype;
+                    + "\tsupertype: " + inferredSupertype
+                    + "\t\n subtypeSolutions: " + subtypeSolutions
+                    + "\t\n supertypeSolutions: " + supertypeSolutions;
         }
     }
 
