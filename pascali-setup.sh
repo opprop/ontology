@@ -5,7 +5,7 @@ set -e
 
 . ./env-setup.sh
 
-export SHELLOPTS
+# export SHELLOPTS
 
 #default value is pascaliUWat. REPO_SITE may be set to other value for travis test purpose.
 export REPO_SITE="${REPO_SITE:-pascaliUWat}"
