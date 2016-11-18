@@ -1,13 +1,14 @@
 #!/bin/bash
 WORKING_DIR=$(cd $(dirname "$0") && pwd)
+ONTOLOGY_DIR=$(cd $WORKING_DIR/.. && pwd)
 
 #setup env variables
-. ./env-setup.sh
+. $ONTOLOGY_DIR/env-setup.sh
 
 export REPO_SITE=opprop 
 
 ### building checker framework stuffs and ontology
-. ./pascali-setup.sh
+. $ONTOLOGY_DIR/pascali-setup.sh
 
 ### downloading do-like-javac if needs
 if [ -d $JSR308/do-like-javac ] ; then
