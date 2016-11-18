@@ -7,7 +7,7 @@ WORKING_DIR=$(cd $(dirname "$0") && pwd)
 export REPO_SITE=opprop 
 
 ### building checker framework stuffs and ontology
-# . ./pascali-setup.sh
+. ./pascali-setup.sh
 
 
 ### fetching annotated projects
