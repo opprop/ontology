@@ -3,7 +3,8 @@
 # Fail the whole script if any command fails
 set -e
 
-. ./env-setup.sh
+WORKING_DIR=$(cd $(dirname "$0") && pwd)
+. $WORKING_DIR/env-setup.sh
 
 # export SHELLOPTS
 
@@ -11,8 +12,6 @@ set -e
 export REPO_SITE="${REPO_SITE:-pascaliUWat}"
 
 echo "------ Downloading everthing from REPO_SITE: $REPO_SITE ------"
-
-CUR_DIR=$(pwd)
 
 ##### build checker-framework
 if [ -d $JSR308/checker-framework ] ; then
@@ -24,9 +23,9 @@ fi
 ## Build annotation-tools (Annotation File Utilities)
 if [ -d $JSR308/annotation-tools ] ; then
     # Older versions of git don't support the -C command-line option
-    (cd ../annotation-tools && git pull)
+    (cd $JSR308/annotation-tools && git pull)
 else
-    (cd .. && git clone --depth 1 https://github.com/"$REPO_SITE"/annotation-tools.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/annotation-tools.git)
 fi
 # This also builds jsr308-langtools
 (cd $JSR308/annotation-tools/ && ./.travis-build-without-test.sh)
