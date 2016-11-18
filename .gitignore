@@ -14,3 +14,10 @@ build/
 ontologyExample/**/*.class
 ontologyExample/annotated
 ontologyExample/default.jaif
+
+#archive test cases
+intersectionTest/
+missingAnno/
+superTypeArgTest/
+unsat/
+violateCons/
