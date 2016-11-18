@@ -1,6 +1,5 @@
 #!/bin/bash
-WORKING_DIR=$(cd $(dirname "$0") && pwd)
-ONTOLOGY_DIR=$(cd $WORKING_DIR/.. && pwd)
+ONTOLOGY_DIR=$(cd $(dirname "$0") && pwd)
 
 #setup env variables
 . $ONTOLOGY_DIR/env-setup.sh
