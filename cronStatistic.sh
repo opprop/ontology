@@ -9,6 +9,13 @@ export REPO_SITE=opprop
 ### building checker framework stuffs and ontology
 . ./pascali-setup.sh
 
+### downloading do-like-javac if needs
+if [ -d $JSR308/do-like-javac ] ; then
+    # Older versions of git don't support the -C command-line option
+    (cd $JSR308/do-like-javac && git pull)
+else
+    (cd $JSR308 && git clone --depth 1 https://github.com/SRI-CSL/do-like-javac.git)
+fi
 
 ### fetching annotated projects
 
