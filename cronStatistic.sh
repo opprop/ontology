@@ -57,7 +57,7 @@ function runOntologyOnProject() {
     fi
 
     echo "$1 $build_cmd"
-    $JSR308/ontology/run-dljc.sh $build_cmd | tee ontology.log
+    $JSR308/ontology/run-dljc.sh $build_cmd 1> ontology.log 2> ontology-error.log
 }
 
 # remove legacy projects
