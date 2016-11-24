@@ -118,8 +118,9 @@ public class OntologyConstraintSolver extends ConstraintSolver {
     protected void verifyMergedSolution(InferenceSolution mergedSolution,
             Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy, List<Map<Integer, AnnotationMirror>> solutionMaps) {
         List<ViolatedConsDiagnostic> diagnosticList = new ArrayList<>();
-
         for (Constraint constraint : constraints) {
+            //TODO: also verify other kinds of constraint
+            // currently ontology use ExistentialConstraint and EqualityConstraint
             if (!(constraint instanceof SubtypeConstraint)) {
                 continue;
             }
@@ -170,6 +171,12 @@ public class OntologyConstraintSolver extends ConstraintSolver {
             }
 
             assert subtype != null && supertype != null;
+
+            //avoid checking poly ontology
+            if (AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, subtype)
+                    || AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, supertype)) {
+                continue;
+            }
 
             if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
                 ViolatedConsDiagnostic consDiagRes = new ViolatedConsDiagnostic(sConstraint, subtype, supertype);
