@@ -2,8 +2,8 @@
 
 WORKING_DIR=$(pwd)
 
-if [ ! -z ${JSR308+x} ] ; then
-    JSR308=$(cd $(dirname "$0")/.. && pwd)
+if [ -z "${JSR308}" ] ; then
+    export JSR308=$(cd $(dirname "$0")/.. && pwd)
 fi
 
 DLJC="$JSR308"/do-like-javac
