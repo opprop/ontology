@@ -81,10 +81,15 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                 ErrorReporter.errorAbort("vertixSlot should be constantslot!");
             }
 
+            Set<Slot> curSlots = new HashSet<>();
+            for (Constraint constraint : consSet) {
+                curSlots.addAll(constraint.getSlots());
+            }
+
             addPreferenceToCurBottom((ConstantSlot) entry.getKey().getSlot(), consSet);
             // TODO: is using wildcard here safe?
             Serializer<?, ?> serializer = createSerializer(backEndType, latticeFor2);
-            backEnds.add(createBackEnd(backEndType, configuration, slots, consSet,
+            backEnds.add(createBackEnd(backEndType, configuration, curSlots, consSet,
                    qualHierarchy, processingEnvironment, latticeFor2, serializer));
         }
 
