@@ -269,37 +269,12 @@ public class OntologyConstraintSolver extends ConstraintSolver {
                     resultValueSet.toArray(new OntologyValue[resultValueSet.size()]));
             result.put(entry.getKey(), resultAnno);
         }
-        result = inferMissingConstraint(result);
 
         if (collectStatistic) {
             OntologyStatisticUtil.writeInferenceResult("ontology-inferred-slots-statistic.txt", result);
         }
 
         return new DefaultInferenceSolution(result);
-    }
-
-    @Override
-    protected Map<Integer, AnnotationMirror> inferMissingConstraint(Map<Integer, AnnotationMirror> result) {
-        Collection<Constraint> missingConstraints = this.constraintGraph.getMissingConstraints();
-        for (Constraint constraint : missingConstraints) {
-            if (constraint instanceof SubtypeConstraint) {
-                SubtypeConstraint subtypeConstraint = (SubtypeConstraint) constraint;
-                if (!(subtypeConstraint.getSubtype() instanceof ConstantSlot)
-                        && !(subtypeConstraint.getSupertype() instanceof ConstantSlot)) {
-                    VariableSlot subtype = (VariableSlot) subtypeConstraint.getSubtype();
-                    VariableSlot supertype = (VariableSlot) subtypeConstraint.getSupertype();
-                    if (result.keySet().contains(supertype.getId())) {
-                        AnnotationMirror anno = result.get(supertype.getId());
-                        OntologyValue[] ontologyValues = OntologyUtils.getOntologyValues(anno);
-                        if (!(ontologyValues.length == 0 || EnumSet
-                                .copyOf(Arrays.asList(ontologyValues)).contains(OntologyValue.TOP))) {
-                            result.put(subtype.getId(), anno);
-                        }
-                    }
-                }
-            }
-        }
-        return result;
     }
 
     @Override
