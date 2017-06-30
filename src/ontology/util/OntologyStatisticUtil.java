@@ -186,7 +186,7 @@ public class OntologyStatisticUtil {
             OntologyStatisticUtil.recordKeyValue(sb, "missing_number", String.valueOf(missingSolutionCons.size()));
             if (verbose) {
                 for (Constraint cons : missingSolutionCons) {
-                    sb.append(cons + "\n");
+                    sb.append(cons + "\n\n");
                 }
             }
             // write violated constraint info
@@ -194,7 +194,7 @@ public class OntologyStatisticUtil {
 
             if (verbose) {
                 for (ViolatedConsDiagnostic diag : violatedConsDiags) {
-                    sb.append(diag + "\n");
+                    sb.append(diag + "\n\n");
                 }
             }
 
@@ -205,6 +205,16 @@ public class OntologyStatisticUtil {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void printToFile(String fileName, String content) {
+        try {
+            PrintWriter pw = new PrintWriter(fileName);
+            pw.write(content);
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
