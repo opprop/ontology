@@ -30,4 +30,10 @@ public enum OntologyValue {
         return this.value;
     }
 
+    /**
+     *  A cache of the {@link #values()} array.
+     *  One who use {@code values()} frequently should access this static array instead,
+     *  to avoid repeatly create newly array when calling {@code values()}.
+     */
+    public static final OntologyValue[] values = values();
 }

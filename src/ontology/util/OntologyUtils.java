@@ -9,6 +9,7 @@ import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 import org.checkerframework.javacutil.TypesUtils;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -87,6 +88,27 @@ public class OntologyUtils {
         return lub;
     }
 
+    public static boolean isOntologyBottom(AnnotationMirror type) {
+        if (!AnnotationUtils.areSameIgnoringValues(type, OntologyUtils.ONTOLOGY)) {
+            return false;
+        }
+
+        EnumSet<OntologyValue> enumSet = EnumSet.noneOf(OntologyValue.class);
+        enumSet.addAll(Arrays.asList(getOntologyValues(type)));
+
+        return enumSet.size() == OntologyValue.values.length || enumSet.contains(OntologyValue.BOTTOM);
+    }
+
+    public static boolean isOntologyTop(AnnotationMirror type) {
+        if (!AnnotationUtils.areSameIgnoringValues(type, OntologyUtils.ONTOLOGY)) {
+            return false;
+        }
+
+        EnumSet<OntologyValue> enumSet = EnumSet.noneOf(OntologyValue.class);
+        enumSet.addAll(Arrays.asList(getOntologyValues(type)));
+
+        return enumSet.isEmpty() || enumSet.contains(OntologyValue.TOP);
+    }
     /**
      * check whether the passed values are validated as arguments of Ontology qualifier
      * valid values should not be null, and contains at least one ontology value, and

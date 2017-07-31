@@ -79,6 +79,7 @@ dependencies {
     //       should we also snapshot a copy of sat4j from mavenCentral into ontology?
     compile 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.4'
     compile 'org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4'
+    compile 'org.jacop:jacop:4.4.0'
 }
 
 sourceSets {
