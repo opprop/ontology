@@ -102,7 +102,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 EnumSet<OntologyValue> lSet = EnumSet.noneOf(OntologyValue.class);
                 lSet.addAll(Arrays.asList(lhsValue));
 
-                if (rSet.containsAll(lSet) || lSet.contains(OntologyValue.TOP)) {
+                if (rSet.containsAll(lSet) || rSet.contains(OntologyValue.BOTTOM) || lSet.contains(OntologyValue.TOP)) {
                     return true;
                 } else {
                     return false;

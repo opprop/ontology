@@ -19,10 +19,11 @@ class Vector {
     int x;
     int y;
     int z;
-    public @PolyOntology Vector add(@PolyOntology Vector this, @PolyOntology Vector other) {
+    public Vector add( Vector this, Vector other) {
         this.x += other.x;
         this.y += other.y;
         this.z += other.z;
         return this;
     }
 }
+//@PolyOntology 
