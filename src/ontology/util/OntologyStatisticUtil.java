@@ -3,6 +3,7 @@ package ontology.util;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -13,10 +14,17 @@ import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 
+import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
 
 import checkers.inference.InferenceMain;
+import checkers.inference.InferenceSolution;
+import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
+import checkers.inference.model.Slot;
+import checkers.inference.model.SubtypeConstraint;
+import checkers.inference.model.VariableSlot;
 import ontology.qual.OntologyValue;
 
 public class OntologyStatisticUtil {
@@ -133,6 +141,114 @@ public class OntologyStatisticUtil {
             list.add(value);
         }
         return list.toArray(new OntologyValue[list.size()]);
+    }
+
+
+    /**
+     * verify the solution whether is consistent with constraints
+     * @param mergedSolution
+     * @param constraints
+     * @param qualifierHierarchy
+     */
+    public static void verifySolution(InferenceSolution mergedSolution,
+            Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy, List<Map<Integer, AnnotationMirror>> solutionMaps) {
+        List<ViolatedConsDiagnostic> diagnosticList = new ArrayList<>();
+        for (Constraint constraint : constraints) {
+            //TODO: also verify other kinds of constraint
+            // currently ontology use ExistentialConstraint and EqualityConstraint
+            if (!(constraint instanceof SubtypeConstraint)) {
+                continue;
+            }
+            SubtypeConstraint sConstraint = (SubtypeConstraint) constraint;
+            Slot subtypeSlot = sConstraint.getSubtype();
+            Slot supertypeSlot = sConstraint.getSupertype();
+            AnnotationMirror subtype, supertype;
+
+            // currently both suptypeSlot and supertypeSlot should be type of VariableSlot
+            assert subtypeSlot instanceof VariableSlot && supertypeSlot instanceof VariableSlot;
+
+            final int subtypeId = ((VariableSlot) subtypeSlot).getId();
+            final int supertypeId = ((VariableSlot) supertypeSlot).getId();
+
+            if (subtypeSlot instanceof ConstantSlot && supertypeSlot instanceof ConstantSlot) {
+                continue;
+
+            } else if (subtypeSlot instanceof ConstantSlot) {
+                subtype = ((ConstantSlot) subtypeSlot).getValue();
+                supertype= mergedSolution.getAnnotation(supertypeId);
+
+                assert subtype != null;
+
+                if (supertype == null) {
+                    logNoSolution(sConstraint, subtype, supertype);
+                    continue;
+                }
+
+            } else if (supertypeSlot instanceof ConstantSlot) {
+                subtype = mergedSolution.getAnnotation(subtypeId);
+                supertype = ((ConstantSlot) supertypeSlot).getValue();
+
+                assert supertype != null;
+
+                if (subtype == null) {
+                    logNoSolution(sConstraint, subtype, supertype);
+                    continue;
+                }
+
+            } else {
+                subtype = mergedSolution.getAnnotation(subtypeId);
+                supertype = mergedSolution.getAnnotation(supertypeId);
+
+                if (subtype == null || supertype == null) {
+                    logNoSolution(sConstraint, subtype, supertype);
+                    continue;
+                }
+            }
+
+            assert subtype != null && supertype != null;
+
+            //avoid checking poly ontology
+            if (AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, subtype)
+                    || AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, supertype)) {
+                continue;
+            }
+
+            if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
+                ViolatedConsDiagnostic consDiagRes = new ViolatedConsDiagnostic(sConstraint, subtype, supertype);
+
+                List<AnnotationMirror> subtypeSolutions = new ArrayList<> ();
+                List<AnnotationMirror> supertypeSolutions = new ArrayList<> ();
+
+                for (Map<Integer, AnnotationMirror> solutionMap : solutionMaps) {
+                    if (solutionMap.containsKey(subtypeId)) {
+                        subtypeSolutions.add(solutionMap.get(subtypeId));
+                    }
+                    if (solutionMap.containsKey(supertypeId)) {
+                        supertypeSolutions.add(solutionMap.get(supertypeId));
+                    }
+                }
+
+                consDiagRes.setSubtypeSolutions(subtypeSolutions);
+                consDiagRes.setSupertypeSolutions(supertypeSolutions);
+                diagnosticList.add(consDiagRes);
+                OntologyStatisticUtil.getPostVerifyStatRecorder().recordViolatedConsDiags(consDiagRes);
+            }
+        }
+
+        if (!diagnosticList.isEmpty()) {
+            StringBuilder sBuilder = new StringBuilder();
+            sBuilder.append("solved solution doesn't consistent with below constraints: \n");
+            for (ViolatedConsDiagnostic result : diagnosticList) {
+                sBuilder.append(result + "\n");
+            }
+            ErrorReporter.errorAbort(sBuilder.toString());
+        }
+    }
+
+    public static void logNoSolution(SubtypeConstraint subtypeConstraint, AnnotationMirror subtype, AnnotationMirror supertype) {
+        InferenceMain.getInstance().logger.warning("no solution for subtype constraint: " + subtypeConstraint +
+                "\tinferred subtype: " + subtype + "\tinferred supertype: " + supertype);
+        OntologyStatisticUtil.getPostVerifyStatRecorder().recordMissingSolution(subtypeConstraint);
     }
 
     public static PostVerificationStatisticRecorder getPostVerifyStatRecorder() {
