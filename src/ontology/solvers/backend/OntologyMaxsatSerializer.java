@@ -11,12 +11,12 @@ import checkers.inference.model.CombineConstraint;
 import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
-import constraintsolver.Lattice;
-import constraintsolver.VariableCombos;
-import maxsatbackend.MaxSatSerializer;
+import checkers.inference.solver.backend.maxsatbackend.MathUtils;
+import checkers.inference.solver.backend.maxsatbackend.MaxSatSerializer;
+import checkers.inference.solver.frontend.Lattice;
+import checkers.inference.solver.frontend.VariableCombos;
+import checkers.inference.solver.util.VectorUtils;
 import ontology.util.OntologyUtils;
-import util.MathUtils;
-import util.VectorUtils;
 
 public class OntologyMaxsatSerializer extends MaxSatSerializer {
 
@@ -61,7 +61,7 @@ public class OntologyMaxsatSerializer extends MaxSatSerializer {
                         //TODO: TBD
                         return defaultAction();
                     } else {
-                        if (lattice.getAllTypes().contains(cDecl.getValue())) {
+                        if (lattice.allTypes.contains(cDecl.getValue())) {
                             resultClauses.add(VectorUtils.asVec(
                                     MathUtils.mapIdToMatrixEntry(result.getId(), cDecl.getValue(), lattice)));
                         }
