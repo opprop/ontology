@@ -1,0 +1,66 @@
+projects:
+- name: nd4j
+  giturl: https://github.com/opprop-benchmarks/nd4j.git
+  build: mvn install
+  clean: mvn clean
+
+- name: ejml
+  giturl: https://github.com/opprop-benchmarks/ejml.git
+  build: gradle build
+  clean: gradle clean
+
+# We have infinite-loop problem with this project. So comment it out.
+# - name: commons-math
+#   giturl: https://github.com/opprop-benchmarks/commons-math.git
+#   build: mvn install
+#   clean: mvn clean
+
+- name: jblas
+  giturl: https://github.com/opprop-benchmarks/jblas.git
+  build: mvn install
+  clean: mvn clean
+
+# - name: matrix-toolkits-java
+#   giturl: https://github.com/opprop-benchmarks/matrix-toolkits-java.git
+#   build: mvn install
+#   clean: mvn clean
+
+- name: ojAlgo
+  giturl: https://github.com/opprop-benchmarks/ojAlgo.git
+  build: mvn install
+  clean: mvn clean
+
+- name: exp4j
+  giturl: https://github.com/opprop-benchmarks/exp4j.git
+  build: mvn install
+  clean: mvn clean
+
+- name: JLargeArrays
+  giturl: https://github.com/opprop-benchmarks/JLargeArrays.git
+  build: mvn install
+  clean: mvn clean
+
+# - name: jscience
+#   giturl: https://github.com/opprop-benchmarks/jscience.git
+#   build: mvn install
+#   clean: mvn clean
+
+- name: la4j
+  giturl: https://github.com/opprop-benchmarks/la4j.git
+  build: mvn install
+  clean: mvn clean
+
+# - name: scijava-common
+#   giturl: https://github.com/opprop-benchmarks/scijava-common.git
+#   build: mvn install
+#   clean: mvn clean
+
+# - name: imagej
+#   giturl: https://github.com/opprop-benchmarks/imagej.git
+#   build: mvn install
+#   clean: mvn clean
+
+# - name: scifio
+#   giturl: https://github.com/opprop-benchmarks/scifio.git
+#   build: mvn install
+#   clean: mvn clean
