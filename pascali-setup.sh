@@ -60,14 +60,5 @@ fi
 
 (cd $JSR308/checker-framework-inference && gradle dist)
 
-##### build generic-type-inference-solver
-if [ -d $JSR308/generic-type-inference-solver ] ; then
-    (cd $JSR308/generic-type-inference-solver && git pull)
-else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/generic-type-inference-solver.git)
-fi
-
-(cd $JSR308/generic-type-inference-solver/ && gradle build)
-
 ##### build ontology
 (cd $JSR308/ontology && gradle build)
