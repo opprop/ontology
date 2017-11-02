@@ -38,6 +38,13 @@ else
     (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/stubparser.git)
 fi
 
+## Fetching DLJC
+if [ -d $JSR308/do-like-javac ] ; then
+    (cd $JSR308/do-like-javac && git pull)
+else
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/do-like-javac.git)
+fi
+
 ## Fast-build stubparser without tseting first.
 (cd $JSR308/stubparser && mvn -Dmaven.test.skip=true install)
 
