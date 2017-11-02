@@ -11,16 +11,16 @@ import checkers.inference.model.CombineConstraint;
 import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Slot;
 import checkers.inference.model.VariableSlot;
-import checkers.inference.solver.backend.maxsatbackend.MathUtils;
-import checkers.inference.solver.backend.maxsatbackend.MaxSatSerializer;
+import checkers.inference.solver.backend.maxsat.MathUtils;
+import checkers.inference.solver.backend.maxsat.MaxSatFormatTranslator;
+import checkers.inference.solver.backend.maxsat.VectorUtils;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.VariableCombos;
-import checkers.inference.solver.util.VectorUtils;
 import ontology.util.OntologyUtils;
 
-public class OntologyMaxsatSerializer extends MaxSatSerializer {
+public class OntologyMaxsatFormatTranslator extends MaxSatFormatTranslator {
 
-    public OntologyMaxsatSerializer(Lattice lattice) {
+    public OntologyMaxsatFormatTranslator(Lattice lattice) {
         super(lattice);
     }
 
@@ -50,7 +50,7 @@ public class OntologyMaxsatSerializer extends MaxSatSerializer {
                 if (AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, cDecl.getValue())) {
                     if (target instanceof ConstantSlot) {
                         resultClauses.add(VectorUtils.asVec(
-                                MathUtils.mapIdToMatrixEntry(result.getId(), ((ConstantSlot)target).getValue(), lattice)));
+                                MathUtils.mapIdToMatrixEntry(result.getId(), typeToInt.get(((ConstantSlot)target).getValue()), lattice)));
                     } else {
                         VecInt[] equalityClauses = new EqualityVariableCombos(emptyClauses)
                                 .accept(result, target, null);
@@ -63,7 +63,7 @@ public class OntologyMaxsatSerializer extends MaxSatSerializer {
                     } else {
                         if (lattice.allTypes.contains(cDecl.getValue())) {
                             resultClauses.add(VectorUtils.asVec(
-                                    MathUtils.mapIdToMatrixEntry(result.getId(), cDecl.getValue(), lattice)));
+                                    MathUtils.mapIdToMatrixEntry(result.getId(), typeToInt.get(cDecl.getValue()), lattice)));
                         }
                     }
                 }

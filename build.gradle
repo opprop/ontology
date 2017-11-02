@@ -79,6 +79,7 @@ dependencies {
     //       should we also snapshot a copy of sat4j from mavenCentral into ontology?
     compile 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.4'
     compile 'org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4'
+    compile fileTree(dir: "lib", include: ['*.jar'])
 }
 
 sourceSets {
@@ -100,6 +101,10 @@ sourceSets {
     // TODO: add test src path when have unit tests
 }
 
+task copyZ3 (type: Copy) {
+    from cfInferenceDir + "/lib/com.microsoft.z3.jar" into file('lib/')
+}
+
 //Switch the Javac used to the JSR308
 tasks.compileJava {
   description = 'Compiles this project using the jsr308 compiler.'
@@ -111,7 +116,8 @@ tasks.compileJava {
     options.compilerArgs += ['-source' , '7', '-target', '7']
   }
   options.forkOptions.executable="$jsr308_langtoolsDir/dist/bin/javac"
-}
+} dependsOn(copyZ3)
+
 
 tasks.clean {
     delete += "bin"
