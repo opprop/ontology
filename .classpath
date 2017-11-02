@@ -8,7 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/checker-framework-inference"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/framework"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jsr308-langtools"/>
-	<classpathentry kind="lib" path="/Users/charleszhuochen/Programming/UWaterloo/jsr308/jacop/target/jacop-4.4.0.jar"/>
-	<classpathentry kind="lib" path="/Users/charleszhuochen/Programming/UWaterloo/jsr308/z3/build/com.microsoft.z3.jar"/>
+	<classpathentry kind="lib" path="/Users/charleszhuochen/Programming/UWaterloo/jsr308/z3/bin/com.microsoft.z3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
