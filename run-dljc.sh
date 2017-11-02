@@ -13,6 +13,7 @@ export PATH="$PATH":"$AFU"/scripts
 export CLASSPATH="$JSR308"/ontology/bin
 
 export DYLD_LIBRARY_PATH="$JSR308"/checker-framework-inference/lib
+export LD_LIBRARY_PATH="$JSR308"/checker-framework-inference/lib
 
 
 CHECKER=ontology.OntologyChecker
