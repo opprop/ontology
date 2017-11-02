@@ -10,13 +10,14 @@ DLJC="$JSR308"/do-like-javac
 export AFU="$JSR308"/annotation-tools/annotation-file-utilities
 export PATH="$PATH":"$AFU"/scripts
 
-export CLASSPATH="$JSR308"/ontology/bin:"$JSR308"/generic-type-inference-solver/bin:"$JSR308"/jacop/target/jacop-4.4.0.jar:"$JSR308"/z3/build/com.microsoft.z3.jar
+export CLASSPATH="$JSR308"/ontology/bin
 
-export DYLD_LIBRARY_PATH="$JSR308"/z3/build
+export DYLD_LIBRARY_PATH="$JSR308"/checker-framework-inference/lib
 
+
+CHECKER=ontology.OntologyChecker
 SOLVER=ontology.solvers.backend.OntologyConstraintSolver
 SET_SOLVER=ontology.solvers.backend.jacop.OntologyJaCopSolver
-Z3_SOLVER=ontology.solvers.backend.z3.OntologyZ3Solver
 
 #parsing build command of the target program
 build_cmd="$1"
@@ -28,16 +29,15 @@ do
 done
 
 cd "$WORKING_DIR"
-# running_cmd="python $DLJC/dljc -t inference --checker ontology.OntologyChecker --solver ontology.solvers.backend.OntologyConstraintSolver --solverArgs=\"backEndType=maxsatbackend.Lingeling,solveInParallel=false\" -o logs -m ROUNDTRIP -afud $WORKING_DIR/annotated -- $build_cmd"
-infer_cmd="python $DLJC/dljc -t inference --checker ontology.OntologyChecker --solver $Z3_SOLVER --solverArgs=\"collectStatistic=true\" -o logs -m ROUNDTRIP -afud $WORKING_DIR/annotated -- $build_cmd "
+
+infer_cmd="python $DLJC/dljc -t inference --checker $CHECKER --solver $SOLVER --solverArgs=\"collectStatistic=true,solver=Z3\" -o logs -m ROUNDTRIP -afud $WORKING_DIR/annotated -- $build_cmd "
 
 # debug_onlyCompile="--onlyCompileBytecodeBase true"
-debug_cmd="python $DLJC/dljc -t inference_debug --annotationClassPath $JSR308/ontology/bin $debug_onlyCompile --checker ontology.OntologyChecker --solver $Z3_SOLVER --solverArgs=\"collectStatistic=true\" -o logs -m INFER -afud $WORKING_DIR/annotated -- $build_cmd "
+debug_cmd="python $DLJC/dljc -t testminimizer --annotationClassPath $JSR308/ontology/bin $debug_onlyCompile --expectOutputRegex 'Z3 Unsatisfiable' --checker $DATAFLOW_CHECKER --solver $DATAFLOW_SOLVER --solverArgs=\"collectStatistic=true,solver=Z3\" -o logs -m INFER -afud $WORKING_DIR/annotated -- $build_cmd "
 
 
-running_cmd=$debug_cmd
+running_cmd=$infer_cmd
 
-# running_cmd=$debug_cmd
 
 echo "============ Important variables ============="
 echo "JSR308: $JSR308"

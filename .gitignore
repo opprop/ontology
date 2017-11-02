@@ -3,6 +3,9 @@
 # eclipse output
 bin/
 
+# lib dependencies
+lib/
+
 #gradle config
 .gradle/
 

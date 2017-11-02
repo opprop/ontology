@@ -4,7 +4,7 @@ import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 import ontology.qual.PolyOntology;
 
-import org.checkerframework.framework.util.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 import org.checkerframework.javacutil.TypesUtils;
@@ -27,8 +27,8 @@ public class OntologyUtils {
     private OntologyUtils(ProcessingEnvironment processingEnv, Elements elements) {
         ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
         ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
-        ONTOLOGY = AnnotationUtils.fromClass(elements, Ontology.class);
-        POLY_ONTOLOGY = AnnotationUtils.fromClass(elements, PolyOntology.class);
+        ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
+        POLY_ONTOLOGY = AnnotationBuilder.fromClass(elements, PolyOntology.class);
     }
 
     public static void initOntologyUtils (ProcessingEnvironment processingEnv, Elements elements) {
@@ -52,6 +52,21 @@ public class OntologyUtils {
         }
         // cannot determine OntologyValue by the given type
         return OntologyValue.TOP;
+    }
+
+    public static boolean isOntologyTop(AnnotationMirror type) {
+        if (!AnnotationUtils.areSameIgnoringValues(ONTOLOGY, type)) {
+            return false;
+        }
+
+        OntologyValue[] values = getOntologyValues(type);
+        for (OntologyValue value : values) {
+            if (value == OntologyValue.TOP) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static AnnotationMirror createOntologyAnnotationByValues(ProcessingEnvironment processingEnv,
