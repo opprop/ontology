@@ -13,25 +13,36 @@ export REPO_SITE="${REPO_SITE:-pascaliUWat}"
 
 echo "------ Downloading everthing from REPO_SITE: $REPO_SITE ------"
 
-##### build checker-framework
+##### Fetching checker-framework
 if [ -d $JSR308/checker-framework ] ; then
     (cd $JSR308/checker-framework && git pull)
 else
     (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework.git)
 fi
 
-## Build annotation-tools (Annotation File Utilities)
+## Fetching annotation-tools (Annotation File Utilities)
 if [ -d $JSR308/annotation-tools ] ; then
     # Older versions of git don't support the -C command-line option
     (cd $JSR308/annotation-tools && git pull)
 else
     (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/annotation-tools.git)
 fi
-# This also builds jsr308-langtools
+
+# Build annotation tools, this also builds jsr308-langtools
 (cd $JSR308/annotation-tools/ && ./.travis-build-without-test.sh)
 
-## try only build checker-framework, with jdk
-ant -f $JSR308/checker-framework/checker/build.xml jar
+## Fetching stubparser
+if [ -d $JSR308/stubparser ] ; then
+    (cd $JSR308/stubparser && git pull)
+else
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/stubparser.git)
+fi
+
+## Fast-build stubparser without tseting first.
+(cd $JSR308/stubparser && mvn -Dmaven.test.skip=true install)
+
+## Try only build checker-framework, with jdk
+(ant -f $JSR308/checker-framework/checker/build.xml jar)
 
 ##### build checker-framework-inference
 if [ -d $JSR308/checker-framework-inference ] ; then
