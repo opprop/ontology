@@ -44,8 +44,8 @@ This script would first fetching the projects defined in
 `ontology/corpus`, then running Ontology on this corpus.
 
 After this script finished, you can check the `logs/infer.log` under
-each project directory to see the tool running log, and currently
-`infer_result_*.jaif` under each project directory is the infer output
+each project directory to see the tool running log, and
+`logs/infer_result_*.jaif` are the inference output
 of onology on each project.
 
 ### Regarding the sci-corpus
