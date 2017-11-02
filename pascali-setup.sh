@@ -25,7 +25,7 @@ if [ -d $JSR308/annotation-tools ] ; then
     # Older versions of git don't support the -C command-line option
     (cd $JSR308/annotation-tools && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/annotation-tools.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/typetools/annotation-tools.git)
 fi
 
 # Build annotation tools, this also builds jsr308-langtools
@@ -35,7 +35,7 @@ fi
 if [ -d $JSR308/stubparser ] ; then
     (cd $JSR308/stubparser && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/stubparser.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/typetools/stubparser.git)
 fi
 
 ## Fetching DLJC
@@ -45,7 +45,7 @@ else
     (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/do-like-javac.git)
 fi
 
-## Fast-build stubparser without tseting first.
+## Fast-build stubparser without testing.
 (cd $JSR308/stubparser && mvn -Dmaven.test.skip=true install)
 
 ## Try only build checker-framework, with jdk
