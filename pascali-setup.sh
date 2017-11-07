@@ -60,5 +60,5 @@ fi
 
 (cd $JSR308/checker-framework-inference && gradle dist)
 
-##### build ontology
-(cd $JSR308/ontology && gradle build)
+##### build ontology without testing
+(cd $JSR308/ontology && gradle build -x test)

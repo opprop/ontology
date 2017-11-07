@@ -4,6 +4,7 @@
 	<classpathentry kind="lib" path="/checker-framework-inference/dist/org.ow2.sat4j.maxsat-2.3.4.jar"/>
 	<classpathentry kind="lib" path="/checker-framework-inference/dist/org.ow2.sat4j.pb-2.3.4.jar"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/checker-framework-inference"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/framework"/>
