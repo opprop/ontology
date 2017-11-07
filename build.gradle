@@ -142,6 +142,11 @@ test {
     environment "external_checker_classpath", "$ontologyDir/bin"
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
+        exceptionFormat = 'full'
+        showExceptions true
+        showCauses true
+        showStackTraces true
+        showStandardStreams true
     }
     jvmArgs "-Xbootclasspath/p:$cfInferenceDir/dist/javac.jar"
 }
