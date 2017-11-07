@@ -13,3 +13,5 @@ IFS=$OIFS
 export REPO_SITE=$SLUGOWNER
 
 . ./pascali-setup.sh
+
+gradle test
