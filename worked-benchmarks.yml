@@ -1,0 +1,20 @@
+projects:
+- name: jblas
+  giturl: https://github.com/opprop-benchmarks/jblas.git
+  build: mvn install
+  clean: mvn clean
+
+- name: exp4j
+  giturl: https://github.com/opprop-benchmarks/exp4j.git
+  build: mvn install
+  clean: mvn clean
+
+- name: JLargeArrays
+  giturl: https://github.com/opprop-benchmarks/JLargeArrays.git
+  build: mvn install
+  clean: mvn clean
+
+- name: jReactPhysics3D
+  giturl: https://github.com/opprop-benchmarks/jReactPhysics3D.git
+  build: mvn install
+  clean: mvn clean

@@ -14,4 +14,4 @@ export REPO_SITE=$SLUGOWNER
 
 . ./pascali-setup.sh
 
-gradle test
+. ./test-ontology.sh
