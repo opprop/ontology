@@ -1,6 +1,7 @@
 language: java
 
-install: true
+install:
+  - pip install --user  -r requirements.txt
 
 script: ./.travis-build.sh
 

@@ -13,6 +13,9 @@ lib/
 dist/
 build/
 
+# corpus
+corpus/
+
 #example classes and annotated output
 ontologyExample/**/*.class
 ontologyExample/annotated
