@@ -55,7 +55,7 @@ fi
 if [ -d $JSR308/checker-framework-inference ] ; then
     (cd $JSR308/checker-framework-inference && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git --branch opprop-fixDocker)
 fi
 
 (cd $JSR308/checker-framework-inference && gradle dist)
