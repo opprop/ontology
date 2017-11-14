@@ -49,7 +49,7 @@ fi
 (cd $JSR308/stubparser && mvn -Dmaven.test.skip=true install)
 
 ## Try only build checker-framework, with jdk
-(ant -f $JSR308/checker-framework/checker/build.xml jar)
+(ant -f $JSR308/checker-framework/checker/build.xml dist-downloadjdk)
 
 ##### build checker-framework-inference
 if [ -d $JSR308/checker-framework-inference ] ; then
