@@ -33,7 +33,9 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
         // TODO: how to encode POLY?
         for (Slot slot : constraint.getSlots()) {
             if (isPolyOntology(slot)) {
-                return EMPTY_VALUE;
+                // Return true as empty value, to filter out poly ontology.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                return context.mkTrue();
             }
         }
 
@@ -51,18 +53,15 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
         return super.serialize(constraint);
     }
 
-     @Override
-    protected boolean isSubtypeSubSet() {
-        return false;
-    }
-
     @Override
     public BoolExpr serialize(EqualityConstraint constraint) {
         // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode POLY_ONTOLOGY into the domain.
         // TODO: how to encode POLY?
         for (Slot slot : constraint.getSlots()) {
             if (isPolyOntology(slot)) {
-                return EMPTY_VALUE;
+                // Return true as empty value, to filter out poly ontology.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                return context.mkTrue();
             }
         }
         return super.serialize(constraint);
@@ -74,7 +73,9 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
         // TODO: how to encode POLY?
         for (Slot slot : constraint.getSlots()) {
             if (isPolyOntology(slot)) {
-                return EMPTY_VALUE;
+                // Return true as empty value, to filter out poly ontology.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                return context.mkTrue();
             }
         }
         return super.serialize(constraint);
@@ -86,7 +87,9 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
         // TODO: how to encode POLY?
         for (Slot slot : preferenceConstraint.getSlots()) {
             if (isPolyOntology(slot)) {
-                return EMPTY_VALUE;
+                // Return true as empty value, to filter out poly ontology.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                return context.mkTrue();
             }
         }
         return super.serialize(preferenceConstraint);
