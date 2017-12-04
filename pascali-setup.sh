@@ -25,7 +25,7 @@ if [ -d $JSR308/annotation-tools ] ; then
     # Older versions of git don't support the -C command-line option
     (cd $JSR308/annotation-tools && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/typetools/annotation-tools.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/annotation-tools.git)
 fi
 
 # Build annotation tools, this also builds jsr308-langtools
