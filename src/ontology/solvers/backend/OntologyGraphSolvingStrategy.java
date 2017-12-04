@@ -1,28 +1,20 @@
 package ontology.solvers.backend;
 
-import ontology.qual.OntologyValue;
-import ontology.solvers.backend.z3.OntologyZ3FormatTranslator;
-import ontology.util.OntologyStatisticUtil;
-import ontology.util.OntologyUtils;
-
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
 
 import checkers.inference.DefaultInferenceSolution;
 import checkers.inference.InferenceMain;
@@ -33,30 +25,37 @@ import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
-import checkers.inference.solver.SolverEngine;
-import checkers.inference.solver.backend.FormatTranslator;
-import checkers.inference.solver.backend.SolverAdapter;
-import checkers.inference.solver.backend.SolverType;
+import checkers.inference.solver.backend.Solver;
+import checkers.inference.solver.backend.SolverFactory;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
 import checkers.inference.solver.constraintgraph.Vertex;
 import checkers.inference.solver.frontend.Lattice;
 import checkers.inference.solver.frontend.LatticeBuilder;
 import checkers.inference.solver.frontend.TwoQualifiersLattice;
+import checkers.inference.solver.strategy.GraphSolvingStrategy;
+import checkers.inference.solver.util.SolverEnvironment;
+import ontology.qual.OntologyValue;
+import ontology.util.OntologyUtils;
 
-public class OntologyConstraintSolver extends SolverEngine {
+public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
 
-    // TODO: why this processingEnv does not initialted in Constructor?
-    private ProcessingEnvironment processingEnvironment;
+    protected ProcessingEnvironment processingEnvironment;
+
+    public OntologyGraphSolvingStrategy(SolverFactory solverFactory) {
+        super(solverFactory);
+    }
 
     @Override
-    protected InferenceSolution graphSolve(ConstraintGraph constraintGraph,
-            Map<String, String> configuration, Collection<Slot> slots,
-            Collection<Constraint> constraints, QualifierHierarchy qualHierarchy,
-            ProcessingEnvironment processingEnvironment, FormatTranslator<?, ?, ?> defaultSerializer) {
-        this.processingEnvironment = processingEnvironment;
-        // TODO: is using wildcard safe here?
-        List<SolverAdapter<?>> backEnds = new ArrayList<>();
-        List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps = new LinkedList<>();
+    public InferenceSolution solve(SolverEnvironment solverEnvironment, Collection<Slot> slots,
+            Collection<Constraint> constraints, Lattice lattice) {
+        this.processingEnvironment = solverEnvironment.processingEnvironment;
+        return super.solve(solverEnvironment, slots, constraints, lattice);
+    }
+
+    @Override
+    protected List<Solver<?>> separateGraph(SolverEnvironment solverEnvironment, ConstraintGraph constraintGraph,
+            Collection<Slot> slots, Collection<Constraint> constraints, Lattice lattice) {
+        List<Solver<?>> solvers = new ArrayList<>();
 
         for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
@@ -72,7 +71,7 @@ public class OntologyConstraintSolver extends SolverEngine {
                 continue;
             }
 
-            AnnotationMirror CUR_ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment, ontologyValues);
+            AnnotationMirror CUR_ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(solverEnvironment.processingEnvironment, ontologyValues);
             TwoQualifiersLattice latticeFor2 = new LatticeBuilder().buildTwoTypeLattice(OntologyUtils.ONTOLOGY_TOP, CUR_ONTOLOGY_BOTTOM);
 
             Set<Constraint> consSet = entry.getValue();
@@ -88,32 +87,10 @@ public class OntologyConstraintSolver extends SolverEngine {
 
             addPreferenceToCurBottom((ConstantSlot) entry.getKey().getSlot(), consSet);
             // TODO: is using wildcard here safe?
-            FormatTranslator<?, ?, ?> serializer = createFormatTranslator(solverType, latticeFor2);
-            backEnds.add(createSolverAdapter(solverType, configuration, reachableSlots, consSet,
-                   processingEnvironment, latticeFor2, serializer));
+            solvers.add(solverFactory.createSolver(solverEnvironment, reachableSlots, constraints, latticeFor2));
         }
-
-        try {
-            if (backEnds.size() > 0) {
-                inferenceSolutionMaps = solveInparallel(backEnds);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        InferenceSolution mergedSolution = mergeSolution(inferenceSolutionMaps);
-
-        try {
-            OntologyStatisticUtil.verifySolution(mergedSolution, constraints, qualHierarchy, inferenceSolutionMaps);
-        } finally {
-            if (collectStatistic) {
-                OntologyStatisticUtil.getPostVerifyStatRecorder().writeStatistic();
-            }
-        }
-
-        return mergedSolution;
+        return solvers;
     }
-
 
     private void addPreferenceToCurBottom(ConstantSlot curBtm, Set<Constraint> consSet) {
         Set<Constraint> preferSet = new HashSet<>();
@@ -131,22 +108,6 @@ public class OntologyConstraintSolver extends SolverEngine {
             }
         }
         consSet.addAll(preferSet);
-    }
-    @Override
-    protected FormatTranslator<?, ?, ?> createFormatTranslator(SolverType solverType, Lattice lattice) {
-        switch (solverType) {
-        case MAXSAT:
-        case LINGELING: {
-            return new OntologyMaxsatFormatTranslator(lattice);
-        }
-
-        case Z3: {
-            return new OntologyZ3FormatTranslator(lattice);
-        }
-
-        default:
-            return solverType.createDefaultFormatTranslator(lattice);
-        }
     }
 
     @Override
@@ -181,25 +142,6 @@ public class OntologyConstraintSolver extends SolverEngine {
             result.put(entry.getKey(), resultAnno);
         }
 
-        if (collectStatistic) {
-            OntologyStatisticUtil.writeInferenceResult("ontology-inferred-slots-statistic.txt", result);
-        }
-
         return new DefaultInferenceSolution(result);
-    }
-
-    @Override
-    protected void sanitizeConfiguration() {
-        if (solverType != SolverType.Z3 && !useGraph) {
-            useGraph = true;
-            InferenceMain.getInstance().logger.warning("OntologyConstraintSolver: Don't use graph to solve constraints will "
-                    + "cause wrong answers in Ontology type system with MaxSat Solver. Modified solver argument \"useGraph\" to true.");
-        }
-
-        if (solverType == SolverType.Z3 && useGraph) {
-            useGraph = false;
-            InferenceMain.getInstance().logger.warning("OntologyConstraintSolver: Use graph to solve constraints will "
-                    + "cause wrong answers in Ontology type system with Z3 Solver. Modified solver argument \"useGraph\" to false.");
-        }
     }
 }

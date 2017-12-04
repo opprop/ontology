@@ -4,7 +4,7 @@ ROOT=$(cd $(dirname "$0")/.. && pwd)
 
 CFI="$ROOT"/checker-framework-inference
 
-SOLVER=ontology.solvers.backend.OntologyConstraintSolver
+SOLVER=ontology.solvers.backend.OntologySolverEngine
 
 DEBUG_SOVLER=checkers.inference.solver.DebugSolver
 
@@ -14,11 +14,10 @@ CHECKER=ontology.OntologyChecker
 
 # SOLVER="$DEBUG_SOVLER"
 # IS_HACK=false
-
 DEBUG_CLASSPATH=""
 
 export CLASSPATH="$ROOT"/ontology/bin:$DEBUG_CLASSPATH:.
-
+export external_checker_classpath="$ROOT"/ontology/bin
 
 $CFI/scripts/inference-dev --checker "$CHECKER" --solver "$SOLVER" --solverArgs="collectStatistic=true,solver=Z3" --hacks="$IS_HACK" -m ROUNDTRIP -afud ./annotated "$@"
 

@@ -19,8 +19,7 @@ export LD_LIBRARY_PATH="$JSR308"/checker-framework-inference/lib
 
 
 CHECKER=ontology.OntologyChecker
-SOLVER=ontology.solvers.backend.OntologyConstraintSolver
-SET_SOLVER=ontology.solvers.backend.jacop.OntologyJaCopSolver
+SOLVER=ontology.solvers.backend.OntologySolverEngine
 
 #parsing build command of the target program
 build_cmd="$1"
@@ -33,7 +32,7 @@ done
 
 cd "$WORKING_DIR"
 
-infer_cmd="python $DLJC/dljc -t inference --crashExit true --checker $CHECKER --solver $SOLVER --solverArgs=\"collectStatistic=true,solver=Z3\" -o logs -m INFER -afud $WORKING_DIR/annotated -- $build_cmd "
+infer_cmd="python $DLJC/dljc -t inference --guess -crashExit --checker $CHECKER --solver $SOLVER --solverArgs=\"collectStatistic=true,solver=Z3\" -o logs -m INFER -afud $WORKING_DIR/annotated -- $build_cmd "
 
 # debug_onlyCompile="--onlyCompileBytecodeBase true"
 debug_cmd="python $DLJC/dljc -t testminimizer --annotationClassPath $JSR308/ontology/bin $debug_onlyCompile --expectOutputRegex 'Z3 Unsatisfiable' --checker $DATAFLOW_CHECKER --solver $DATAFLOW_SOLVER --solverArgs=\"collectStatistic=true,solver=Z3\" -o logs -m INFER -afud $WORKING_DIR/annotated -- $build_cmd "
