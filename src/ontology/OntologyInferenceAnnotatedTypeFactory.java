@@ -136,13 +136,11 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
         @Override
         public Void visitParameterizedType(final ParameterizedTypeTree param, final AnnotatedTypeMirror atm) {
             TreePath path = atypeFactory.getPath(param);
-            if (path != null) {
-                final TreePath parentPath = path.getParentPath();
-                final Tree parentNode = parentPath.getLeaf();
-                if (!parentNode.getKind().equals(Kind.NEW_CLASS)) {
+            if (path == null ||
+                !path.getParentPath().getLeaf().getKind().equals(Kind.NEW_CLASS)) {
                     variableAnnotator.visit(atm, param);
-                }
             }
+
             return null;
         }
     }
