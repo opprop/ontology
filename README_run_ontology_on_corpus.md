@@ -27,7 +27,7 @@ We currently use a customized version of
 of ontology.
 
 You also need to install Lithium for the test case minimizer:
-https://github.com/pascaliUWat/do-like-javac/blob/master/README_testminimizer.md
+https://github.com/opprop/do-like-javac/blob/master/README_testminimizer.md
 
 
 ## Running the tool
