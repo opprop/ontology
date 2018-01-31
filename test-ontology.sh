@@ -33,7 +33,6 @@ fi
 
 if [ ! -d ../do-like-javac ] ; then
     (cd $JSR308 && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
-    (cd $JSR308/do-like-javac && pwd)
 fi
 
 # Running Ontology on working benchmarks
