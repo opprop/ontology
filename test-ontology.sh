@@ -22,11 +22,11 @@ gradle test
 # specially for travis downstream test.
 SLUGOWNER=${TRAVIS_REPO_SLUG%/*}
 if [[ "$SLUGOWNER" == "" ]]; then
-  SLUGOWNER=typetools
+  SLUGOWNER=opprop
 fi
 
 if [ ! -d ../do-like-javac ] ; then
-    (cd .. && git pull https://github.com/${SLUGOWNER}/do-like-javac.git)
+    (cd .. && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
 fi
 
 # Running Ontology on working benchmarks
