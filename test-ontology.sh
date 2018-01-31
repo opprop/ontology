@@ -6,6 +6,12 @@ set -e
 # Running Ontology test suite
 gradle test
 
+WORKING_DIR=$(pwd)
+
+if [ -z "${JSR308}" ] ; then
+    export JSR308=$(cd $(dirname "$0")/.. && pwd)
+fi
+
 # Pulling DLJC, if there is no DLJC.
 # This is specially for adding ontology as
 # a travis downstream test for CFI.
@@ -26,7 +32,8 @@ if [[ "$SLUGOWNER" == "" ]]; then
 fi
 
 if [ ! -d ../do-like-javac ] ; then
-    (cd .. && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
+    (cd $JSR308 && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
+    (cd $JSR308/do-like-javac && pwd)
 fi
 
 # Running Ontology on working benchmarks
