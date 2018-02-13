@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -16,9 +17,11 @@ import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 
-import checkers.inference.DefaultInferenceSolution;
+import com.sun.tools.javac.util.Pair;
+
+import checkers.inference.DefaultInferenceResult;
 import checkers.inference.InferenceMain;
-import checkers.inference.InferenceSolution;
+import checkers.inference.InferenceResult;
 import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
@@ -46,7 +49,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
     }
 
     @Override
-    public InferenceSolution solve(SolverEnvironment solverEnvironment, Collection<Slot> slots,
+    public InferenceResult solve(SolverEnvironment solverEnvironment, Collection<Slot> slots,
             Collection<Constraint> constraints, Lattice lattice) {
         this.processingEnvironment = solverEnvironment.processingEnvironment;
         return super.solve(solverEnvironment, slots, constraints, lattice);
@@ -57,7 +60,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
             Collection<Slot> slots, Collection<Constraint> constraints, Lattice lattice) {
         List<Solver<?>> solvers = new ArrayList<>();
 
-        for (Map.Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
+        for (Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
             if (!AnnotationUtils.areSameIgnoringValues(anno, OntologyUtils.ONTOLOGY)) {
                 continue;
@@ -111,12 +114,17 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
     }
 
     @Override
-    protected InferenceSolution mergeSolution(List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps) {
-        Map<Integer, AnnotationMirror> result = new HashMap<> ();
+    protected InferenceResult mergeInferenceResults(List<Pair<Map<Integer, AnnotationMirror>, Collection<Constraint>>> inferenceResults) {
+        Map<Integer, AnnotationMirror> solutions = new HashMap<> ();
         Map<Integer, EnumSet<OntologyValue>> ontologyResults = new HashMap<> ();
 
-        for (Map<Integer, AnnotationMirror> inferenceSolutionMap : inferenceSolutionMaps) {
-            for (Map.Entry<Integer, AnnotationMirror> entry : inferenceSolutionMap.entrySet()) {
+        for (Pair<Map<Integer, AnnotationMirror>, Collection<Constraint>> inferenceResult : inferenceResults) {
+
+            if (inferenceResult.fst == null) {
+                return new DefaultInferenceResult(inferenceResult.snd);
+            }
+
+            for (Entry<Integer, AnnotationMirror> entry : inferenceResult.fst.entrySet()) {
                 Integer id = entry.getKey();
                 AnnotationMirror ontologyAnno = entry.getValue();
                 EnumSet<OntologyValue> ontologyValues = ontologyResults.get(id);
@@ -132,16 +140,17 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
                 EnumSet<OntologyValue> lub = OntologyUtils.lubOfOntologyValues(ontologyValues, annoValues);
                 ontologyValues.clear();
                 ontologyValues.addAll(lub);
+
             }
         }
 
-        for (Map.Entry<Integer, EnumSet<OntologyValue>> entry : ontologyResults.entrySet()) {
+        for (Entry<Integer, EnumSet<OntologyValue>> entry : ontologyResults.entrySet()) {
             EnumSet<OntologyValue> resultValueSet = entry.getValue();
             AnnotationMirror resultAnno = OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
                     resultValueSet.toArray(new OntologyValue[resultValueSet.size()]));
-            result.put(entry.getKey(), resultAnno);
+            solutions.put(entry.getKey(), resultAnno);
         }
 
-        return new DefaultInferenceSolution(result);
+        return new DefaultInferenceResult(solutions);
     }
 }
