@@ -146,12 +146,14 @@ public class OntologyStatisticUtil {
 
     /**
      * verify the solution whether is consistent with constraints
-     * @param mergedSolution
+     * @param mergedResult
      * @param constraints
      * @param qualifierHierarchy
      */
-    public static void verifySolution(InferenceResult mergedSolution,
+    public static void verifySolution(InferenceResult mergedResult,
             Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy, List<Map<Integer, AnnotationMirror>> solutionMaps) {
+        assert mergedResult.hasSolution() : "Should verify an inference result with a solution!";
+
         List<ViolatedConsDiagnostic> diagnosticList = new ArrayList<>();
         for (Constraint constraint : constraints) {
             //TODO: also verify other kinds of constraint
@@ -175,7 +177,7 @@ public class OntologyStatisticUtil {
 
             } else if (subtypeSlot instanceof ConstantSlot) {
                 subtype = ((ConstantSlot) subtypeSlot).getValue();
-                supertype= mergedSolution.getSolutionForVariable(supertypeId);
+                supertype= mergedResult.getSolutionForVariable(supertypeId);
 
                 assert subtype != null;
 
@@ -185,7 +187,7 @@ public class OntologyStatisticUtil {
                 }
 
             } else if (supertypeSlot instanceof ConstantSlot) {
-                subtype = mergedSolution.getSolutionForVariable(subtypeId);
+                subtype = mergedResult.getSolutionForVariable(subtypeId);
                 supertype = ((ConstantSlot) supertypeSlot).getValue();
 
                 assert supertype != null;
@@ -196,8 +198,8 @@ public class OntologyStatisticUtil {
                 }
 
             } else {
-                subtype = mergedSolution.getSolutionForVariable(subtypeId);
-                supertype = mergedSolution.getSolutionForVariable(supertypeId);
+                subtype = mergedResult.getSolutionForVariable(subtypeId);
+                supertype = mergedResult.getSolutionForVariable(supertypeId);
 
                 if (subtype == null || supertype == null) {
                     logNoSolution(sConstraint, subtype, supertype);
