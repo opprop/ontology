@@ -16,9 +16,11 @@ import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 
-import checkers.inference.DefaultInferenceSolution;
+import com.sun.tools.javac.util.Pair;
+
+import checkers.inference.DefaultInferenceResult;
 import checkers.inference.InferenceMain;
-import checkers.inference.InferenceSolution;
+import checkers.inference.InferenceResult;
 import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
@@ -46,7 +48,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
     }
 
     @Override
-    public InferenceSolution solve(SolverEnvironment solverEnvironment, Collection<Slot> slots,
+    public InferenceResult solve(SolverEnvironment solverEnvironment, Collection<Slot> slots,
             Collection<Constraint> constraints, Lattice lattice) {
         this.processingEnvironment = solverEnvironment.processingEnvironment;
         return super.solve(solverEnvironment, slots, constraints, lattice);
@@ -111,12 +113,16 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
     }
 
     @Override
-    protected InferenceSolution mergeSolution(List<Map<Integer, AnnotationMirror>> inferenceSolutionMaps) {
+    protected InferenceResult mergeInferenceResults(List<Pair<Map<Integer, AnnotationMirror>, Collection<Constraint>>> inferenceResults) {
         Map<Integer, AnnotationMirror> result = new HashMap<> ();
         Map<Integer, EnumSet<OntologyValue>> ontologyResults = new HashMap<> ();
 
-        for (Map<Integer, AnnotationMirror> inferenceSolutionMap : inferenceSolutionMaps) {
-            for (Map.Entry<Integer, AnnotationMirror> entry : inferenceSolutionMap.entrySet()) {
+        for (Pair<Map<Integer, AnnotationMirror>, Collection<Constraint>> inferenceResult : inferenceResults) {
+            if (inferenceResult.fst == null) {
+                return new DefaultInferenceResult(inferenceResult.snd);
+            }
+
+            for (Map.Entry<Integer, AnnotationMirror> entry : inferenceResult.fst.entrySet()) {
                 Integer id = entry.getKey();
                 AnnotationMirror ontologyAnno = entry.getValue();
                 EnumSet<OntologyValue> ontologyValues = ontologyResults.get(id);
@@ -142,6 +148,6 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
             result.put(entry.getKey(), resultAnno);
         }
 
-        return new DefaultInferenceSolution(result);
+        return new DefaultInferenceResult(result);
     }
 }
