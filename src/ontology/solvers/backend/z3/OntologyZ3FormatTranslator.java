@@ -11,9 +11,11 @@ import checkers.inference.model.InequalityConstraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
+import checkers.inference.solver.backend.encoder.ConstraintEncoderFactory;
 import checkers.inference.solver.backend.z3.Z3BitVectorCodec;
 import checkers.inference.solver.backend.z3.Z3BitVectorFormatTranslator;
 import checkers.inference.solver.frontend.Lattice;
+import ontology.solvers.backend.z3.encoder.OntologyZ3BitVectorConstraintEncoderFactory;
 import ontology.util.OntologyUtils;
 
 public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
@@ -25,6 +27,11 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
     @Override
     protected Z3BitVectorCodec createZ3BitVectorCodec() {
         return new OntologyZ3BitVectorCodec();
+    }
+
+    @Override
+    protected ConstraintEncoderFactory<BoolExpr> createConstraintEncoderFactory() {
+        return new OntologyZ3BitVectorConstraintEncoderFactory(lattice, context, this);
     }
 
     @Override

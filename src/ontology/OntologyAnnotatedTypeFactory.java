@@ -41,7 +41,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     @Override
     protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
-        TypeUseLocation[] topLocations = { TypeUseLocation.ALL };
+        TypeUseLocation[] topLocations = {TypeUseLocation.ALL};
         defaults.addCheckedCodeDefaults(OntologyUtils.ONTOLOGY_TOP, topLocations);
     }
 
