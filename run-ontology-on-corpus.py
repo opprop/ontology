@@ -28,10 +28,10 @@ def main(argv):
     with open (os.path.join(ONTOLOGY_DIR, args.corpus_file)) as projects_file:
         projects = yaml.load(projects_file)["projects"]
 
-    for project in projects:
-        project_dir = os.path.join(BENCHMARK_DIR, project["name"])
+    for project_name, project_attrs in projects.iteritems():
+        project_dir = os.path.join(BENCHMARK_DIR, project_name)
         if not os.path.exists(project_dir):
-            git("clone", project["giturl"], "--depth", "1")
+            git("clone", project_attrs["giturl"], "--depth", "1")
 
     print "----- Fetching corpus done. -----"
 
@@ -39,20 +39,20 @@ def main(argv):
 
     failed_projects = list()
 
-    for project in projects:
-        project_dir = os.path.join(BENCHMARK_DIR, project["name"])
+    for project_name, project_attrs in projects.iteritems():
+        project_dir = os.path.join(BENCHMARK_DIR, project_name)
         os.chdir(project_dir)
         print "Enter directory: {}".format(project_dir)
-        if project["clean"] == '' or project["build"] == '':
-            print "Skip project {}, as there were no build/clean cmd.".format(project["name"])
+        if project_attrs["clean"] == '' or project_attrs["build"] == '':
+            print "Skip project {}, as there were no build/clean cmd.".format(project_name)
         print "Cleaning project..."
-        subprocess.call(shlex.split(project["clean"]))
+        subprocess.call(shlex.split(project_attrs["clean"]))
         print "Cleaning done."
-        print "Running command: {}".format(tool_excutable + " " + project["build"])
-        rtn_code = subprocess.call([tool_excutable, project["build"]])
+        print "Running command: {}".format(tool_excutable + " " + project_attrs["build"])
+        rtn_code = subprocess.call([tool_excutable, project_attrs["build"]])
         print "Return code is {}.".format(rtn_code)
         if not rtn_code == 0:
-            failed_projects.append(project["name"])
+            failed_projects.append(project_name)
 
     if len(failed_projects) > 0:
         print "----- Inference failed on {} out of {} projects. Failed projects are: {} -----".format(len(failed_projects), len(projects), failed_projects)
