@@ -5,15 +5,19 @@ import shlex
 import argparse
 
 ONTOLOGY_DIR = os.path.dirname(os.path.realpath(__file__))
-BENCHMARK_DIR = os.path.join(ONTOLOGY_DIR, "corpus")
 
 
 def main(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--corpus-file', dest='corpus_file')
+    parser.add_argument('--corpus-file', dest='corpus_file', required=True)
+    parser.add_argument('--corpus', dest='corpus')
     args = parser.parse_args()
 
     tool_excutable = os.path.join(ONTOLOGY_DIR, "run-dljc.sh")
+
+    corpus_name = args.corpus if not args.corpus == None else os.path.splitext(args.corpus_file)[0]
+
+    BENCHMARK_DIR = os.path.join(ONTOLOGY_DIR, corpus_name)
 
     print "----- Fetching corpus... -----"
     if not os.path.exists(BENCHMARK_DIR):
