@@ -2,8 +2,8 @@ package ontology.qual;
 
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -36,6 +36,20 @@ public enum OntologyValue {
     }
 
     /**
+     * Determine if a given ontology value set is equal to {@link OntologyValue#BOTTOM}.
+     *
+     * An ontology value set express the same meaning of {@link OntologyValue#BOTTOM} if it:
+     *   a) Contains value of {@link OntologyValue#BOTTOM}, or
+     *   b) it contains all real Ontology values.
+     * @param ontologyValues agiven ontology value set
+     * @return true if the given set is semantically equal to {@link OntologyValue#BOTTOM}
+     */
+    public static final boolean isEqualToBottom(Set<OntologyValue> ontologyValues) {
+        return ontologyValues.contains(BOTTOM)
+                || singleRealValueToOrdinal.keySet().equals(ontologyValues);
+    }
+
+    /**
      *  A cache of the {@link #values()} array.
      *  One who use {@code values()} frequently should access this static array instead,
      *  to avoid repeatly create newly array when calling {@code values()}.
@@ -49,24 +63,16 @@ public enum OntologyValue {
      */
     public static final Map<OntologyValue, Integer> singleRealValueToOrdinal;
 
-    /**
-     * The reverse map from zero-based ordinal to single real value.
-     */
-    public static final Map<Integer, OntologyValue> ordinalTosingleRealValue;
-
     static {
         Map<OntologyValue, Integer> tempMap = new EnumMap<>(OntologyValue.class);
-        Map<Integer, OntologyValue> reverseTempMap = new HashMap<>();
         int ordinal = 0;
         for (OntologyValue ontologyValue : values) {
             if (ontologyValue == OntologyValue.TOP || ontologyValue == OntologyValue.BOTTOM) {
                 continue;
             }
             tempMap.put(ontologyValue, ordinal);
-            reverseTempMap.put(ordinal, ontologyValue);
             ordinal += 1;
         }
         singleRealValueToOrdinal = Collections.unmodifiableMap(tempMap);
-        ordinalTosingleRealValue = Collections.unmodifiableMap(reverseTempMap);
     }
 }
