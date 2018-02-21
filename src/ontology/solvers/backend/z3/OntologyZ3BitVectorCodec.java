@@ -67,7 +67,6 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
 
     @Override
     public AnnotationMirror decodeNumeralValue(BigInteger numeralValue, ProcessingEnvironment processingEnvironment) {
-        //TODO: change decoding to use BitSet, avoid using int.
         int intNumberalValue = numeralValue.intValue();
         Set<OntologyValue> ontologyValues = EnumSet.noneOf(OntologyValue.class);
 
@@ -83,6 +82,11 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
                     break;
                 }
             }
+        }
+
+        if (OntologyValue.isEqualToBottom(ontologyValues)) {
+            return OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
+                    OntologyValue.BOTTOM);
         }
 
         return OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
