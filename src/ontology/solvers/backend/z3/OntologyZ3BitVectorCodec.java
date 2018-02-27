@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
@@ -23,8 +23,7 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
 
     private final int domainSize;
 
-    private final Map<OntologyValue, Integer> ontologyValueEncodingMap;
-
+    private final Map<OntologyValue, BigInteger> ontologyValueEncodingMap;
 
     public OntologyZ3BitVectorCodec() {
         this.domainSize = OntologyValue.values.length - 2;
@@ -34,12 +33,34 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
         if (domainSize > Integer.SIZE) {
             ErrorReporter.errorAbort("Crruently Ontology Z3 BitVectorCodec implementation cannot support domain size larger than " + Integer.SIZE);
         }
+        ontologyValueEncodingMap = Collections.unmodifiableMap(createOntologyValueEncodingMap());
+    }
 
-        Map<OntologyValue, Integer> tempMap = new EnumMap<>(OntologyValue.class);
+    private Map<OntologyValue, BigInteger> createOntologyValueEncodingMap() {
+        Map<OntologyValue, BigInteger> encodingMap = new EnumMap<>(OntologyValue.class);
+        BigInteger encode = BigInteger.ZERO;
         for (OntologyValue ontologyValue : OntologyValue.values) {
-            tempMap.put(ontologyValue, encodeOntologyValue(ontologyValue));
+            switch (ontologyValue) {
+                case TOP: {
+                    // Defensive programming, TOP's encoding is ZERO.
+                    encode = BigInteger.ZERO;
+                    break;
+                }
+                case BOTTOM: {
+                    encode = BigInteger.ZERO;
+                    for (int i = 0; i < OntologyValue.values.length; i ++) {
+                        encode = encode.setBit(i);
+                    }
+                    break;
+                }
+                default: {
+                    int ordinal = OntologyValue.singleRealValueToOrdinal.get(ontologyValue);
+                    encode = BigInteger.ZERO.setBit(ordinal);
+                }
+            }
+            encodingMap.put(ontologyValue, encode);
         }
-        ontologyValueEncodingMap = Collections.unmodifiableMap(tempMap);
+        return encodingMap;
     }
 
     @Override
@@ -58,32 +79,47 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
         }
 
         OntologyValue[] values = OntologyUtils.getOntologyValues(am);
-        int encode = 0;
+        BigInteger encode = BigInteger.ZERO;
         for (OntologyValue ontologyValue : values) {
-            encode |= ontologyValueEncodingMap.get(ontologyValue);
+            encode = encode.or(ontologyValueEncodingMap.get(ontologyValue));
         }
-        return BigInteger.valueOf(encode);
+        return encode;
     }
 
     @Override
     public AnnotationMirror decodeNumeralValue(BigInteger numeralValue, ProcessingEnvironment processingEnvironment) {
-        int intNumberalValue = numeralValue.intValue();
         Set<OntologyValue> ontologyValues = EnumSet.noneOf(OntologyValue.class);
 
-        for (Entry<OntologyValue, Integer> entry : ontologyValueEncodingMap.entrySet()) {
-            int ontologyNumeralValue = entry.getValue();
+        // If numberalValue represents an empty set, then it is TOP.
+        if (numeralValue.equals(BigInteger.ZERO)) {
+            return OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
+                    OntologyValue.TOP);
+        }
+
+        for (Entry<OntologyValue, BigInteger> entry : ontologyValueEncodingMap.entrySet()) {
+            BigInteger ontologyNumeralValue = entry.getValue();
             OntologyValue ontologyValue = entry.getKey();
-            if ((ontologyNumeralValue & intNumberalValue) == ontologyNumeralValue) {
-                if (ontologyValue == OntologyValue.TOP && ontologyNumeralValue != intNumberalValue) {
-                    continue;
-                }
+
+            if (ontologyValue == OntologyValue.TOP) {
+                // Skip the TOP case, as we've alredy checked TOP before.
+                continue;
+            }
+
+            // If the set represented by numerlValue is a super set of ontologyNumberValue,
+            // then the corresponding ontologyValue is belongs to the resulted AM's ontologyValues set.
+            if (ontologyNumeralValue.and(numeralValue).equals(ontologyNumeralValue)) {
                 ontologyValues.add(ontologyValue);
-                if (ontologyNumeralValue == intNumberalValue) {
+
+                // If numeralValue is equal to a single ontologyNumberalValue,
+                // then no further searching is needed. We've already found the decoding.
+                if (ontologyNumeralValue.equals(numeralValue)) {
                     break;
                 }
             }
         }
 
+        // If the resulted ontologyValues express the same meaning of BOTTOM,
+        // Just create an AM with BOTTOM value.
         if (OntologyValue.isEqualToBottom(ontologyValues)) {
             return OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
                     OntologyValue.BOTTOM);
@@ -91,31 +127,5 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
 
         return OntologyUtils.createOntologyAnnotationByValues(processingEnvironment,
                 ontologyValues.toArray(new OntologyValue[ontologyValues.size()]));
-    }
-
-    protected int encodeOntologyValue(OntologyValue ontologyValue) {
-        int encode;
-
-        if (ontologyValue == OntologyValue.TOP) {
-            return 0;
-        }
-
-        if (ontologyValue == OntologyValue.BOTTOM) {
-            // Start from 0, then left-shift and accumulated by bit OR.
-            encode = 0;
-            for (int i = 0; i < domainSize; i ++) {
-                encode = encode << 1;
-                encode = encode | 1;
-            }
-            return encode;
-        }
-
-        int oridnal = OntologyValue.singleRealValueToOrdinal.get(ontologyValue);
-        // Start from 1, then left-shift it to corresponding binary position.
-        encode = 1;
-        for (int i = 0; i < oridnal; i ++) {
-            encode = encode << 1;
-        }
-        return encode;
     }
 }
