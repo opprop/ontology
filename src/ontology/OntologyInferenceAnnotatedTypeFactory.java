@@ -39,7 +39,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             BaseAnnotatedTypeFactory realTypeFactory, InferrableChecker realChecker, SlotManager slotManager,
             ConstraintManager constraintManager) {
         super(inferenceChecker, withCombineConstraints, realTypeFactory, realChecker, slotManager, constraintManager);
-        OntologyUtils.initOntologyUtils(processingEnv, elements);
+        OntologyUtils.initOntologyUtils(processingEnv);
         postInit();
     }
 
@@ -107,7 +107,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
 
         @Override
         public Void visitNewClass(final NewClassTree newClassTree, final AnnotatedTypeMirror atm) {
-            switch (OntologyUtils.determineOntologyValue(atm.getUnderlyingType())) {
+            switch (OntologyUtils.getInstance().determineOntologyValue(atm.getUnderlyingType())) {
             case SEQUENCE: {
                 AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
                 ConstantSlot cs = variableAnnotator.createConstant(anno, newClassTree);
