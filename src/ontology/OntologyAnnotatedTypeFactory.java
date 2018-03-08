@@ -30,7 +30,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     public OntologyAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
-        OntologyUtils.initOntologyUtils(processingEnv, elements);
+        OntologyUtils.initOntologyUtils(processingEnv);
         postInit();
     }
 
@@ -120,7 +120,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         @Override
         public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror type) {
-            switch (OntologyUtils.determineOntologyValue(type.getUnderlyingType())) {
+            switch (OntologyUtils.getInstance().determineOntologyValue(type.getUnderlyingType())) {
             case SEQUENCE: {
                 AnnotationMirror ontologyValue = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
                 type.replaceAnnotation(ontologyValue);

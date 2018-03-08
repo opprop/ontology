@@ -17,6 +17,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
 public class OntologyUtils {
 
@@ -24,16 +25,38 @@ public class OntologyUtils {
 
     public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
 
-    private OntologyUtils(ProcessingEnvironment processingEnv, Elements elements) {
+    /**
+     * Util for operating elements.
+     * Obtained from {@link ProcessingEnvironment}
+     */
+    private final Elements elements;
+
+    /**
+     * Util for operating types.
+     * Obtained from {@link ProcessingEnvironment}
+     */
+    private final Types types;
+
+    /**
+     * TypeMirror for java.util.List.
+     */
+    private final TypeMirror LIST;
+
+    private OntologyUtils(ProcessingEnvironment processingEnv) {
+        elements = processingEnv.getElementUtils();
+        types = processingEnv.getTypeUtils();
         ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
         ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
         ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
         POLY_ONTOLOGY = AnnotationBuilder.fromClass(elements, PolyOntology.class);
+
+        // Built-in ontic concepts for isomorphic types.
+        LIST = elements.getTypeElement("java.util.List").asType();
     }
 
-    public static void initOntologyUtils (ProcessingEnvironment processingEnv, Elements elements) {
+    public static void initOntologyUtils (ProcessingEnvironment processingEnv) {
         if (singletonInstance == null) {
-            singletonInstance = new OntologyUtils(processingEnv, elements);
+            singletonInstance = new OntologyUtils(processingEnv);
         }
     }
 
@@ -44,9 +67,8 @@ public class OntologyUtils {
         return singletonInstance;
     }
 
-    public static OntologyValue determineOntologyValue(TypeMirror type) {
-        if (TypesUtils.isDeclaredOfName(type, "java.util.LinkedList")
-                || TypesUtils.isDeclaredOfName(type, "java.util.ArrayList")
+    public OntologyValue determineOntologyValue(TypeMirror type) {
+        if (TypesUtils.isErasedSubtype(type, LIST, types)
                 || type.getKind().equals(TypeKind.ARRAY)) {
             return OntologyValue.SEQUENCE;
         }
