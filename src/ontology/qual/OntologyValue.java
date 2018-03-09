@@ -18,6 +18,7 @@ public enum OntologyValue {
 
     TOP("TOP"),
     SEQUENCE("sequence"),
+    DICTIONARY("dictionary"),
     POSITION_3D("position_3d"),
     VELOCITY_3D("velocity_3d"),
     FORCE_3D("force_3d"),

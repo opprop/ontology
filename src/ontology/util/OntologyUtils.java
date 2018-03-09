@@ -1,14 +1,5 @@
 package ontology.util;
 
-import ontology.qual.Ontology;
-import ontology.qual.OntologyValue;
-import ontology.qual.PolyOntology;
-
-import org.checkerframework.javacutil.AnnotationBuilder;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
-import org.checkerframework.javacutil.TypesUtils;
-
 import java.util.EnumSet;
 import java.util.List;
 
@@ -19,11 +10,25 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import org.checkerframework.javacutil.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.javacutil.TypesUtils;
+
+import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
+import ontology.qual.PolyOntology;
+
 public class OntologyUtils {
 
     private static OntologyUtils singletonInstance;
 
     public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
+
+    /**
+     * The processing environment.
+     */
+    private final ProcessingEnvironment processingEnvironment;
 
     /**
      * Util for operating elements.
@@ -42,7 +47,18 @@ public class OntologyUtils {
      */
     private final TypeMirror LIST;
 
+    /**
+     * TypeMirror for java.util.Dictionary;
+     */
+    private final TypeMirror DICTIONARY;
+
+    /**
+     * TypeMirror for java.util.Map;
+     */
+    private final TypeMirror MAP;
+
     private OntologyUtils(ProcessingEnvironment processingEnv) {
+        processingEnvironment = processingEnv;
         elements = processingEnv.getElementUtils();
         types = processingEnv.getTypeUtils();
         ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
@@ -52,6 +68,8 @@ public class OntologyUtils {
 
         // Built-in ontic concepts for isomorphic types.
         LIST = elements.getTypeElement("java.util.List").asType();
+        DICTIONARY = elements.getTypeElement("java.util.Dictionary").asType();
+        MAP = elements.getTypeElement("java.util.Map").asType();
     }
 
     public static void initOntologyUtils (ProcessingEnvironment processingEnv) {
@@ -67,13 +85,26 @@ public class OntologyUtils {
         return singletonInstance;
     }
 
-    public OntologyValue determineOntologyValue(TypeMirror type) {
+    public AnnotationMirror determineOntologyAnnotation(TypeMirror type) {
+        OntologyValue determinedValue = OntologyValue.TOP;
+
         if (TypesUtils.isErasedSubtype(type, LIST, types)
                 || type.getKind().equals(TypeKind.ARRAY)) {
-            return OntologyValue.SEQUENCE;
+            determinedValue = OntologyValue.SEQUENCE;
         }
-        // cannot determine OntologyValue by the given type
-        return OntologyValue.TOP;
+        if (TypesUtils.isErasedSubtype(type, MAP, types)
+                || TypesUtils.isErasedSubtype(type, DICTIONARY, types)) {
+            determinedValue = OntologyValue.DICTIONARY;
+        }
+
+        switch (determinedValue) {
+            case TOP:
+            case BOTTOM:
+                return null;
+            default: {
+                return createOntologyAnnotationByValues(processingEnvironment, determinedValue);
+            }
+        }
     }
 
     public static boolean isOntologyTop(AnnotationMirror type) {
