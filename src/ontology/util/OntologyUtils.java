@@ -1,14 +1,5 @@
 package ontology.util;
 
-import ontology.qual.Ontology;
-import ontology.qual.OntologyValue;
-import ontology.qual.PolyOntology;
-
-import org.checkerframework.javacutil.AnnotationBuilder;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
-import org.checkerframework.javacutil.TypesUtils;
-
 import java.util.EnumSet;
 import java.util.List;
 
@@ -19,11 +10,25 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import org.checkerframework.javacutil.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.javacutil.TypesUtils;
+
+import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
+import ontology.qual.PolyOntology;
+
 public class OntologyUtils {
 
     private static OntologyUtils singletonInstance;
 
     public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
+
+    /**
+     * The processing environment.
+     */
+    private final ProcessingEnvironment processingEnvironment;
 
     /**
      * Util for operating elements.
@@ -53,6 +58,7 @@ public class OntologyUtils {
     private final TypeMirror MAP;
 
     private OntologyUtils(ProcessingEnvironment processingEnv) {
+        processingEnvironment = processingEnv;
         elements = processingEnv.getElementUtils();
         types = processingEnv.getTypeUtils();
         ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
@@ -79,17 +85,26 @@ public class OntologyUtils {
         return singletonInstance;
     }
 
-    public OntologyValue determineOntologyValue(TypeMirror type) {
+    public AnnotationMirror determineOntologyAnnotation(TypeMirror type) {
+        OntologyValue determinedValue = OntologyValue.TOP;
+
         if (TypesUtils.isErasedSubtype(type, LIST, types)
                 || type.getKind().equals(TypeKind.ARRAY)) {
-            return OntologyValue.SEQUENCE;
+            determinedValue = OntologyValue.SEQUENCE;
         }
         if (TypesUtils.isErasedSubtype(type, MAP, types)
                 || TypesUtils.isErasedSubtype(type, DICTIONARY, types)) {
-            return OntologyValue.DICTIONARY;
+            determinedValue = OntologyValue.DICTIONARY;
         }
-        // cannot determine OntologyValue by the given type
-        return OntologyValue.TOP;
+
+        switch (determinedValue) {
+            case TOP:
+            case BOTTOM:
+                return null;
+            default: {
+                return createOntologyAnnotationByValues(processingEnvironment, determinedValue);
+            }
+        }
     }
 
     public static boolean isOntologyTop(AnnotationMirror type) {
