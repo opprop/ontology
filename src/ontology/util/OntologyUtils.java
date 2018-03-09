@@ -42,6 +42,16 @@ public class OntologyUtils {
      */
     private final TypeMirror LIST;
 
+    /**
+     * TypeMirror for java.util.Dictionary;
+     */
+    private final TypeMirror DICTIONARY;
+
+    /**
+     * TypeMirror for java.util.Map;
+     */
+    private final TypeMirror MAP;
+
     private OntologyUtils(ProcessingEnvironment processingEnv) {
         elements = processingEnv.getElementUtils();
         types = processingEnv.getTypeUtils();
@@ -52,6 +62,8 @@ public class OntologyUtils {
 
         // Built-in ontic concepts for isomorphic types.
         LIST = elements.getTypeElement("java.util.List").asType();
+        DICTIONARY = elements.getTypeElement("java.util.Dictionary").asType();
+        MAP = elements.getTypeElement("java.util.Map").asType();
     }
 
     public static void initOntologyUtils (ProcessingEnvironment processingEnv) {
@@ -71,6 +83,10 @@ public class OntologyUtils {
         if (TypesUtils.isErasedSubtype(type, LIST, types)
                 || type.getKind().equals(TypeKind.ARRAY)) {
             return OntologyValue.SEQUENCE;
+        }
+        if (TypesUtils.isErasedSubtype(type, MAP, types)
+                || TypesUtils.isErasedSubtype(type, DICTIONARY, types)) {
+            return OntologyValue.DICTIONARY;
         }
         // cannot determine OntologyValue by the given type
         return OntologyValue.TOP;
