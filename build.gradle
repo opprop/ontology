@@ -119,17 +119,17 @@ task copyZ3 (type: Copy) {
 
 // Switch the Javac used by JSR308
 tasks.compileJava {
-	description = 'Compiles this project using the jsr308 compiler.'
-	options.fork = true
-  	options.forkOptions.executable="$jsr308_langtoolsDir/dist/bin/javac"
-	options.compilerArgs = [
-      	'-implicit:class',
-      	'-Awarns',
-      	'-Xmaxwarns', '10000'
-	]
-  	if(jreVersion == 1.7) {
-		options.compilerArgs += ['-source' , '7', '-target', '7']
-	}
+    description = 'Compiles this project using the jsr308 compiler.'
+    options.fork = true
+    options.forkOptions.executable="$jsr308_langtoolsDir/dist/bin/javac"
+    options.compilerArgs = [
+        '-implicit:class',
+        '-Awarns',
+        '-Xmaxwarns', '10000'
+    ]
+    if(jreVersion == 1.7) {
+        options.compilerArgs += ['-source' , '7', '-target', '7']
+    }
 } dependsOn(copyZ3)
 
 
