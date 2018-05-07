@@ -137,8 +137,10 @@ tasks.clean {
 }
 
 test {
-    systemProperty "path.afu.scripts", "$annotationToolsDir/annotation-file-utilities/scripts"
-    systemProperty "path.inference.script", "$cfInferenceDir/scripts/inference"
+    systemProperties 'path.afu.scripts': "$annotationToolsDir/annotation-file-utilities/scripts",
+            'path.inference.script': "$cfInferenceDir/scripts/inference",
+            JDK_JAR: "$cfInferenceDir/dist/jdk8.jar"
+
     environment "external_checker_classpath", "$ontologyDir/bin"
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
