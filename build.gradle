@@ -105,7 +105,7 @@ sourceSets {
 
     test {
         java {
-            srcDirs = ["tests", "${cfInferenceDir}/tests", "${checkerFrameworkDir}/util/src/main/java"]
+            srcDirs = ["tests", "${checkerFrameworkDir}/util/src/main/java"]
             compileClasspath += toPackageClasspath
             runtimeClasspath += compileClasspath
         }
@@ -131,6 +131,15 @@ tasks.compileJava {
     }
 } dependsOn(copyZ3)
 
+// CFInferenceTest utilities
+def cfInferenceTestFiles = fileTree("${cfInferenceDir}/tests").matching {
+    include 'checkers/inference/test/*.java'
+}
+
+// Add the CFInferenceTest utilities files to the test sources
+tasks.compileTestJava {
+    source += cfInferenceTestFiles
+}
 
 tasks.clean {
     delete += "bin"
