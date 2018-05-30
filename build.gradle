@@ -105,8 +105,7 @@ sourceSets {
 
     test {
         java {
-            srcDirs = ["tests"]
-            include "**/*.java"
+            srcDirs = ["tests", "${cfInferenceDir}/tests", "${checkerFrameworkDir}/util/src/main/java"]
             compileClasspath += toPackageClasspath
             runtimeClasspath += compileClasspath
         }
