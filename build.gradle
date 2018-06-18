@@ -14,8 +14,9 @@ ext {
     jsr308 = System.getenv('JSR308') ?: file(new File("..")).absolutePath
     cfPath = "${jsr308}/checker-framework"
     cfiPath = "${jsr308}/checker-framework-inference"
+    jsr308langtoolsPath = "${jsr308}/jsr308-langtools"
     afu = "${jsr308}/annotation-tools/annotation-file-utilities"
-    ontologyDir = "${jsr308}/ontology"
+    ontologyPath = "${jsr308}/ontology"
 }
 
 println '===================================='
@@ -67,13 +68,25 @@ sourceSets {
     }
 }
 
+compileJava {
+    description = 'Compiles this project using the jsr308 compiler.'
+    options.fork = true
+    options.forkOptions.executable="${jsr308langtoolsPath}/dist/bin/javac"
+    options.compilerArgs = [
+            '-implicit:class',
+            '-Awarns',
+            '-Xmaxwarns', '10000',
+    ]
+}
+
 test {
     systemProperties 'path.afu.scripts': "${afu}/scripts",
             'path.inference.script': "${cfiPath}/scripts/inference",
-            'use.hacks': true,
             JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"
 
-    environment "external_checker_classpath", "${ontologyDir}/build/classes/java/main"
+    environment "external_checker_classpath", "${ontologyPath}/build/classes/java/main"
+
+    jvmArgs "-Xbootclasspath/p:${cfiPath}/dist/javac.jar"
 
     testLogging {
         // Always run the tests
@@ -99,14 +112,6 @@ test {
         }
 
     }
-}
-
-compileJava {
-    options.compilerArgs = [
-            '-implicit:class',
-            '-Awarns',
-            '-Xmaxwarns', '10000',
-    ]
 }
 
 tasks.clean {
