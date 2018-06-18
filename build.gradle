@@ -7,10 +7,6 @@
 //    */
 //   id 'com.github.sherter.google-java-format' version '0.6'
 // }
-plugins {
-    id 'com.github.johnrengelman.shadow' version '2.0.2'
-}
-
 apply plugin: 'java'
 
 ext {
