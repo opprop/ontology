@@ -1,168 +1,135 @@
+/// Why doesn't this work on Travis under Java 7?
+/// The same text does in Randoop's build.gradle file.
+// plugins {
+//   /*
+//    * Plugin that applies Google-Java-format to the Java files in the project.
+//    * https://github.com/sherter/google-java-format-gradle-plugin
+//    */
+//   id 'com.github.sherter.google-java-format' version '0.6'
+// }
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
+}
+
 apply plugin: 'java'
 
-/************************ system variables ************************/
-def env         = System.getenv()
+ext {
+    assert JavaVersion.current() == JavaVersion.VERSION_1_8: "Set JAVA_HOME to JDK 8. Current version is ${JavaVersion.current()}"
+    jsr308 = System.getenv('JSR308') ?: file(new File("..")).absolutePath
+    cfPath = "${jsr308}/checker-framework"
+    cfiPath = "${jsr308}/checker-framework-inference"
+    afu = "${jsr308}/annotation-tools/annotation-file-utilities"
+    ontologyDir = "${jsr308}/ontology"
+}
 
-def javaHome    = env["JAVA_HOME"]
+println '===================================='
+println '         Ontology Checker           '
+println '===================================='
+println ''
+println '-------------------------------'
+println 'Important Environment Variables'
+println '-------------------------------'
+println 'JSR308: ' + jsr308
+println 'CF:     ' + cfPath
+println 'CFI:    ' + cfiPath
 
-//TODO: copy from CF Inference, need refactor later on
-//determined based on the the version of the currently running JVM
-def jreVersion  = {
-    def envJreVersion = env["CFI_JRE_VERSION"];
-    if(envJreVersion == null) {
-        def jreVersionStr  = System.getProperty("java.version");
-        def matches        = ( jreVersionStr =~ /^(\d\.\d+)\..*$/ )
-
-        final double jreVer;
-        if(matches.matches()) {
-            jreVer = Double.parseDouble(matches.group(1));
-        } else {
-            throw new RuntimeException("Could not determine version from property java.version=" + jreVersionStr);
-        }
-
-        return jreVer
-    } else {
-        return envJreVersion;
-    }
-}.call()
-
-/************************ jsr308 variables ************************/
-def jsr308Dir   = env["JSR308"] ?: file(new File("..")).absolutePath
-
-def jsr308_langtoolsDir = (jsr308Dir + "/jsr308-langtools")
-
-def annotationToolsDir = jsr308Dir + "/annotation-tools"
-
-def checkerFrameworkDir = jsr308Dir + "/checker-framework"
-
-def cfInferenceDir = jsr308Dir + "/checker-framework-inference"
-
-// dir of generic type inference solver 
-def gtisDir = jsr308Dir + "/generic-type-inference-solver"
-
-def ontologyDir = jsr308Dir + "/ontology"
-
-/************************ util functions ************************/
-//Closure that creates a file from a base directory and a name of the file in that directory
-def fromBaseDir   = { baseDir, child -> baseDir ? new File(baseDir, child) : new File(child)  }
-
-//A function that, given a file name, creates a file object of that name with 
-//checkersDir as its parent
-def checkerFrameworkChild = fromBaseDir.curry(checkerFrameworkDir)
-
-def cfInferenceChild = fromBaseDir.curry(cfInferenceDir)
-
-/************************ build variables ************************/
-//JarsToPackage contains both all members that should be on the classpath for this build
-// should use `+` operation at the end of a line which would means "append" in groovy
-// http://stackoverflow.com/questions/31044673/groovy-postgres-no-signature-of-method-java-lang-string-positive
-def jarsToPackage = [//checker relative paths
-                        "checker/dist/checker.jar",
-                    ].collect { checkerFrameworkChild(it).getAbsolutePath() } +
-                    [
-                        "dist/checker-framework-inference.jar",
-                    ].collect { cfInferenceChild(it).getAbsolutePath() }
-
-def gtisClasspath = gtisDir+"/bin"
-
-//A list of files to append to the class path during compilation
-def toPackageClasspath = files(
-    jarsToPackage
-    + gtisClasspath
-)
-
-/************************ java plugin arguments ************************/
 repositories {
+    jcenter()
     mavenCentral()
 }
 
 dependencies {
-    // solver backend dependencies
-    // TODO: should be removed when we get rid of classic solver
-    // TODO: currently the runtime dependencies of sat4j is bit tricky --- it actually uses the sat4j from cfi/dist
-    //       should we also snapshot a copy of sat4j from mavenCentral into ontology?
+    compile fileTree(dir: "${cfPath}/checker/dist", include: "checker.jar")
+    compile fileTree(dir: "${cfiPath}/dist", include: "checker-framework-inference.jar")
     compile 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.4'
     compile 'org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4'
-    compile fileTree(dir: "lib", include: ['*.jar'])
+    compile fileTree(dir: "${cfiPath}/lib", include: "com.microsoft.z3.jar")
 
-    testCompile fileTree(dir: "${checkerFrameworkDir}/util/build/libs", include: "testlib-*.jar")
+    testCompile fileTree(dir: "${cfPath}/util/build/libs", include: "testlib-*.jar")
     testCompile 'junit:junit:4.12'
 }
 
 sourceSets {
     main {
         java {
-            srcDir "src"
+            srcDirs = ["src"]
         }
 
         resources {
-            srcDir "src"
+            srcDirs = ["src"]
         }
-
-        //Leads to a dir structure of "checker-framework-inference/bin/checkers/...classes...
-        output.classesDir "bin"
-        compileClasspath += toPackageClasspath
-        compileClasspath += files("bin")
     }
 
     test {
         java {
-            srcDirs = ["tests"]
-            compileClasspath += toPackageClasspath
-            runtimeClasspath += compileClasspath
+            srcDirs = ["tests", "${cfiPath}/tests/checkers/inference/test"]
         }
     }
 }
 
-task copyZ3 (type: Copy) {
-    from cfInferenceDir + "/lib/com.microsoft.z3.jar" into file('lib/')
-}
+test {
+    systemProperties 'path.afu.scripts': "${afu}/scripts",
+            'path.inference.script': "${cfiPath}/scripts/inference",
+            'use.hacks': true,
+            JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"
 
-// Switch the Javac used by JSR308
-tasks.compileJava {
-    description = 'Compiles this project using the jsr308 compiler.'
-    options.fork = true
-    options.forkOptions.executable="$jsr308_langtoolsDir/dist/bin/javac"
-    options.compilerArgs = [
-        '-implicit:class',
-        '-Awarns',
-        '-Xmaxwarns', '10000'
-    ]
-    if(jreVersion == 1.7) {
-        options.compilerArgs += ['-source' , '7', '-target', '7']
+    environment "external_checker_classpath", "${ontologyDir}/bin"
+
+    testLogging {
+        // Always run the tests
+        outputs.upToDateWhen { false }
+        // The following prints out each time a test is passed.
+        // events "passed", "skipped", "failed", "standardOut", "standardError"
+
+        // Show the found unexpected diagnostics and expected diagnostics not found.
+        exceptionFormat "full"
     }
-} dependsOn(copyZ3)
 
-// CFInferenceTest utilities
-def cfInferenceTestFiles = fileTree("${cfInferenceDir}/tests").matching {
-    include 'checkers/inference/test/*.java'
+    // After each test, print a summary.
+    afterSuite { desc, result ->
+        if (desc.getClassName() != null) {
+            long mils = result.getEndTime() - result.getStartTime()
+            double seconds = mils / 1000.0
+
+            println "Testsuite: ${desc.getClassName()}\n" +
+                    "Tests run: ${result.testCount}, " +
+                    "Failures: ${result.failedTestCount}, " +
+                    "Skipped: ${result.skippedTestCount}, " +
+                    "Time elapsed: ${seconds} sec\n"
+        }
+
+    }
 }
 
-// Add the CFInferenceTest utilities files to the test sources
-tasks.compileTestJava {
-    source += cfInferenceTestFiles
+compileJava {
+    options.compilerArgs = [
+            '-implicit:class',
+            '-Awarns',
+            '-Xmaxwarns', '10000',
+    ]
 }
 
 tasks.clean {
-    delete += "bin"
+    delete += "build"
     delete += "dist"
+    delete += "testdata"
 }
 
-test {
-    systemProperties 'path.afu.scripts': "$annotationToolsDir/annotation-file-utilities/scripts",
-            'path.inference.script': "$cfInferenceDir/scripts/inference",
-            JDK_JAR: "$cfInferenceDir/dist/jdk8.jar"
-
-    environment "external_checker_classpath", "$ontologyDir/bin"
-    testLogging {
-        events "PASSED", "FAILED", "SKIPPED"
-        exceptionFormat = 'full'
-        showExceptions true
-        showCauses true
-        showStackTraces true
-        showStandardStreams true
-    }
-    jvmArgs "-Xbootclasspath/p:$cfInferenceDir/dist/javac.jar"
-}
-
-libsDirName="../dist"
+/// Commented out because plugins section is commented out
+// /* Configuration for formatting */
+// googleJavaFormat {
+//   // toolVersion '1.3'
+//   options style: 'AOSP'
+// }
+// tasks.googleJavaFormat {
+//   group 'Formatting'
+//   description = "Reformat Java source code with Google-Java-format"
+//   exclude 'testing'
+//   exclude 'testinputs'
+// }
+// tasks.verifyGoogleJavaFormat {
+//   group 'Formatting'
+//   description = "Check Java source code is in Google-Java-format"
+//   exclude 'testing'
+//   exclude 'testinputs'
+// }
