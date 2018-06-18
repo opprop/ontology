@@ -1,17 +1,14 @@
 *~
 
-# eclipse output
-bin/
-
-# lib dependencies
-lib/
-
 #gradle config
-.gradle/
+.gradle
 
 # gradle output
 dist/
 build/
+
+# test output
+testdata/
 
 # corpus
 corpus/
