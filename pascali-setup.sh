@@ -8,8 +8,8 @@ WORKING_DIR=$(cd $(dirname "$0") && pwd)
 
 # export SHELLOPTS
 
-#default value is pascaliUWat. REPO_SITE may be set to other value for travis test purpose.
-export REPO_SITE="${REPO_SITE:-pascaliUWat}"
+#default value is opprop. REPO_SITE may be set to other value for travis test purpose.
+export REPO_SITE="${REPO_SITE:-opprop}"
 
 echo "------ Downloading everthing from REPO_SITE: $REPO_SITE ------"
 
@@ -27,7 +27,7 @@ fi
 if [ -d $JSR308/checker-framework-inference ] ; then
     (cd $JSR308/checker-framework-inference && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
+    (cd $JSR308 && git clone -b ontology_debug --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
 fi
 
 (cd $JSR308/checker-framework-inference && gradle dist)
