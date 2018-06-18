@@ -82,7 +82,8 @@ compileJava {
 test {
     systemProperties 'path.afu.scripts': "${afu}/scripts",
             'path.inference.script': "${cfiPath}/scripts/inference",
-            JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"
+            JDK_JAR: "${cfPath}/checker/dist/jdk8.jar",
+            'java.library.path': "${cfiPath}/lib"
 
     environment "external_checker_classpath", "${ontologyPath}/build/classes/java/main"
 
