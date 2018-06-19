@@ -10,5 +10,4 @@ public class OntologyZ3SolverFactory extends Z3SolverFactory {
     protected Z3BitVectorFormatTranslator createFormatTranslator(Lattice lattice) {
         return new OntologyZ3FormatTranslator(lattice);
     }
-
 }

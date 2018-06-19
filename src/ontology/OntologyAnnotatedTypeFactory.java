@@ -1,8 +1,15 @@
 package ontology;
 
+import com.sun.source.tree.NewArrayTree;
+import com.sun.source.tree.NewClassTree;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
-
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.TypeUseLocation;
@@ -14,17 +21,6 @@ import org.checkerframework.framework.util.GraphQualifierHierarchy;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationUtils;
-
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.lang.model.element.AnnotationMirror;
-
-import com.sun.source.tree.NewArrayTree;
-import com.sun.source.tree.NewClassTree;
 
 public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
@@ -57,8 +53,8 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         @Override
-        protected Set<AnnotationMirror>
-        findBottoms(Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
+        protected Set<AnnotationMirror> findBottoms(
+                Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
             Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
             newBottoms.remove(OntologyUtils.ONTOLOGY);
             newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
@@ -102,7 +98,9 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 EnumSet<OntologyValue> lSet = EnumSet.noneOf(OntologyValue.class);
                 lSet.addAll(Arrays.asList(lhsValue));
 
-                if (rSet.containsAll(lSet) || rSet.contains(OntologyValue.BOTTOM) || lSet.contains(OntologyValue.TOP)) {
+                if (rSet.containsAll(lSet)
+                        || rSet.contains(OntologyValue.BOTTOM)
+                        || lSet.contains(OntologyValue.TOP)) {
                     return true;
                 } else {
                     return false;
@@ -120,7 +118,9 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         @Override
         public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror type) {
-            AnnotationMirror ontologyAnno =OntologyUtils.getInstance().determineOntologyAnnotation(type.getUnderlyingType());
+            AnnotationMirror ontologyAnno =
+                    OntologyUtils.getInstance()
+                            .determineOntologyAnnotation(type.getUnderlyingType());
             if (ontologyAnno != null) {
                 type.replaceAnnotation(ontologyAnno);
             }
@@ -130,7 +130,9 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
         @Override
         public Void visitNewArray(final NewArrayTree newArrayTree, final AnnotatedTypeMirror atm) {
-            AnnotationMirror anno = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.SEQUENCE);
+            AnnotationMirror anno =
+                    OntologyUtils.createOntologyAnnotationByValues(
+                            processingEnv, OntologyValue.SEQUENCE);
             atm.replaceAnnotation(anno);
             return super.visitNewArray(newArrayTree, atm);
         }

@@ -5,17 +5,12 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- *
- * @author charleszhuochen
- *
- */
+/** @author charleszhuochen */
 
 // TODO: this Enum class would be better if it is an inner Enum class of {@code Ontology} annotation because it is a component of {@code Ontology} class
 // However, put this class into {@code Ontology} would cause a nullpointer exception in jsr308-langtools/**/{@code JavaCompiler#resolveIdent(String name)}
 // the reason of this null pointer exception need to be investigated.
 public enum OntologyValue {
-
     TOP("TOP"),
     SEQUENCE("sequence"),
     DICTIONARY("dictionary"),
@@ -39,9 +34,9 @@ public enum OntologyValue {
     /**
      * Determine if a given ontology value set is equal to {@link OntologyValue#BOTTOM}.
      *
-     * An ontology value set express the same meaning of {@link OntologyValue#BOTTOM} if it:
-     *   a) Contains value of {@link OntologyValue#BOTTOM}, or
-     *   b) it contains all real Ontology values.
+     * <p>An ontology value set express the same meaning of {@link OntologyValue#BOTTOM} if it: a)
+     * Contains value of {@link OntologyValue#BOTTOM}, or b) it contains all real Ontology values.
+     *
      * @param ontologyValues agiven ontology value set
      * @return true if the given set is semantically equal to {@link OntologyValue#BOTTOM}
      */
@@ -51,17 +46,15 @@ public enum OntologyValue {
     }
 
     /**
-     *  A cache of the {@link #values()} array.
-     *  One who use {@code values()} frequently should access this static array instead,
-     *  to avoid repeatly create newly array when calling {@code values()}.
+     * A cache of the {@link #values()} array. One who use {@code values()} frequently should access
+     * this static array instead, to avoid repeatly create newly array when calling {@code
+     * values()}.
      */
     public static final OntologyValue[] values = values();
 
     //TODO: maybe move these two maps to a single Util class for OntologyZ3Serializer?
     // As these two seems special created for the Z3 decoding and encoding.
-    /**
-     * A map from single real values (i.e. except TOP and BOTTOM) to a zero-based ordinal.
-     */
+    /** A map from single real values (i.e. except TOP and BOTTOM) to a zero-based ordinal. */
     public static final Map<OntologyValue, Integer> singleRealValueToOrdinal;
 
     static {

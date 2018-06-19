@@ -1,5 +1,12 @@
 package ontology.util;
 
+import checkers.inference.InferenceMain;
+import checkers.inference.InferenceResult;
+import checkers.inference.model.ConstantSlot;
+import checkers.inference.model.Constraint;
+import checkers.inference.model.Slot;
+import checkers.inference.model.SubtypeConstraint;
+import checkers.inference.model.VariableSlot;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -11,56 +18,49 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.lang.model.element.AnnotationMirror;
-
+import ontology.qual.OntologyValue;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 
-import checkers.inference.InferenceMain;
-import checkers.inference.InferenceResult;
-import checkers.inference.model.ConstantSlot;
-import checkers.inference.model.Constraint;
-import checkers.inference.model.Slot;
-import checkers.inference.model.SubtypeConstraint;
-import checkers.inference.model.VariableSlot;
-import ontology.qual.OntologyValue;
-
 public class OntologyStatisticUtil {
 
-    private final static Map<OntologyValue, Integer> valueToHashMap;
-    private final static Map<Integer, OntologyValue> hashToValueMap;
+    private static final Map<OntologyValue, Integer> valueToHashMap;
+    private static final Map<Integer, OntologyValue> hashToValueMap;
     private static PostVerificationStatisticRecorder recorder;
 
     static {
-        EnumMap<OntologyValue, Integer> tempV2HMap = new EnumMap<> (OntologyValue.class);
+        EnumMap<OntologyValue, Integer> tempV2HMap = new EnumMap<>(OntologyValue.class);
         HashMap<Integer, OntologyValue> tempH2VMap = new HashMap<>();
 
         int i = 0;
         for (OntologyValue value : OntologyValue.values()) {
             tempV2HMap.put(value, Integer.valueOf(i));
             tempH2VMap.put(Integer.valueOf(i), value);
-            ++ i;
+            ++i;
         }
         valueToHashMap = Collections.unmodifiableMap(tempV2HMap);
         hashToValueMap = Collections.unmodifiableMap(tempH2VMap);
     }
 
     /**
-     * Persistent general information of inferred slots into file {@code filename}.
-     * Information include:
+     * Persistent general information of inferred slots into file {@code filename}. Information
+     * include:
+     *
      * <ul>
-     *      <li> total number of inferred slots
-     *      <li> inferred slots number of each {@link OntologyValue}
+     *   <li> total number of inferred slots
+     *   <li> inferred slots number of each {@link OntologyValue}
      * </ul>
+     *
      * @param filename the name of file that will store these information
      * @param result a map from slot id to inferred annotation result
-     * 
-     * <p><em>Note</em>: file will be stored at the current working directory
+     *     <p><em>Note</em>: file will be stored at the current working directory
      */
-    public static void writeInferenceResult(String filename, Map<Integer, AnnotationMirror> result) {
-        String writePath = new File(new File("").getAbsolutePath()).toString() + File.separator + filename;
+    public static void writeInferenceResult(
+            String filename, Map<Integer, AnnotationMirror> result) {
+        String writePath =
+                new File(new File("").getAbsolutePath()).toString() + File.separator + filename;
         StringBuilder sb = new StringBuilder();
 
         recordKeyValue(sb, "total_number", String.valueOf(result.size()));
@@ -70,7 +70,10 @@ public class OntologyStatisticUtil {
 
         for (AnnotationMirror inferAnno : result.values()) {
             if (!AnnotationUtils.areSameIgnoringValues(inferAnno, OntologyUtils.ONTOLOGY)) {
-                InferenceMain.getInstance().logger.warning("OntologyStatisticUtil: found non ontology solution: " + inferAnno);
+                InferenceMain.getInstance()
+                        .logger
+                        .warning(
+                                "OntologyStatisticUtil: found non ontology solution: " + inferAnno);
                 continue;
             }
 
@@ -91,7 +94,7 @@ public class OntologyStatisticUtil {
             OntologyValue[] values = getOntologyValues(entry.getKey());
             StringBuilder valueNames = new StringBuilder();
             valueNames.append("[");
-            for (int i = 0; i < values.length; i ++ ) {
+            for (int i = 0; i < values.length; i++) {
                 valueNames.append(values[i].toString());
                 if (i < values.length - 1) {
                     valueNames.append(",");
@@ -115,7 +118,7 @@ public class OntologyStatisticUtil {
             return new String();
         }
 
-        List<Integer> list = new ArrayList<> ();
+        List<Integer> list = new ArrayList<>();
         for (OntologyValue value : values) {
             list.add(valueToHashMap.get(value));
         }
@@ -123,7 +126,7 @@ public class OntologyStatisticUtil {
 
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < list.size(); i ++) {
+        for (int i = 0; i < list.size(); i++) {
             sb.append(String.valueOf(list.get(i)));
             if (i < list.size() - 1) {
                 sb.append(",");
@@ -143,15 +146,18 @@ public class OntologyStatisticUtil {
         return list.toArray(new OntologyValue[list.size()]);
     }
 
-
     /**
      * verify the solution whether is consistent with constraints
+     *
      * @param mergedResult
      * @param constraints
      * @param qualifierHierarchy
      */
-    public static void verifySolution(InferenceResult mergedResult,
-            Collection<Constraint> constraints, QualifierHierarchy qualifierHierarchy, List<Map<Integer, AnnotationMirror>> solutionMaps) {
+    public static void verifySolution(
+            InferenceResult mergedResult,
+            Collection<Constraint> constraints,
+            QualifierHierarchy qualifierHierarchy,
+            List<Map<Integer, AnnotationMirror>> solutionMaps) {
         assert mergedResult.hasSolution() : "Should verify an inference result with a solution!";
 
         List<ViolatedConsDiagnostic> diagnosticList = new ArrayList<>();
@@ -177,7 +183,7 @@ public class OntologyStatisticUtil {
 
             } else if (subtypeSlot instanceof ConstantSlot) {
                 subtype = ((ConstantSlot) subtypeSlot).getValue();
-                supertype= mergedResult.getSolutionForVariable(supertypeId);
+                supertype = mergedResult.getSolutionForVariable(supertypeId);
 
                 assert subtype != null;
 
@@ -216,10 +222,11 @@ public class OntologyStatisticUtil {
             }
 
             if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
-                ViolatedConsDiagnostic consDiagRes = new ViolatedConsDiagnostic(sConstraint, subtype, supertype);
+                ViolatedConsDiagnostic consDiagRes =
+                        new ViolatedConsDiagnostic(sConstraint, subtype, supertype);
 
-                List<AnnotationMirror> subtypeSolutions = new ArrayList<> ();
-                List<AnnotationMirror> supertypeSolutions = new ArrayList<> ();
+                List<AnnotationMirror> subtypeSolutions = new ArrayList<>();
+                List<AnnotationMirror> supertypeSolutions = new ArrayList<>();
 
                 for (Map<Integer, AnnotationMirror> solutionMap : solutionMaps) {
                     if (solutionMap.containsKey(subtypeId)) {
@@ -233,7 +240,8 @@ public class OntologyStatisticUtil {
                 consDiagRes.setSubtypeSolutions(subtypeSolutions);
                 consDiagRes.setSupertypeSolutions(supertypeSolutions);
                 diagnosticList.add(consDiagRes);
-                OntologyStatisticUtil.getPostVerifyStatRecorder().recordViolatedConsDiags(consDiagRes);
+                OntologyStatisticUtil.getPostVerifyStatRecorder()
+                        .recordViolatedConsDiags(consDiagRes);
             }
         }
 
@@ -247,9 +255,19 @@ public class OntologyStatisticUtil {
         }
     }
 
-    public static void logNoSolution(SubtypeConstraint subtypeConstraint, AnnotationMirror subtype, AnnotationMirror supertype) {
-        InferenceMain.getInstance().logger.warning("no solution for subtype constraint: " + subtypeConstraint +
-                "\tinferred subtype: " + subtype + "\tinferred supertype: " + supertype);
+    public static void logNoSolution(
+            SubtypeConstraint subtypeConstraint,
+            AnnotationMirror subtype,
+            AnnotationMirror supertype) {
+        InferenceMain.getInstance()
+                .logger
+                .warning(
+                        "no solution for subtype constraint: "
+                                + subtypeConstraint
+                                + "\tinferred subtype: "
+                                + subtype
+                                + "\tinferred supertype: "
+                                + supertype);
         OntologyStatisticUtil.getPostVerifyStatRecorder().recordMissingSolution(subtypeConstraint);
     }
 
@@ -264,20 +282,23 @@ public class OntologyStatisticUtil {
         sb.append(key + "," + value + "\n");
     }
     /**
-     * An inner class for recording statistic information
-     * of post-verification of Ontology solutions.
-     * @author charleszhuochen
+     * An inner class for recording statistic information of post-verification of Ontology
+     * solutions.
      *
+     * @author charleszhuochen
      */
     public static class PostVerificationStatisticRecorder {
         private Set<Constraint> missingSolutionCons;
         private Set<ViolatedConsDiagnostic> violatedConsDiags;
-        /**whether store verbose informations. currently this parameter doesn't exposed to outside setting,
-         * which means one may need hard reset value here if trigger verbose. Modify it if needs.*/
+        /**
+         * whether store verbose informations. currently this parameter doesn't exposed to outside
+         * setting, which means one may need hard reset value here if trigger verbose. Modify it if
+         * needs.
+         */
         private boolean verbose = false;
 
         public PostVerificationStatisticRecorder() {
-            missingSolutionCons = new HashSet<> ();
+            missingSolutionCons = new HashSet<>();
             violatedConsDiags = new HashSet<>();
         }
 
@@ -296,19 +317,23 @@ public class OntologyStatisticUtil {
         public void writeStatistic() {
             writeStatistic("post-verification-statistic.txt");
         }
+
         public void writeStatistic(String filename) {
-            String writePath = new File(new File("").getAbsolutePath()).toString() + File.separator + filename;
+            String writePath =
+                    new File(new File("").getAbsolutePath()).toString() + File.separator + filename;
             StringBuilder sb = new StringBuilder();
 
             // write missing constraint info
-            OntologyStatisticUtil.recordKeyValue(sb, "missing_number", String.valueOf(missingSolutionCons.size()));
+            OntologyStatisticUtil.recordKeyValue(
+                    sb, "missing_number", String.valueOf(missingSolutionCons.size()));
             if (verbose) {
                 for (Constraint cons : missingSolutionCons) {
                     sb.append(cons + "\n\n");
                 }
             }
             // write violated constraint info
-            OntologyStatisticUtil.recordKeyValue(sb, "violated_number", String.valueOf(violatedConsDiags.size()));
+            OntologyStatisticUtil.recordKeyValue(
+                    sb, "violated_number", String.valueOf(violatedConsDiags.size()));
 
             if (verbose) {
                 for (ViolatedConsDiagnostic diag : violatedConsDiags) {

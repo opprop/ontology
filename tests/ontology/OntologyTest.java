@@ -1,21 +1,24 @@
 package ontology;
 
+import checkers.inference.test.CFInferenceTest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
+import ontology.solvers.backend.OntologySolverEngine;
 import org.checkerframework.framework.test.TestUtilities;
 import org.checkerframework.javacutil.Pair;
 import org.junit.runners.Parameterized.Parameters;
 
-import checkers.inference.test.CFInferenceTest;
-import ontology.solvers.backend.OntologySolverEngine;
-
 public class OntologyTest extends CFInferenceTest {
- 
+
     public OntologyTest(File testFile) {
-        super(testFile, ontology.OntologyChecker.class, "ontology",
-                "-Anomsgtext", "-d", "tests/build/outputdir");
+        super(
+                testFile,
+                ontology.OntologyChecker.class,
+                "ontology",
+                "-Anomsgtext",
+                "-d",
+                "tests/build/outputdir");
     }
 
     @Override
@@ -32,10 +35,9 @@ public class OntologyTest extends CFInferenceTest {
     }
 
     @Parameters
-    public static List<File> getTestFiles(){
+    public static List<File> getTestFiles() {
         List<File> testfiles = new ArrayList<>();
         testfiles.addAll(TestUtilities.getJavaFilesAsArgumentList(new File("testing")));
         return testfiles;
     }
-
 }

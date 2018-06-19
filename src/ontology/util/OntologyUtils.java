@@ -2,22 +2,19 @@ package ontology.util;
 
 import java.util.EnumSet;
 import java.util.List;
-
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-
+import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
+import ontology.qual.PolyOntology;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ErrorReporter;
 import org.checkerframework.javacutil.TypesUtils;
-
-import ontology.qual.Ontology;
-import ontology.qual.OntologyValue;
-import ontology.qual.PolyOntology;
 
 public class OntologyUtils {
 
@@ -25,44 +22,32 @@ public class OntologyUtils {
 
     public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
 
-    /**
-     * The processing environment.
-     */
+    /** The processing environment. */
     private final ProcessingEnvironment processingEnvironment;
 
-    /**
-     * Util for operating elements.
-     * Obtained from {@link ProcessingEnvironment}
-     */
+    /** Util for operating elements. Obtained from {@link ProcessingEnvironment} */
     private final Elements elements;
 
-    /**
-     * Util for operating types.
-     * Obtained from {@link ProcessingEnvironment}
-     */
+    /** Util for operating types. Obtained from {@link ProcessingEnvironment} */
     private final Types types;
 
-    /**
-     * TypeMirror for java.util.List.
-     */
+    /** TypeMirror for java.util.List. */
     private final TypeMirror LIST;
 
-    /**
-     * TypeMirror for java.util.Dictionary;
-     */
+    /** TypeMirror for java.util.Dictionary; */
     private final TypeMirror DICTIONARY;
 
-    /**
-     * TypeMirror for java.util.Map;
-     */
+    /** TypeMirror for java.util.Map; */
     private final TypeMirror MAP;
 
     private OntologyUtils(ProcessingEnvironment processingEnv) {
         processingEnvironment = processingEnv;
         elements = processingEnv.getElementUtils();
         types = processingEnv.getTypeUtils();
-        ONTOLOGY_TOP = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
-        ONTOLOGY_BOTTOM = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
+        ONTOLOGY_TOP =
+                OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.TOP);
+        ONTOLOGY_BOTTOM =
+                OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
         ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
         POLY_ONTOLOGY = AnnotationBuilder.fromClass(elements, PolyOntology.class);
 
@@ -72,7 +57,7 @@ public class OntologyUtils {
         MAP = elements.getTypeElement("java.util.Map").asType();
     }
 
-    public static void initOntologyUtils (ProcessingEnvironment processingEnv) {
+    public static void initOntologyUtils(ProcessingEnvironment processingEnv) {
         if (singletonInstance == null) {
             singletonInstance = new OntologyUtils(processingEnv);
         }
@@ -101,9 +86,10 @@ public class OntologyUtils {
             case TOP:
             case BOTTOM:
                 return null;
-            default: {
-                return createOntologyAnnotationByValues(processingEnvironment, determinedValue);
-            }
+            default:
+                {
+                    return createOntologyAnnotationByValues(processingEnvironment, determinedValue);
+                }
         }
     }
 
@@ -122,8 +108,8 @@ public class OntologyUtils {
         return false;
     }
 
-    public static AnnotationMirror createOntologyAnnotationByValues(ProcessingEnvironment processingEnv,
-            OntologyValue... values) {
+    public static AnnotationMirror createOntologyAnnotationByValues(
+            ProcessingEnvironment processingEnv, OntologyValue... values) {
         validateOntologyValues(values);
         AnnotationBuilder builder = new AnnotationBuilder(processingEnv, Ontology.class);
         builder.setValue("values", values);
@@ -131,11 +117,13 @@ public class OntologyUtils {
     }
 
     public static OntologyValue[] getOntologyValues(AnnotationMirror type) {
-        List<OntologyValue> ontologyValueList = AnnotationUtils.getElementValueEnumArray(type, "values", OntologyValue.class, true);
+        List<OntologyValue> ontologyValueList =
+                AnnotationUtils.getElementValueEnumArray(type, "values", OntologyValue.class, true);
         return ontologyValueList.toArray(new OntologyValue[ontologyValueList.size()]);
     }
 
-    public static EnumSet<OntologyValue> lubOfOntologyValues(EnumSet<OntologyValue> valueSet1, EnumSet<OntologyValue> valueSet2) {
+    public static EnumSet<OntologyValue> lubOfOntologyValues(
+            EnumSet<OntologyValue> valueSet1, EnumSet<OntologyValue> valueSet2) {
         EnumSet<OntologyValue> lub = EnumSet.noneOf(OntologyValue.class);
 
         for (OntologyValue value1 : valueSet1) {
@@ -156,9 +144,10 @@ public class OntologyUtils {
     }
 
     /**
-     * check whether the passed values are validated as arguments of Ontology qualifier
-     * valid values should not be null, and contains at least one ontology value, and
-     * doesn't cotains null element inside the array.
+     * check whether the passed values are validated as arguments of Ontology qualifier valid values
+     * should not be null, and contains at least one ontology value, and doesn't cotains null
+     * element inside the array.
+     *
      * @param values the checking values
      */
     protected static void validateOntologyValues(OntologyValue... values) {

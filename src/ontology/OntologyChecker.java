@@ -1,16 +1,14 @@
 package ontology;
 
-import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
-import org.checkerframework.framework.flow.CFTransfer;
-
 import checkers.inference.BaseInferrableChecker;
-//import checkers.inference.ConstraintManager;
-import checkers.inference.model.ConstraintManager;
 import checkers.inference.InferenceChecker;
 import checkers.inference.InferrableChecker;
 import checkers.inference.SlotManager;
 import checkers.inference.dataflow.InferenceAnalysis;
 import checkers.inference.dataflow.InferenceTransfer;
+import checkers.inference.model.ConstraintManager;
+import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
+import org.checkerframework.framework.flow.CFTransfer;
 
 public class OntologyChecker extends BaseInferrableChecker {
 
@@ -20,7 +18,8 @@ public class OntologyChecker extends BaseInferrableChecker {
     }
 
     @Override
-    public OntologyVisitor createVisitor(InferenceChecker ichecker, BaseAnnotatedTypeFactory factory, boolean infer) {
+    public OntologyVisitor createVisitor(
+            InferenceChecker ichecker, BaseAnnotatedTypeFactory factory, boolean infer) {
         return new OntologyVisitor(this, ichecker, factory, infer);
     }
 
@@ -35,12 +34,20 @@ public class OntologyChecker extends BaseInferrableChecker {
     }
 
     @Override
-    public OntologyInferenceAnnotatedTypeFactory createInferenceATF(InferenceChecker inferenceChecker,
-            InferrableChecker realChecker, BaseAnnotatedTypeFactory realTypeFactory,
-            SlotManager slotManager, ConstraintManager constraintManager) {
-        OntologyInferenceAnnotatedTypeFactory ontologyInferenceATF = new OntologyInferenceAnnotatedTypeFactory(
-                inferenceChecker, realChecker.withCombineConstraints(), realTypeFactory, realChecker,
-                slotManager, constraintManager);
+    public OntologyInferenceAnnotatedTypeFactory createInferenceATF(
+            InferenceChecker inferenceChecker,
+            InferrableChecker realChecker,
+            BaseAnnotatedTypeFactory realTypeFactory,
+            SlotManager slotManager,
+            ConstraintManager constraintManager) {
+        OntologyInferenceAnnotatedTypeFactory ontologyInferenceATF =
+                new OntologyInferenceAnnotatedTypeFactory(
+                        inferenceChecker,
+                        realChecker.withCombineConstraints(),
+                        realTypeFactory,
+                        realChecker,
+                        slotManager,
+                        constraintManager);
         return ontologyInferenceATF;
     }
 
