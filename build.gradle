@@ -20,9 +20,9 @@ ext {
     ontologyPath = "${jsr308}/ontology"
 }
 
-println '===================================='
-println '         Ontology Checker           '
-println '===================================='
+println '==================================='
+println '         Ontology Checker          '
+println '==================================='
 println ''
 println '-------------------------------'
 println 'Important Environment Variables'
@@ -58,6 +58,7 @@ sourceSets {
 
         resources {
             srcDirs = ["src"]
+            include "**/*.astub"
         }
     }
 
@@ -77,38 +78,53 @@ compileJava {
     ]
 }
 
-test {
-    systemProperties 'path.afu.scripts': "${afu}/scripts",
-            'path.inference.script': "${cfiPath}/scripts/inference",
-            JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"
-
-    environment "external_checker_classpath", "${ontologyPath}/build/classes/java/main"
-
-    jvmArgs "-Xbootclasspath/p:${cfiPath}/dist/javac.jar"
-
-    testLogging {
-        // Always run the tests
-        outputs.upToDateWhen { false }
-        // The following prints out each time a test is passed.
-        // events "passed", "skipped", "failed", "standardOut", "standardError"
-
-        // Show the found unexpected diagnostics and expected diagnostics not found.
-        exceptionFormat "full"
+afterEvaluate {
+    // Create a task for each JUnit test class whose name is the same as the JUnit class name.
+    sourceSets.test.allJava.filter { it.path.contains('tests') }.forEach { file ->
+        String junitClassName = file.name.replaceAll(".java", "")
+        tasks.create(name: "${junitClassName}", type: Test) {
+            description "Run ${junitClassName} tests."
+            include "**/${name}.class"
+        }
     }
 
-    // After each test, print a summary.
-    afterSuite { desc, result ->
-        if (desc.getClassName() != null) {
-            long mils = result.getEndTime() - result.getStartTime()
-            double seconds = mils / 1000.0
+    // Configure JUnit tests
+    tasks.withType(Test) {
+        systemProperties 'path.afu.scripts': "${afu}/scripts",
+                'path.inference.script': "${cfiPath}/scripts/inference",
+                JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"
 
-            println "Testsuite: ${desc.getClassName()}\n" +
-                    "Tests run: ${result.testCount}, " +
-                    "Failures: ${result.failedTestCount}, " +
-                    "Skipped: ${result.skippedTestCount}, " +
-                    "Time elapsed: ${seconds} sec\n"
+        environment "external_checker_classpath", "${ontologyPath}/build/classes/java/main:${ontologyPath}/build/resources/main:${ontologyPath}/build/libs/ontology.jar"
+
+        jvmArgs "-Xbootclasspath/p:${cfiPath}/dist/javac.jar"
+
+        testLogging {
+            // Always run the tests
+            outputs.upToDateWhen { false }
+            // The following prints out each time a test is passed.
+            events "passed", "skipped", "failed", "standardOut", "standardError"
+
+            // Show the found unexpected diagnostics and expected diagnostics not found.
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+            showStandardStreams true
         }
 
+        // After each test, print a summary.
+        afterSuite { desc, result ->
+            if (desc.getClassName() != null) {
+                long mils = result.getEndTime() - result.getStartTime()
+                double seconds = mils / 1000.0
+
+                println "Testsuite: ${desc.getClassName()}\n" +
+                        "Tests run: ${result.testCount}, " +
+                        "Failures: ${result.failedTestCount}, " +
+                        "Skipped: ${result.skippedTestCount}, " +
+                        "Time elapsed: ${seconds} sec\n"
+            }
+        }
     }
 }
 
@@ -128,9 +144,11 @@ tasks.googleJavaFormat {
   group 'Formatting'
   description = "Reformat Java source code with Google-Java-format"
   exclude 'testing'
+  exclude 'testdata'
 }
 tasks.verifyGoogleJavaFormat {
   group 'Formatting'
   description = "Check Java source code is in Google-Java-format"
   exclude 'testing'
+  exclude 'testdata'
 }
