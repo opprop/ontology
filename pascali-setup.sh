@@ -17,7 +17,7 @@ echo "------ Downloading everthing from REPO_SITE: $REPO_SITE ------"
 if [ -d $JSR308/checker-framework-inference ] ; then
     (cd $JSR308/checker-framework-inference && git pull)
 else
-    (cd $JSR308 && git clone -b ontology_debug --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
+    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
 fi
 
 (cd $JSR308/checker-framework-inference && ./.travis-build-without-test.sh)
