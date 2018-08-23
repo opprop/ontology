@@ -44,7 +44,7 @@ dependencies {
     compile fileTree(dir: "${cfiPath}/lib", include: "com.microsoft.z3.jar")
 
     // CF test lib dependency
-    testCompile fileTree(dir: "${cfPath}/util/build/libs", include: "testlib-*.jar")
+    testCompile fileTree(dir: "${cfPath}/framework-test/build/libs", include: "framework-test-*.jar")
     testCompile 'junit:junit:4.12'
 }
 
