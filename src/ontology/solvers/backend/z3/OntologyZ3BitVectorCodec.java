@@ -13,7 +13,7 @@ import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
 
@@ -27,7 +27,7 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
         // Check domain size limit.
         // TODO: Extend supportability by using BitSet and BigInteger if needs.
         if (domainSize > Integer.SIZE) {
-            ErrorReporter.errorAbort(
+            throw new BugInCF(
                     "Crruently Ontology Z3 BitVectorCodec implementation cannot support domain size larger than "
                             + Integer.SIZE);
         }

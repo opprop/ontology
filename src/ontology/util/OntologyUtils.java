@@ -13,7 +13,7 @@ import ontology.qual.OntologyValue;
 import ontology.qual.PolyOntology;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.javacutil.BugInCF;
 import org.checkerframework.javacutil.TypesUtils;
 
 public class OntologyUtils {
@@ -65,7 +65,7 @@ public class OntologyUtils {
 
     public static OntologyUtils getInstance() {
         if (singletonInstance == null) {
-            ErrorReporter.errorAbort("getInstance() get called without initialization!");
+            throw new BugInCF("getInstance() get called without initialization!");
         }
         return singletonInstance;
     }
@@ -152,11 +152,11 @@ public class OntologyUtils {
      */
     protected static void validateOntologyValues(OntologyValue... values) {
         if (values == null || values.length < 1) {
-            ErrorReporter.errorAbort("ontology values are invalid: " + values);
+            throw new BugInCF("ontology values are invalid: " + values);
         }
         for (OntologyValue value : values) {
             if (value == null) {
-                ErrorReporter.errorAbort("ontology values are invalid: " + values);
+                throw new BugInCF("ontology values are invalid: " + values);
             }
         }
     }

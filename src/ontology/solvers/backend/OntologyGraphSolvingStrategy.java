@@ -34,7 +34,7 @@ import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
 
@@ -88,7 +88,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
             Set<Constraint> consSet = entry.getValue();
             Slot vertixSlot = entry.getKey().getSlot();
             if (!(vertixSlot instanceof ConstantSlot)) {
-                ErrorReporter.errorAbort("vertixSlot should be constantslot!");
+                throw new BugInCF("vertixSlot should be constantslot!");
             }
 
             Set<Slot> reachableSlots = new HashSet<>();

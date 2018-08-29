@@ -22,7 +22,7 @@ import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ErrorReporter;
+import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyStatisticUtil {
 
@@ -251,7 +251,7 @@ public class OntologyStatisticUtil {
             for (ViolatedConsDiagnostic result : diagnosticList) {
                 sBuilder.append(result + "\n");
             }
-            ErrorReporter.errorAbort(sBuilder.toString());
+            throw new BugInCF(sBuilder.toString());
         }
     }
 
