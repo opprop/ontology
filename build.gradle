@@ -146,10 +146,14 @@ tasks.googleJavaFormat {
     description = "Reformat Java source code with Google-Java-format"
     exclude 'testing'
     exclude 'testdata'
+    exclude 'annotated'
+    exclude 'worked-benchmarks'
 }
 tasks.verifyGoogleJavaFormat {
     group 'Formatting'
     description = "Check Java source code is in Google-Java-format"
     exclude 'testing'
     exclude 'testdata'
+    exclude 'annotated'
+    exclude 'worked-benchmarks'
 }
