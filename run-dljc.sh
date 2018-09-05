@@ -8,16 +8,17 @@ if [ -z "${JSR308}" ] ; then
     export JSR308=$(cd $(dirname "$0")/.. && pwd)
 fi
 
-DLJC="$JSR308"/do-like-javac
-export AFU="$JSR308"/annotation-tools/annotation-file-utilities
-export PATH="$PATH":"$AFU"/scripts
+DLJC=$JSR308/do-like-javac
+export AFU=$JSR308/annotation-tools/annotation-file-utilities
+export PATH=$PATH:$AFU/scripts
+CFI=$JSR308/checker-framework-inference
 
-ONTOLOGYPATH="$JSR308"/ontology/build/classes/main
+ONTOLOGYPATH=$JSR308/ontology/build/classes/main
 export CLASSPATH="$ONTOLOGYPATH"
 
-CFI_LIB="$JSR308"/checker-framework-inference/lib
-export DYLD_LIBRARY_PATH="$CFI_LIB"
-export LD_LIBRARY_PATH="$CFI_LIB"
+CFI_LIB=$CFI/lib
+export DYLD_LIBRARY_PATH=$CFI_LIB
+export LD_LIBRARY_PATH=$CFI_LIB
 
 CHECKER=ontology.OntologyChecker
 SOLVER=ontology.solvers.backend.OntologySolverEngine
