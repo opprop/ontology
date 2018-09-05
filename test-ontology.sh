@@ -35,10 +35,18 @@ if [ ! -d ../do-like-javac ] ; then
     (cd $JSR308 && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
 fi
 
-# Running Ontology on working benchmarks
-python run-ontology-on-corpus.py --corpus-file worked-benchmarks.yml
+CORPUSFILE="worked-benchmarks.yml"
+
+if [ -n "$1" ] && [ $1 = "travis" ]; then
+    # Running Ontology on working benchmarks
+    python run-ontology-on-corpus.py --corpus-file $CORPUSFILE --is-travis-build true
+else
+    # Running Ontology on working benchmarks
+    python run-ontology-on-corpus.py --corpus-file $CORPUSFILE
+fi
 
 # Grep experiment outputs
-echo "Experiment status"
+echo ""
+echo "Experiment status:"
 find . -name "infer.log" | xargs grep "Inference succeeded"
 find . -name "infer.log" | xargs grep "Inference failed"

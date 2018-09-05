@@ -6,11 +6,11 @@ import argparse
 
 ONTOLOGY_DIR = os.path.dirname(os.path.realpath(__file__))
 
-
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('--corpus-file', dest='corpus_file', required=True)
     parser.add_argument('--corpus', dest='corpus')
+    parser.add_argument('--is-travis-build', type=bool, dest='is_travis_build')
     args = parser.parse_args()
 
     tool_excutable = os.path.join(ONTOLOGY_DIR, "run-dljc.sh")
@@ -39,7 +39,7 @@ def main(argv):
 
     print "----- Fetching corpus done. -----"
 
-    print "----- Runnning Ontlogy on corpus... -----"
+    print "----- Runnning Ontology on corpus... -----"
 
     failed_projects = list()
 
@@ -63,9 +63,29 @@ def main(argv):
     else:
         print "----- Inference succeed infer all {} projects. -----".format(len(projects))
 
-    print "----- Runnning Ontlogy on corpus done. -----"
+    print "----- Runnning Ontology on corpus done. -----"
 
     rtn_code = 1 if len(failed_projects) > 0 else 0
+
+    # DEBUGGING FOR TRAVIS
+    if args.is_travis_build:
+        print "----- Log file contents of failed projects: -----" + '\n'
+
+        for project_name in failed_projects:
+            log_file = os.path.join(BENCHMARK_DIR, project_name, "logs", "infer.log")
+            print "------------------------------------------------------------"
+            print log_file
+            print "------------------------------------------------------------"
+
+            try:
+                log_file_content = open(log_file, "r")
+                print log_file_content.read()
+            except IOError:
+                print "log file does not exist"
+
+            print "------------------------------------------------------------"
+            print "end of " + log_file
+            print "------------------------------------------------------------"
 
     sys.exit(rtn_code)
 
