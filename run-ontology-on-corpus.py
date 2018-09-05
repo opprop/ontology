@@ -3,6 +3,7 @@ import os, sys
 import subprocess
 import shlex
 import argparse
+import time
 
 ONTOLOGY_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -39,8 +40,9 @@ def main(argv):
 
     print "----- Fetching corpus done. -----"
 
-    print "----- Runnning Ontology on corpus... -----"
+    print "----- Running Ontology on corpus... -----"
 
+    successful_projects = list()
     failed_projects = list()
 
     for project_name, project_attrs in projects.iteritems():
@@ -53,17 +55,24 @@ def main(argv):
         subprocess.call(shlex.split(project_attrs["clean"]))
         print "Cleaning done."
         print "Running command: {}".format(tool_excutable + " " + project_attrs["build"])
+        start = time.time()
         rtn_code = subprocess.call([tool_excutable, project_attrs["build"]])
+        end = time.time()
         print "Return code is {}.".format(rtn_code)
+        print "Time taken by {}: \t{}\t seconds".format(project_name, end - start)
         if not rtn_code == 0:
             failed_projects.append(project_name)
+        else:
+            successful_projects.append(project_name)
 
     if len(failed_projects) > 0:
-        print "----- Inference failed on {} out of {} projects. Failed projects are: {} -----".format(len(failed_projects), len(projects), failed_projects)
+        print "----- Inference failed on {} out of {} projects. -----".format(len(failed_projects), len(projects))
+        print "  Successful projects are: {}.".format(successful_projects)
+        print "  Failed projects are: {}.".format(failed_projects)
     else:
-        print "----- Inference succeed infer all {} projects. -----".format(len(projects))
+        print "----- Inference successfully inferred all {} projects. -----".format(len(projects))
 
-    print "----- Runnning Ontology on corpus done. -----"
+    print "----- Running Ontology on corpus done. -----"
 
     rtn_code = 1 if len(failed_projects) > 0 else 0
 
