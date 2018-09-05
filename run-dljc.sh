@@ -13,8 +13,8 @@ export AFU=$JSR308/annotation-tools/annotation-file-utilities
 export PATH=$PATH:$AFU/scripts
 CFI=$JSR308/checker-framework-inference
 
-ONTOLOGYPATH=$JSR308/ontology/build/classes/main
-export CLASSPATH="$ONTOLOGYPATH"
+ONTOLOGYPATH=$JSR308/ontology/build/classes/java/main
+export CLASSPATH=$ONTOLOGYPATH
 
 CFI_LIB=$CFI/lib
 export DYLD_LIBRARY_PATH=$CFI_LIB

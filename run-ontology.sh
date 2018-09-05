@@ -14,7 +14,7 @@ IS_HACK=true
 # IS_HACK=false
 # DEBUG_CLASSPATH=""
 
-ONTOLOGYPATH=$ROOT/ontology/build/classes/main
+ONTOLOGYPATH=$ROOT/ontology/build/classes/java/main
 export CLASSPATH=$ONTOLOGYPATH:$DEBUG_CLASSPATH:.
 export external_checker_classpath=$ONTOLOGYPATH
 

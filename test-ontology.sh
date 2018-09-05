@@ -4,7 +4,7 @@
 set -e
 
 # Running Ontology test suite
-gradle test
+./gradlew test --console=plain
 
 WORKING_DIR=$(pwd)
 
@@ -48,5 +48,4 @@ fi
 # Grep experiment outputs
 echo ""
 echo "Experiment status:"
-find . -name "infer.log" | xargs grep "Inference succeeded"
-find . -name "infer.log" | xargs grep "Inference failed"
+find . -name "infer.log" | xargs grep -E "Inference (succeeded|failed)"

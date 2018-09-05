@@ -30,4 +30,4 @@ else
 fi
 
 ##### build ontology without testing
-(cd $JSR308/ontology && gradle build -x test)
+(cd $JSR308/ontology && ./gradlew build -x test --console=plain)
