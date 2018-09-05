@@ -37,3 +37,8 @@ fi
 
 # Running Ontology on working benchmarks
 python run-ontology-on-corpus.py --corpus-file worked-benchmarks.yml
+
+# Grep experiment outputs
+echo "Experiment status"
+find . -name "infer.log" | xargs grep "Inference succeeded"
+find . -name "infer.log" | xargs grep "Inference failed"
