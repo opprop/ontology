@@ -12,6 +12,7 @@ testdata/
 
 # corpus
 corpus/
+worked-benchmarks/
 
 #example classes and annotated output
 ontologyExample/**/*.class
