@@ -4,6 +4,12 @@ ROOT=$(cd $(dirname "$0")/.. && pwd)
 
 CFI=$ROOT/checker-framework-inference
 
+AFU=$ROOT/annotation-tools/annotation-file-utilities
+export PATH=$AFU/scripts:$PATH
+
+Z3=$ROOT/z3/bin
+export PATH=$Z3:$PATH
+
 CHECKER=ontology.OntologyChecker
 
 SOLVER=ontology.solvers.backend.OntologySolverEngine
