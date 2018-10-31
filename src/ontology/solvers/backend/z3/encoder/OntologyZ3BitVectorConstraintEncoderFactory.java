@@ -10,15 +10,12 @@ public class OntologyZ3BitVectorConstraintEncoderFactory
         extends Z3BitVectorConstraintEncoderFactory {
 
     public OntologyZ3BitVectorConstraintEncoderFactory(
-            Lattice lattice,
-            Context context,
-            Z3BitVectorFormatTranslator z3BitVectorFormatTranslator) {
-        super(lattice, context, z3BitVectorFormatTranslator);
+            Lattice lattice, Context context, Z3BitVectorFormatTranslator formatTranslator) {
+        super(lattice, context, formatTranslator);
     }
 
     @Override
     public Z3BitVectorSubtypeConstraintEncoder createSubtypeConstraintEncoder() {
-        return new OntologyZ3BitVectorSubtypeConstraintEncoder(
-                lattice, context, z3BitVectorFormatTranslator);
+        return new OntologyZ3BitVectorSubtypeConstraintEncoder(lattice, context, formatTranslator);
     }
 }
