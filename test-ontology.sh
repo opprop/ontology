@@ -3,7 +3,7 @@
 # Failed the whole script if any command failed
 set -e
 
-# Running Ontology test suite
+# Running test suite
 ./gradlew test --console=plain
 
 WORKING_DIR=$(pwd)
@@ -12,25 +12,12 @@ if [ -z "${JSR308}" ] ; then
     export JSR308=$(cd $(dirname "$0")/.. && pwd)
 fi
 
-# Pulling DLJC, if there is no DLJC.
-# This is specially for adding ontology as
-# a travis downstream test for CFI.
-# Because CFI doesn't pull DLJC, but ontology
-# needs DLJC to run the benchmark test.
-#
-# TODO: I don't think this is the best place
-# to place this logic of pulling DLJC, as
-# it actually makes this testing script
-# aware of travis. However, create a seperate
-# script for only pulling DLJC also seems
-# an overkill. Maybe seperate below logic
-# in the future if we need to do more things
-# specially for travis downstream test.
+# Pull DLJC if it doesn't exist
+# This is for downstream travis test for CFI.
 SLUGOWNER=${TRAVIS_REPO_SLUG%/*}
 if [[ "$SLUGOWNER" == "" ]]; then
   SLUGOWNER=opprop
 fi
-
 if [ ! -d ../do-like-javac ] ; then
     (cd $JSR308 && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
 fi
