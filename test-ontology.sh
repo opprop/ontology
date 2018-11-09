@@ -3,9 +3,6 @@
 # Failed the whole script if any command failed
 set -e
 
-# Running test suite
-./gradlew test --console=plain
-
 WORKING_DIR=$(pwd)
 
 if [ -z "${JSR308}" ] ; then
@@ -21,6 +18,9 @@ fi
 if [ ! -d ../do-like-javac ] ; then
     (cd $JSR308 && git clone https://github.com/${SLUGOWNER}/do-like-javac.git)
 fi
+
+# Running test suite
+./gradlew test --console=plain
 
 CORPUSFILE="worked-benchmarks.yml"
 
