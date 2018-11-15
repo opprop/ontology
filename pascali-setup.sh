@@ -17,7 +17,8 @@ echo "------ Downloading everthing from REPO_SITE: $REPO_SITE ------"
 if [ -d $JSR308/checker-framework-inference ] ; then
     (cd $JSR308/checker-framework-inference && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
+    BRANCH=master
+    (cd $JSR308 && git clone -b $BRANCH --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
 fi
 
 (cd $JSR308/checker-framework-inference && ./.travis-build-without-test.sh)
@@ -26,7 +27,8 @@ fi
 if [ -d $JSR308/do-like-javac ] ; then
     (cd $JSR308/do-like-javac && git pull)
 else
-    (cd $JSR308 && git clone --depth 1 https://github.com/"$REPO_SITE"/do-like-javac.git)
+    BRANCH=master
+    (cd $JSR308 && git clone -b $BRANCH --depth 1 https://github.com/"$REPO_SITE"/do-like-javac.git)
 fi
 
 ##### build ontology without testing
