@@ -4,10 +4,10 @@ ONTOLOGY_DIR=$(cd $(dirname "$0") && pwd)
 #setup env variables
 . $ONTOLOGY_DIR/env-setup.sh
 
-export REPO_SITE=opprop 
+export REPO_SITE=opprop
 
 ### building checker framework stuffs and ontology
-. $ONTOLOGY_DIR/pascali-setup.sh
+. $ONTOLOGY_DIR/dependency-setup.sh
 
 ### downloading do-like-javac if needs
 if [ -d $JSR308/do-like-javac ] ; then
@@ -36,7 +36,7 @@ function downloadGitProject() {
     fi
 
     git clone $project_url --branch $branch --depth=1
-} 
+}
 
 function runOntologyOnProject() {
     mvn="pom.xml"

@@ -5,12 +5,12 @@ command in directory `Ontology`:
 
 ```bash
 # cd ontology
-./pascali-setup.sh
+./dependency-setup.sh
 ```
 
 # Running Ontology on sci-corpus
 
-## Dependencies & prerequisites 
+## Dependencies & prerequisites
 
 To run driver script `run-ontology-on-corpus.py`, you need first to
 install below packages:
@@ -23,7 +23,7 @@ The driver script need python version higher than `2.7.10`.
 
 We currently use a customized version of
 [do-like-javac](https://github.com/pascaliUWat/do-like-javac.git). In
-`pascali-setup.sh` we download this version of DLJC in the parent dir
+`dependency-setup.sh` we download this version of DLJC in the parent dir
 of ontology.
 
 You also need to install Lithium for the test case minimizer:
