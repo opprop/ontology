@@ -6,7 +6,6 @@ import checkers.inference.model.ConstantSlot;
 import checkers.inference.model.Constraint;
 import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
-import checkers.inference.model.VariableSlot;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -172,17 +171,14 @@ public class OntologyStatisticUtil {
             Slot supertypeSlot = sConstraint.getSupertype();
             AnnotationMirror subtype, supertype;
 
-            // currently both suptypeSlot and supertypeSlot should be type of VariableSlot
-            assert subtypeSlot instanceof VariableSlot && supertypeSlot instanceof VariableSlot;
+            final int subtypeId = subtypeSlot.getId();
+            final int supertypeId = supertypeSlot.getId();
 
-            final int subtypeId = ((VariableSlot) subtypeSlot).getId();
-            final int supertypeId = ((VariableSlot) supertypeSlot).getId();
-
-            if (subtypeSlot instanceof ConstantSlot && supertypeSlot instanceof ConstantSlot) {
+            if (subtypeSlot.isConstant() && supertypeSlot.isConstant()) {
                 continue;
 
-            } else if (subtypeSlot instanceof ConstantSlot) {
-                subtype = ((ConstantSlot) subtypeSlot).getValue();
+            } else if (subtypeSlot.isConstant()) {
+                subtype = ((ConstantSlot) subtypeSlot).getAnnotation();
                 supertype = mergedResult.getSolutionForVariable(supertypeId);
 
                 assert subtype != null;
@@ -192,9 +188,9 @@ public class OntologyStatisticUtil {
                     continue;
                 }
 
-            } else if (supertypeSlot instanceof ConstantSlot) {
+            } else if (supertypeSlot.isConstant()) {
                 subtype = mergedResult.getSolutionForVariable(subtypeId);
-                supertype = ((ConstantSlot) supertypeSlot).getValue();
+                supertype = ((ConstantSlot) supertypeSlot).getAnnotation();
 
                 assert supertype != null;
 

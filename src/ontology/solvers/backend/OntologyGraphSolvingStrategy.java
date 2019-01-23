@@ -8,7 +8,6 @@ import checkers.inference.model.Constraint;
 import checkers.inference.model.PreferenceConstraint;
 import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
-import checkers.inference.model.VariableSlot;
 import checkers.inference.solver.backend.Solver;
 import checkers.inference.solver.backend.SolverFactory;
 import checkers.inference.solver.constraintgraph.ConstraintGraph;
@@ -87,7 +86,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
 
             Set<Constraint> consSet = entry.getValue();
             Slot vertixSlot = entry.getKey().getSlot();
-            if (!(vertixSlot instanceof ConstantSlot)) {
+            if (!vertixSlot.isConstant()) {
                 throw new BugInCF("vertixSlot should be constantslot!");
             }
 
@@ -111,14 +110,14 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
             if (constraint instanceof SubtypeConstraint) {
                 SubtypeConstraint subCons = (SubtypeConstraint) constraint;
                 Slot superType = subCons.getSupertype();
-                if (superType instanceof ConstantSlot) {
+                if (superType.isConstant()) {
                     continue;
                 }
 
                 PreferenceConstraint preferCons =
                         InferenceMain.getInstance()
                                 .getConstraintManager()
-                                .createPreferenceConstraint((VariableSlot) superType, curBtm, 50);
+                                .createPreferenceConstraint(superType, curBtm, 50);
                 preferSet.add(preferCons);
             }
         }

@@ -50,7 +50,7 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
         BitVecExpr subtypeBV = subtypeSlot.serialize(this);
         BitVecExpr supertypeBV = supertypeSlot.serialize(this);
         int weight = 1;
-        if (subtypeSlot instanceof ConstantSlot) {
+        if (subtypeSlot.isConstant()) {
             weight = 2;
         }
 
@@ -101,8 +101,8 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
     }
 
     protected boolean isPolyOntology(Slot slot) {
-        return slot instanceof ConstantSlot
+        return slot.isConstant()
                 && AnnotationUtils.areSameIgnoringValues(
-                        ((ConstantSlot) slot).getValue(), OntologyUtils.POLY_ONTOLOGY);
+                        ((ConstantSlot) slot).getAnnotation(), OntologyUtils.POLY_ONTOLOGY);
     }
 }

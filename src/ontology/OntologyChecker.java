@@ -43,7 +43,7 @@ public class OntologyChecker extends BaseInferrableChecker {
         OntologyInferenceAnnotatedTypeFactory ontologyInferenceATF =
                 new OntologyInferenceAnnotatedTypeFactory(
                         inferenceChecker,
-                        realChecker.withCombineConstraints(),
+                        realChecker.withVPAConstraints(),
                         realTypeFactory,
                         realChecker,
                         slotManager,
@@ -57,7 +57,7 @@ public class OntologyChecker extends BaseInferrableChecker {
     }
 
     @Override
-    public boolean withCombineConstraints() {
+    public boolean withVPAConstraints() {
         return false;
     }
 }

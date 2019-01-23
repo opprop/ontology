@@ -127,7 +127,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
                             .determineOntologyAnnotation(atm.getUnderlyingType());
             if (ontologyAnno != null) {
                 ConstantSlot cs = variableAnnotator.createConstant(ontologyAnno, newClassTree);
-                atm.replaceAnnotation(cs.getValue());
+                atm.replaceAnnotation(cs.getAnnotation());
             }
 
             variableAnnotator.visit(atm, newClassTree.getIdentifier());
@@ -140,7 +140,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
                     OntologyUtils.createOntologyAnnotationByValues(
                             processingEnv, OntologyValue.SEQUENCE);
             ConstantSlot cs = variableAnnotator.createConstant(anno, newArrayTree);
-            atm.replaceAnnotation(cs.getValue());
+            atm.replaceAnnotation(cs.getAnnotation());
             variableAnnotator.visit(atm, newArrayTree);
             return null;
         }
