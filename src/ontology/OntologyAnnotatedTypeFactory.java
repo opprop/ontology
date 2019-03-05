@@ -89,8 +89,8 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
 
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
-            if (AnnotationUtils.areSameIgnoringValues(rhs, OntologyUtils.ONTOLOGY)
-                    && AnnotationUtils.areSameIgnoringValues(lhs, OntologyUtils.ONTOLOGY)) {
+            if (AnnotationUtils.areSameByName(rhs, OntologyUtils.ONTOLOGY)
+                    && AnnotationUtils.areSameByName(lhs, OntologyUtils.ONTOLOGY)) {
                 OntologyValue[] rhsValue = OntologyUtils.getOntologyValues(rhs);
                 OntologyValue[] lhsValue = OntologyUtils.getOntologyValues(lhs);
                 EnumSet<OntologyValue> rSet = EnumSet.noneOf(OntologyValue.class);

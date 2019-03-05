@@ -71,7 +71,7 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
 
     @Override
     public BigInteger encodeConstantAM(AnnotationMirror am) {
-        if (!AnnotationUtils.areSameIgnoringValues(am, OntologyUtils.ONTOLOGY)) {
+        if (!AnnotationUtils.areSameByName(am, OntologyUtils.ONTOLOGY)) {
             return BigInteger.valueOf(-1);
         }
 

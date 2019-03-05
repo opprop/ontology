@@ -102,7 +102,7 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
 
     protected boolean isPolyOntology(Slot slot) {
         return slot instanceof ConstantSlot
-                && AnnotationUtils.areSameIgnoringValues(
+                && AnnotationUtils.areSameByName(
                         ((ConstantSlot) slot).getValue(), OntologyUtils.POLY_ONTOLOGY);
     }
 }

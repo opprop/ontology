@@ -69,7 +69,7 @@ public class OntologyStatisticUtil {
         Map<String, Integer> valuesStatistics = new HashMap<>();
 
         for (AnnotationMirror inferAnno : result.values()) {
-            if (!AnnotationUtils.areSameIgnoringValues(inferAnno, OntologyUtils.ONTOLOGY)) {
+            if (!AnnotationUtils.areSameByName(inferAnno, OntologyUtils.ONTOLOGY)) {
                 InferenceMain.getInstance()
                         .logger
                         .warning(

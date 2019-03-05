@@ -94,7 +94,7 @@ public class OntologyUtils {
     }
 
     public static boolean isOntologyTop(AnnotationMirror type) {
-        if (!AnnotationUtils.areSameIgnoringValues(ONTOLOGY, type)) {
+        if (!AnnotationUtils.areSameByName(ONTOLOGY, type)) {
             return false;
         }
 

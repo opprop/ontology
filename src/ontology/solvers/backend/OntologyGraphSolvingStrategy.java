@@ -65,7 +65,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
 
         for (Entry<Vertex, Set<Constraint>> entry : constraintGraph.getConstantPath().entrySet()) {
             AnnotationMirror anno = entry.getKey().getValue();
-            if (!AnnotationUtils.areSameIgnoringValues(anno, OntologyUtils.ONTOLOGY)) {
+            if (!AnnotationUtils.areSameByName(anno, OntologyUtils.ONTOLOGY)) {
                 continue;
             }
 
