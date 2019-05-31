@@ -71,40 +71,40 @@ below:
 
 Original file:
 
-    ```java
-    public class Demo {
-        Vector externalVelocity;
-        Vector externalForce;
+```java
+public class Demo {
+    Vector externalVelocity;
+    Vector externalForce;
 
-        public void applyVelocity(Vector velocity) {
-            externalVelocity.add(velocity);
-        }
-
-        public void applyForce(Vector force) {
-            externalForce.add(force);
-        }
+    public void applyVelocity(Vector velocity) {
+        externalVelocity.add(velocity);
     }
-    ```
+
+    public void applyForce(Vector force) {
+        externalForce.add(force);
+    }
+}
+```
 
 Annotated file:
 
-    ```java
-    import ontology.qual.Ontology;
-    import ontology.qual.OntologyValue;
+```java
+import ontology.qual.Ontology;
+import ontology.qual.OntologyValue;
 
-    public class Demo {
-        @Ontology(OntologyValue.VELOCITY_3D) Vector externalVelocity;
-        @Ontology(OntologyValue.FORCE_3D) Vector externalForce;
+public class Demo {
+    @Ontology(OntologyValue.VELOCITY_3D) Vector externalVelocity;
+    @Ontology(OntologyValue.FORCE_3D) Vector externalForce;
 
-        public void applyVelocity(@Ontology(OntologyValue.VELOCITY_3D) Vector velocity) {
-            ((@Ontology(OntologyValue.VELOCITY_3D) Vector) (externalVelocity.add(velocity)));
-        }
-
-        public void applyForce(@Ontology(OntologyValue.FORCE_3D) Vector force) {
-            ((@Ontology(OntologyValue.FORCE_3D) Vector) (externalForce.add(force)));
-        }
+    public void applyVelocity(@Ontology(OntologyValue.VELOCITY_3D) Vector velocity) {
+        ((@Ontology(OntologyValue.VELOCITY_3D) Vector) (externalVelocity.add(velocity)));
     }
-    ```
+
+    public void applyForce(@Ontology(OntologyValue.FORCE_3D) Vector force) {
+        ((@Ontology(OntologyValue.FORCE_3D) Vector) (externalForce.add(force)));
+    }
+}
+```
 
 Note how the input contained annotations for the two fields. These annotations
 have been propagated to the method parameters and the polymorphic method
@@ -113,29 +113,29 @@ invocations.
 
 Original file:
 
-    ```java
-    public static int [] sort(int [] unsorted) {
-        int [] sorted = new int[unsorted.length];
-        for (int i = 0; i < unsorted.length; i++) {
-            sorted[i] = unsorted[i];
-        }
-        Arrays.sort(sorted);
-        return sorted;
+```java
+public static int [] sort(int [] unsorted) {
+    int [] sorted = new int[unsorted.length];
+    for (int i = 0; i < unsorted.length; i++) {
+        sorted[i] = unsorted[i];
     }
-    ```
+    Arrays.sort(sorted);
+    return sorted;
+}
+```
 
 Annotated file:
 
-    ```java
-    public static int @Ontology(OntologyValue.SEQUENCE) [] sort(int @Ontology(OntologyValue.SEQUENCE) [] unsorted) {
-        int @Ontology(OntologyValue.SEQUENCE) [] sorted = new int[unsorted.length];
-        for (int i = 0; i < unsorted.length; i++) {
-            sorted[i] = unsorted[i];
-        }
-        Arrays.sort(sorted);
-        return sorted;
+```java
+public static int @Ontology(OntologyValue.SEQUENCE) [] sort(int @Ontology(OntologyValue.SEQUENCE) [] unsorted) {
+    int @Ontology(OntologyValue.SEQUENCE) [] sorted = new int[unsorted.length];
+    for (int i = 0; i < unsorted.length; i++) {
+        sorted[i] = unsorted[i];
     }
-    ```
+    Arrays.sort(sorted);
+    return sorted;
+}
+```
 
 Note how the general rule for arrays applies in this example, resulting in
 the `SEQUENCE` annotation on all array types.
@@ -167,7 +167,7 @@ the `SEQUENCE` annotation on all array types.
 
 
 - How to quantify the output:
-  the number of ``@Ontology` annotations that have been inserted into the corpus.
+  the number of `@Ontology` annotations that have been inserted into the corpus.
   Before running OTI, the source code contains no `@Ontology` annotations.
   After running OTI, the source code contains `@Ontology` annotations marking
   the ontic types that occur in the application.
