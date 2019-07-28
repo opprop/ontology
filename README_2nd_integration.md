@@ -2,7 +2,11 @@
 
 ## General description
 
-OTI supports other code analysis tools by propagating the ground truths about ontic types in the corpus. For example, ontic types help to distinguish two functions with the same Java types and control flow graphs. OTI takes a minimal set of ground truths from other tools and then propagates them properly in the corpus by type inference based on ontology type rules.
+OTI supports other code analysis tools by propagating the ground truths about
+ontic types in the corpus. For example, ontic types help to distinguish two
+functions with the same Java types and control flow graphs. OTI takes a minimal
+set of ground truths from other tools and then propagates them properly in the
+corpus by type inference based on ontology type rules.
 
 ## Input and output of this tool
 
@@ -21,7 +25,8 @@ Ground truths about ontic types in the corpus. A dictionary that contains:
     }
     ```
 
-    This input tells OTI that Java `array` types and `java.util.List` are related to the ontology concept `Sequence`.
+    This input tells OTI that Java `array` types and `java.util.List` are related
+    to the ontology concept `Sequence`.
 
 - mappings from fields to an ontology concept, e.g.
 
@@ -48,11 +53,14 @@ Ground truths about ontic types in the corpus. A dictionary that contains:
     }
     ```
 
-    This input tells OTI that in package `demo.package`, there is a class `Demo`, whose field `externalVelocity` is related to ontology concept `velocity`, and field `externalForce` is related to ontology concept `force`.
+    This input tells OTI that in package `demo.package`, there is a class `Demo`,
+    whose field `externalVelocity` is related to ontology concept `velocity`, and
+    field `externalForce` is related to ontology concept `force`.
 
 ### Output
 
-The corpus annotated with `@Ontology` type annotations propagated from the ground truths. For example, given the above mappings, the corpus would be annotated as below:
+The corpus annotated with `@Ontology` type annotations propagated from the ground truths. 
+For example, given the above mappings, the corpus would be annotated as below:
 
 - Original file:
 
@@ -91,7 +99,8 @@ The corpus annotated with `@Ontology` type annotations propagated from the groun
     }
     ```
 
-Note how the input contained annotations for the two fields. These annotations have been propagated to the method parameters and the polymorphic method invocations.
+Note how the input contained annotations for the two fields. These annotations have been 
+propagated to the method parameters and the polymorphic method invocations.
 
 - Original file:
 
@@ -119,13 +128,15 @@ Note how the input contained annotations for the two fields. These annotations h
     }
     ```
 
-Note how the general rule for arrays applies in this example, resulting in the `SEQUENCE` annotation on all array types.
+Note how the general rule for arrays applies in this example, resulting in the 
+`SEQUENCE` annotation on all array types.
 
 ## Process steps and data
 
 ### Steps
 
-- Take a json file describing the mappings from Java types to ontology concepts and mappings from class fields to ontology concepts
+- Take a json file describing the mappings from Java types to ontology concepts and 
+  mappings from class fields to ontology concepts
 
 - Update the OTI system
     - create new `OntologyValue` enum values in the `OntologyValue` class
@@ -134,7 +145,8 @@ Note how the general rule for arrays applies in this example, resulting in the `
 
 - Create a .jaif file describing the annotation information on the class fields
 
-- Insert ground truth type annotations into the corpus (Instead of performing steps 0-3, this can also be done manually by annotating fields with ground truths.)
+- Insert ground truth type annotations into the corpus (Instead of performing steps 0-3, 
+  this can also be done manually by annotating fields with ground truths.)
 
 - Run OTI on inserted corpus to further propagate type annotations
 
@@ -144,11 +156,15 @@ the corpus source code, before and after OTI.
 
 ### How to quantify the output: 
 
-the number of `@Ontology` annotations that have been inserted into the corpus. Before running OTI, the source code contains no `@Ontology` annotations. After running OTI, the source code contains `@Ontology` annotations marking the ontic types that occur in the application.
+the number of `@Ontology` annotations that have been inserted into the corpus. 
+Before running OTI, the source code contains no `@Ontology` annotations. After 
+running OTI, the source code contains `@Ontology` annotations marking the ontic
+types that occur in the application.
 
 ### Running the scripts for OTI: 
 
-`mapping_2_annotation` module in `integration-test2` provides a command-line interface for running OTI by giving mappings.
+`mapping_2_annotation` module in `integration-test2` provides a command-line 
+interface for running OTI by giving mappings.
 
 ## Usage:
 
@@ -170,6 +186,7 @@ Do both:
 python map2annotation --type-mapping <type_mappings>.json --field-mapping <field_mappings>.json
 ```
 
-Note: when called from the command line, `map2annotation` will clean the source code of OTI before updating the type rules and Ontology values.
+Note: when called from the command line, `map2annotation` will clean the source code 
+of OTI before updating the type rules and Ontology values.
 
 Note: for the json format of the mapping files, please refer to the examples in `mapping_2_annotation/json_file_examples/`
