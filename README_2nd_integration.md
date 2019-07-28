@@ -59,7 +59,7 @@ Ground truths about ontic types in the corpus. A dictionary that contains:
 
 ### Output
 
-The corpus annotated with `@Ontology` type annotations propagated from the ground truths. 
+The corpus annotated with `@Ontology` type annotations propagated from the ground truths.
 For example, given the above mappings, the corpus would be annotated as below:
 
 - Original file:
@@ -99,7 +99,7 @@ For example, given the above mappings, the corpus would be annotated as below:
     }
     ```
 
-Note how the input contained annotations for the two fields. These annotations have been 
+Note how the input contained annotations for the two fields. These annotations have been
 propagated to the method parameters and the polymorphic method invocations.
 
 - Original file:
@@ -128,7 +128,7 @@ propagated to the method parameters and the polymorphic method invocations.
     }
     ```
 
-Note how the general rule for arrays applies in this example, resulting in the 
+Note how the general rule for arrays applies in this example, resulting in the
 `SEQUENCE` annotation on all array types.
 
 ## Process steps and data
@@ -145,28 +145,28 @@ Note how the general rule for arrays applies in this example, resulting in the
 
 - Create a .jaif file describing the annotation information on the class fields
 
-- Insert ground truth type annotations into the corpus (Instead of performing steps 0-3, 
+- Insert ground truth type annotations into the corpus (Instead of performing steps 0-3,
   this can also be done manually by annotating fields with ground truths.)
 
 - Run OTI on inserted corpus to further propagate type annotations
 
-### Data:
+### Data
 
-the corpus source code, before and after OTI.
+The corpus source code, before and after OTI.
 
-### How to quantify the output: 
+### How to quantify the output
 
-the number of `@Ontology` annotations that have been inserted into the corpus. 
-Before running OTI, the source code contains no `@Ontology` annotations. After 
+The number of `@Ontology` annotations that have been inserted into the corpus.
+Before running OTI, the source code contains no `@Ontology` annotations. After
 running OTI, the source code contains `@Ontology` annotations marking the ontic
 types that occur in the application.
 
-### Running the scripts for OTI: 
+### Running the scripts for OTI
 
-`mapping_2_annotation` module in `integration-test2` provides a command-line 
+`mapping_2_annotation` module in `integration-test2` provides a command-line
 interface for running OTI by giving mappings.
 
-## Usage:
+## Usage
 
 Insert rules mapping Java types to ontology concepts, then annotating the corpus based on these rules:
 
@@ -186,7 +186,7 @@ Do both:
 python map2annotation --type-mapping <type_mappings>.json --field-mapping <field_mappings>.json
 ```
 
-Note: when called from the command line, `map2annotation` will clean the source code 
+Note: when called from the command line, `map2annotation` will clean the source code
 of OTI before updating the type rules and Ontology values.
 
 Note: for the json format of the mapping files, please refer to the examples in `mapping_2_annotation/json_file_examples/`
