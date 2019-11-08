@@ -39,7 +39,7 @@ dependencies {
     compile fileTree(dir: "${cfiPath}/dist", include: "checker-framework-inference.jar")
     // sat4j solver dependency
     compile 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.4'
-    compile 'org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.4'
+    compile 'org.ow2.sat4j:org.ow2.sat4j.maxsat:2.3.5'
     // z3 solver dependency
     compile fileTree(dir: "${cfiPath}/lib", include: "com.microsoft.z3.jar")
 
