@@ -1,5 +1,5 @@
 # ontology
-[![build-status](https://travis-ci.org/opprop/ontology.svg?branch=master)](https://travis-ci.org/opprop/ontology)
+[![build-status](https://travis-ci.com/opprop/ontology.svg?branch=master)](https://travis-ci.com/opprop/ontology)
 
 
 Ontology Inference System
