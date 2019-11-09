@@ -49,8 +49,8 @@ public class OntologyStatisticUtil {
      * include:
      *
      * <ul>
-     *   <li> total number of inferred slots
-     *   <li> inferred slots number of each {@link OntologyValue}
+     *   <li>total number of inferred slots
+     *   <li>inferred slots number of each {@link OntologyValue}
      * </ul>
      *
      * @param filename the name of file that will store these information
@@ -162,7 +162,7 @@ public class OntologyStatisticUtil {
 
         List<ViolatedConsDiagnostic> diagnosticList = new ArrayList<>();
         for (Constraint constraint : constraints) {
-            //TODO: also verify other kinds of constraint
+            // TODO: also verify other kinds of constraint
             // currently ontology use ExistentialConstraint and EqualityConstraint
             if (!(constraint instanceof SubtypeConstraint)) {
                 continue;
@@ -215,7 +215,7 @@ public class OntologyStatisticUtil {
 
             assert subtype != null && supertype != null;
 
-            //avoid checking poly ontology
+            // avoid checking poly ontology
             if (AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, subtype)
                     || AnnotationUtils.areSame(OntologyUtils.POLY_ONTOLOGY, supertype)) {
                 continue;

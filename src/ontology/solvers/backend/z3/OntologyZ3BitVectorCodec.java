@@ -108,7 +108,8 @@ public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
             }
 
             // If the set represented by numerlValue is a super set of ontologyNumberValue,
-            // then the corresponding ontologyValue is belongs to the resulted AM's ontologyValues set.
+            // then the corresponding ontologyValue is belongs to the resulted AM's ontologyValues
+            // set.
             if (ontologyNumeralValue.and(numeralValue).equals(ontologyNumeralValue)) {
                 ontologyValues.add(ontologyValue);
 

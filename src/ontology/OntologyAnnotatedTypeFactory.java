@@ -59,7 +59,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             newBottoms.remove(OntologyUtils.ONTOLOGY);
             newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
 
-            //update supertypes
+            // update supertypes
             Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
             supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
             supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);

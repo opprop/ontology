@@ -29,4 +29,4 @@ class Vector {
         return this;
     }
 }
-//@PolyOntology
+// @PolyOntology

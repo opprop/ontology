@@ -24,8 +24,8 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
 
@@ -67,7 +67,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             newBottoms.remove(OntologyUtils.ONTOLOGY);
             newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
 
-            //update supertypes
+            // update supertypes
             Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
             supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
             supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);

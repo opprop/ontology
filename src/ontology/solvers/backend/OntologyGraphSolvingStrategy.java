@@ -73,7 +73,7 @@ public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
 
             if (ontologyValues.length == 0
                     ||
-                    //does not solve when the bottom is also TOP
+                    // does not solve when the bottom is also TOP
                     EnumSet.copyOf(Arrays.asList(ontologyValues)).contains(OntologyValue.TOP)) {
                 continue;
             }
