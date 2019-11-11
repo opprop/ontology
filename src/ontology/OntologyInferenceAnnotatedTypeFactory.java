@@ -24,7 +24,7 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
@@ -96,7 +96,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
     @Override
     public TreeAnnotator createTreeAnnotator() {
         return new ListTreeAnnotator(
-                new ImplicitsTreeAnnotator(this),
+                new LiteralTreeAnnotator(this),
                 new OntologyInferenceTreeAnnotator(
                         this, realChecker, realTypeFactory, variableAnnotator, slotManager));
     }
