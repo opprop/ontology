@@ -1,5 +1,3 @@
-/// Why doesn't this work on Travis under Java 7?
-/// The same text does in Randoop's build.gradle file.
 plugins {
     // Plugin that applies Google-Java-format to the Java files in the project.
     // https://github.com/sherter/google-java-format-gradle-plugin
@@ -13,7 +11,6 @@ ext {
     jsr308 = System.getenv('JSR308') ?: file(new File("..")).absolutePath
     cfPath = "${jsr308}/checker-framework"
     cfiPath = "${jsr308}/checker-framework-inference"
-    jsr308langtoolsPath = "${jsr308}/jsr308-langtools"
     afu = "${jsr308}/annotation-tools/annotation-file-utilities"
     ontologyPath = "${jsr308}/ontology"
 }
@@ -43,6 +40,8 @@ dependencies {
     // z3 solver dependency
     compile fileTree(dir: "${cfiPath}/lib", include: "com.microsoft.z3.jar")
 
+    compile fileTree(dir: "${cfiPath}/dist", include: "inference-framework-test-lib.jar")
+
     // CF test lib dependency
     testCompile fileTree(dir: "${cfPath}/framework-test/build/libs", include: "framework-test-*.jar")
     testCompile 'junit:junit:4.12'
@@ -62,8 +61,7 @@ sourceSets {
 
     test {
         java {
-            // TODO: we shouldn't need source level dependency on CFITest
-            srcDirs = ["tests", "${cfiPath}/tests/checkers/inference/test"]
+            srcDirs = ["tests"]
         }
     }
 }
@@ -135,7 +133,6 @@ tasks.clean {
     delete += "testdata"
 }
 
-// Commented out because plugins section is commented out
 /* Configuration for formatting */
 googleJavaFormat {
     // toolVersion '1.3'
