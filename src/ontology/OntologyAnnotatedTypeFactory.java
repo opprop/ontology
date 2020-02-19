@@ -80,8 +80,8 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
             assert fullMap.containsKey(OntologyUtils.ONTOLOGY);
             Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
-            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
             fullMap.remove(OntologyUtils.ONTOLOGY);
+            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
 
             // update tops
             tops.remove(OntologyUtils.ONTOLOGY);
@@ -106,7 +106,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     return false;
                 }
             } else {
-                return false;
+                return super.isSubtype(rhs, lhs);
             }
         }
     }
