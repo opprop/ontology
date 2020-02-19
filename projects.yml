@@ -66,7 +66,7 @@ projects:
     build: mvn install
     clean: mvn clean
 
-  jReactPhysics3D:
-    giturl: https://github.com/opprop-benchmarks/jReactPhysics3D.git
-    build: mvn install
-    clean: mvn clean
+#  jReactPhysics3D:
+#    giturl: https://github.com/opprop-benchmarks/jReactPhysics3D.git
+#    build: mvn install
+#    clean: mvn clean
