@@ -2,6 +2,7 @@ package ontology;
 
 import checkers.inference.InferenceAnnotatedTypeFactory;
 import checkers.inference.InferenceChecker;
+import checkers.inference.InferenceMain;
 import checkers.inference.InferenceQualifierHierarchy;
 import checkers.inference.InferenceTreeAnnotator;
 import checkers.inference.InferrableChecker;
@@ -14,6 +15,7 @@ import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -24,10 +26,11 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.framework.type.treeannotator.ImplicitsTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
+import org.checkerframework.javacutil.AnnotationUtils;
 
 public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFactory {
 
@@ -50,6 +53,13 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
     }
 
     @Override
+    protected Set<? extends AnnotationMirror> getDefaultTypeDeclarationBounds() {
+        Set<AnnotationMirror> top = new HashSet<>();
+        top.add(OntologyUtils.ONTOLOGY_TOP);
+        return top;
+    }
+
+    @Override
     public QualifierHierarchy createQualifierHierarchy(MultiGraphFactory factory) {
         return new OntologyInferenceQualifierHierarchy(factory);
     }
@@ -67,7 +77,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             newBottoms.remove(OntologyUtils.ONTOLOGY);
             newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
 
-            //update supertypes
+            // update supertypes
             Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
             supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
             supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);
@@ -91,12 +101,31 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
             fullMap.remove(OntologyUtils.ONTOLOGY);
         }
+
+        @Override
+        public Set<? extends AnnotationMirror> leastUpperBounds(
+                Collection<? extends AnnotationMirror> annos1,
+                Collection<? extends AnnotationMirror> annos2) {
+            if (InferenceMain.isHackMode(annos1.size() != annos2.size())) {
+                Set<AnnotationMirror> result = AnnotationUtils.createAnnotationSet();
+                for (AnnotationMirror a1 : annos1) {
+                    for (AnnotationMirror a2 : annos2) {
+                        AnnotationMirror lub = leastUpperBound(a1, a2);
+                        if (lub != null) {
+                            result.add(lub);
+                        }
+                    }
+                }
+                return result;
+            }
+            return super.leastUpperBounds(annos1, annos2);
+        }
     }
 
     @Override
     public TreeAnnotator createTreeAnnotator() {
         return new ListTreeAnnotator(
-                new ImplicitsTreeAnnotator(this),
+                new LiteralTreeAnnotator(this),
                 new OntologyInferenceTreeAnnotator(
                         this, realChecker, realTypeFactory, variableAnnotator, slotManager));
     }

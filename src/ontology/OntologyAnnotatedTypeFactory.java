@@ -59,7 +59,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             newBottoms.remove(OntologyUtils.ONTOLOGY);
             newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
 
-            //update supertypes
+            // update supertypes
             Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
             supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
             supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);
@@ -80,8 +80,8 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
             assert fullMap.containsKey(OntologyUtils.ONTOLOGY);
             Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
-            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
             fullMap.remove(OntologyUtils.ONTOLOGY);
+            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
 
             // update tops
             tops.remove(OntologyUtils.ONTOLOGY);

@@ -34,12 +34,14 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
 
     @Override
     public BoolExpr serialize(SubtypeConstraint constraint) {
-        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode POLY_ONTOLOGY into the domain.
+        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode
+        // POLY_ONTOLOGY into the domain.
         // TODO: how to encode POLY?
         for (Slot slot : constraint.getSlots()) {
             if (isPolyOntology(slot)) {
                 // Return true as empty value, to filter out poly ontology.
-                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value
+                // here.
                 return context.mkTrue();
             }
         }
@@ -60,12 +62,14 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
 
     @Override
     public BoolExpr serialize(EqualityConstraint constraint) {
-        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode POLY_ONTOLOGY into the domain.
+        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode
+        // POLY_ONTOLOGY into the domain.
         // TODO: how to encode POLY?
         for (Slot slot : constraint.getSlots()) {
             if (isPolyOntology(slot)) {
                 // Return true as empty value, to filter out poly ontology.
-                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value
+                // here.
                 return context.mkTrue();
             }
         }
@@ -74,12 +78,14 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
 
     @Override
     public BoolExpr serialize(InequalityConstraint constraint) {
-        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode POLY_ONTOLOGY into the domain.
+        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode
+        // POLY_ONTOLOGY into the domain.
         // TODO: how to encode POLY?
         for (Slot slot : constraint.getSlots()) {
             if (isPolyOntology(slot)) {
                 // Return true as empty value, to filter out poly ontology.
-                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value
+                // here.
                 return context.mkTrue();
             }
         }
@@ -88,12 +94,14 @@ public class OntologyZ3FormatTranslator extends Z3BitVectorFormatTranslator {
 
     @Override
     public BoolExpr serialize(PreferenceConstraint preferenceConstraint) {
-        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode POLY_ONTOLOGY into the domain.
+        // Ignore constraints that contains POLY_ONTOLOGY, as currently we don't encode
+        // POLY_ONTOLOGY into the domain.
         // TODO: how to encode POLY?
         for (Slot slot : preferenceConstraint.getSlots()) {
             if (isPolyOntology(slot)) {
                 // Return true as empty value, to filter out poly ontology.
-                // TODO: Make encoder.emptyValue public, then using that consistent empty value here.
+                // TODO: Make encoder.emptyValue public, then using that consistent empty value
+                // here.
                 return context.mkTrue();
             }
         }

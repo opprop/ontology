@@ -7,8 +7,10 @@ import java.util.Set;
 
 /** @author charleszhuochen */
 
-// TODO: this Enum class would be better if it is an inner Enum class of {@code Ontology} annotation because it is a component of {@code Ontology} class
-// However, put this class into {@code Ontology} would cause a nullpointer exception in jsr308-langtools/**/{@code JavaCompiler#resolveIdent(String name)}
+// TODO: this Enum class would be better if it is an inner Enum class of {@code Ontology} annotation
+// because it is a component of {@code Ontology} class
+// However, put this class into {@code Ontology} would cause a nullpointer exception in
+// jsr308-langtools/**/{@code JavaCompiler#resolveIdent(String name)}
 // the reason of this null pointer exception need to be investigated.
 public enum OntologyValue {
     TOP("TOP"),
@@ -52,7 +54,7 @@ public enum OntologyValue {
      */
     public static final OntologyValue[] values = values();
 
-    //TODO: maybe move these two maps to a single Util class for OntologyZ3Serializer?
+    // TODO: maybe move these two maps to a single Util class for OntologyZ3Serializer?
     // As these two seems special created for the Z3 decoding and encoding.
     /** A map from single real values (i.e. except TOP and BOTTOM) to a zero-based ordinal. */
     public static final Map<OntologyValue, Integer> singleRealValueToOrdinal;
