@@ -106,7 +106,7 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                     return false;
                 }
             } else {
-                return super.isSubtype(rhs, lhs);
+                return false;
             }
         }
     }
