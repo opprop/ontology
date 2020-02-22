@@ -14,6 +14,7 @@ projects:
     build: mvn install
     clean: mvn clean
 
+#  Now for this project, we got an weird error when running with dljc, skip it for now.
 #  jReactPhysics3D:
 #    giturl: https://github.com/opprop-benchmarks/jReactPhysics3D.git
 #    build: mvn install
