@@ -2,7 +2,6 @@ package ontology;
 
 import checkers.inference.InferenceAnnotatedTypeFactory;
 import checkers.inference.InferenceChecker;
-import checkers.inference.InferenceMain;
 import checkers.inference.InferenceQualifierHierarchy;
 import checkers.inference.InferenceTreeAnnotator;
 import checkers.inference.InferrableChecker;
@@ -15,7 +14,6 @@ import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +28,6 @@ import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
-import org.checkerframework.javacutil.AnnotationUtils;
 
 public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFactory {
 
@@ -50,13 +47,6 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
                 constraintManager);
         OntologyUtils.initOntologyUtils(processingEnv);
         postInit();
-    }
-
-    @Override
-    protected Set<? extends AnnotationMirror> getDefaultTypeDeclarationBounds() {
-        Set<AnnotationMirror> top = new HashSet<>();
-        top.add(OntologyUtils.ONTOLOGY_TOP);
-        return top;
     }
 
     @Override
@@ -100,25 +90,6 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
             Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
             fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
             fullMap.remove(OntologyUtils.ONTOLOGY);
-        }
-
-        @Override
-        public Set<? extends AnnotationMirror> leastUpperBounds(
-                Collection<? extends AnnotationMirror> annos1,
-                Collection<? extends AnnotationMirror> annos2) {
-            if (InferenceMain.isHackMode(annos1.size() != annos2.size())) {
-                Set<AnnotationMirror> result = AnnotationUtils.createAnnotationSet();
-                for (AnnotationMirror a1 : annos1) {
-                    for (AnnotationMirror a2 : annos2) {
-                        AnnotationMirror lub = leastUpperBound(a1, a2);
-                        if (lub != null) {
-                            result.add(lub);
-                        }
-                    }
-                }
-                return result;
-            }
-            return super.leastUpperBounds(annos1, annos2);
         }
     }
 
