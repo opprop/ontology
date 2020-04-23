@@ -9,10 +9,11 @@ projects:
     build: mvn install
     clean: mvn clean
 
-  JLargeArrays:
-    giturl: https://github.com/opprop-benchmarks/JLargeArrays.git
-    build: mvn install
-    clean: mvn clean
+#  Cannot compile with JDK11
+#  JLargeArrays:
+#    giturl: https://github.com/opprop-benchmarks/JLargeArrays.git
+#    build: mvn install
+#    clean: mvn clean
 
 #  Now for this project, we got an weird error when running with dljc, skip it for now.
 #  jReactPhysics3D:
