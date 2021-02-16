@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        jdk: [ 8, 11 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{matrix.jdk}}
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --user  -r ./.travis-requirements.txt
+      - name: Github Environment Setup
+        run: |
+          owner=${{ github.repository_owner }}
+          echo "REPO_SITE=${owner}" >> $GITHUB_ENV
+      - name: Ontology Dependency Setup & Build
+        run: ./dependency-setup.sh
+      - name: Ontology Demo Tests
+        run: ./test-ontology.sh
