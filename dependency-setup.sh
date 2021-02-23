@@ -21,7 +21,7 @@ else
     (cd $JSR308 && git clone -b $BRANCH --depth 1 https://github.com/"$REPO_SITE"/checker-framework-inference.git)
 fi
 
-(cd $JSR308/checker-framework-inference && ./.travis-build-without-test.sh)
+(cd $JSR308/checker-framework-inference && ./.ci-build-without-test.sh)
 
 ## Fetching DLJC
 if [ -d $JSR308/do-like-javac ] ; then
