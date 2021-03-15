@@ -96,8 +96,8 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
     }
 
     /**
-     * TODO: Temporarily set the same default as in OntologyInferenceAnnotatedTypeFactory.
-     * Such a default should not be necessary in inference, but works around this CFI issue:
+     * TODO: Temporarily set the same default as in OntologyInferenceAnnotatedTypeFactory. Such a
+     * default should not be necessary in inference, but works around this CFI issue:
      * https://github.com/opprop/checker-framework-inference/issues/310
      */
     @Override
