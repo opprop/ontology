@@ -96,10 +96,8 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
     }
 
     /**
-     * This copies the same overriding in OntologyInferenceAnnotatedTypeFactory, just to work around
-     * the crash happening during CFI continuous integration, by setting default qualifier for type
-     * inference. Such that any type use always has an annotation, which avoids constraints like
-     * `@VarAnnot(?) = null` TODO: need to eliminate this overriding by solving the issue:
+     * TODO: Temporarily set the same default as in OntologyInferenceAnnotatedTypeFactory.
+     * Such a default should not be necessary in inference, but works around this CFI issue:
      * https://github.com/opprop/checker-framework-inference/issues/310
      */
     @Override
