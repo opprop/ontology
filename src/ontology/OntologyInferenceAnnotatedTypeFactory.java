@@ -95,6 +95,14 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
         }
     }
 
+    /**
+     * This copies the same overriding in OntologyInferenceAnnotatedTypeFactory, just to
+     * walk around the crash happening in CFI continious integration, by setting default
+     * qualifier for type inference. Such that any type use always has an annotation,
+     * which avoid constraints like `@VarAnnot(?) = null`
+     * TODO: need to eliminate this overriding by solving the issue:
+     * https://github.com/opprop/checker-framework-inference/issues/310
+     */
     @Override
     protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
         TypeUseLocation[] topLocations = {TypeUseLocation.ALL};
