@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mydir="`dirname $0`"
+mydir="`dirname $BASH_SOURCE`"
 cfDir="${mydir}"/../checker-framework-inference
-. "${cfDir}"/scripts/downstream-runtime-env-setup.sh
+. "${cfDir}"/scripts/runtime-env-setup.sh
 
 CHECKER=ontology.OntologyChecker
 
@@ -21,4 +21,5 @@ export external_checker_classpath=$ONTOLOGYPATH
 $CFI/scripts/inference-dev --checker "$CHECKER" --solver "$SOLVER" --solverArgs="collectStatistics=true,solver=Z3" --hacks="$IS_HACK" -m ROUNDTRIP -afud ./annotated "$@"
 
 # TYPE CHECKING
-# $CFI/scripts/inference-dev --checker "$CHECKER" --solver "$SOLVER" --solverArgs="collectStatistics=true,solver=z3" --hacks="$IS_HACK" -m TYPECHECK "$@"
+#$CFI/scripts/inference-dev --checker "$CHECKER" --solver "$SOLVER" --solverArgs="collectStatistics=true,solver=z3" --hacks="$IS_HACK" -m TYPECHECK "$@"
+
