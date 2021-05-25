@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         jdk: [ 8, 11 ]
     runs-on: ubuntu-latest
