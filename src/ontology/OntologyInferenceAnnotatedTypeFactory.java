@@ -96,10 +96,10 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
     }
 
     /**
-     * Temporarily the same default is set as in {@link OntologyAnnotatedTypeFactory}. Such a
-     * default is not necessary in inference, but to works around this CFI issue:
-     * https://github.com/opprop/checker-framework-inference/issues/310
-     * TODO: remove this method when the CFI issue is fixed
+     * Set the same default qualifier as in {@link OntologyAnnotatedTypeFactory}. Such a default is
+     * not necessary in inference, but to works around this CFI issue:
+     * https://github.com/opprop/checker-framework-inference/issues/310 TODO: remove this method
+     * when the CFI issue is fixed
      */
     @Override
     protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
