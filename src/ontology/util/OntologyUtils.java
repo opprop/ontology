@@ -1,5 +1,13 @@
 package ontology.util;
 
+import java.util.EnumSet;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 import ontology.qual.PolyOntology;
@@ -8,15 +16,6 @@ import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.BugInCF;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.TypesUtils;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import java.util.EnumSet;
 
 public class OntologyUtils {
 
@@ -127,8 +126,7 @@ public class OntologyUtils {
                 type,
                 ontologyValueElement,
                 OntologyValue.class,
-                new OntologyValue[]{OntologyValue.TOP}
-        );
+                new OntologyValue[] {OntologyValue.TOP});
     }
 
     public static EnumSet<OntologyValue> lubOfOntologyValues(

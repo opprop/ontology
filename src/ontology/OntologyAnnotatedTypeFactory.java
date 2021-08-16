@@ -3,6 +3,12 @@ package ontology;
 import checkers.inference.BaseInferenceRealTypeFactory;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -13,13 +19,6 @@ import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationUtils;
-
-import javax.lang.model.element.AnnotationMirror;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
@@ -39,8 +38,8 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
     @SuppressWarnings("deprecation")
     @Override
     public QualifierHierarchy createQualifierHierarchyWithMultiGraphFactory(
-            org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory factory
-    ) {
+            org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory
+                    factory) {
         return new OntologyQualifierHierarchy(factory, OntologyUtils.ONTOLOGY_BOTTOM);
     }
 
@@ -56,12 +55,13 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
     }
 
     @SuppressWarnings("deprecation")
-    private final class OntologyQualifierHierarchy extends org.checkerframework.framework.util.GraphQualifierHierarchy {
+    private final class OntologyQualifierHierarchy
+            extends org.checkerframework.framework.util.GraphQualifierHierarchy {
 
         public OntologyQualifierHierarchy(
-                org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory f,
-                AnnotationMirror bottom
-        ) {
+                org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory
+                        f,
+                AnnotationMirror bottom) {
             super(f, bottom);
         }
 
