@@ -1,37 +1,46 @@
 package ontology;
 
+import checkers.inference.BaseInferenceRealTypeFactory;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
-import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.framework.util.GraphQualifierHierarchy;
-import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationUtils;
 
-public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
+import javax.lang.model.element.AnnotationMirror;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-    public OntologyAnnotatedTypeFactory(BaseTypeChecker checker) {
-        super(checker);
+public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
+
+    public OntologyAnnotatedTypeFactory(BaseTypeChecker checker, boolean isInfer) {
+        super(checker, isInfer);
         OntologyUtils.initOntologyUtils(processingEnv);
         postInit();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public QualifierHierarchy createQualifierHierarchy(MultiGraphFactory factory) {
+    public QualifierHierarchy createQualifierHierarchy() {
+        return org.checkerframework.framework.util.MultiGraphQualifierHierarchy
+                .createMultiGraphQualifierHierarchy(this);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public QualifierHierarchy createQualifierHierarchyWithMultiGraphFactory(
+            org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory factory
+    ) {
         return new OntologyQualifierHierarchy(factory, OntologyUtils.ONTOLOGY_BOTTOM);
     }
 
@@ -46,9 +55,13 @@ public class OntologyAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return new ListTreeAnnotator(super.createTreeAnnotator(), new OntologyTreeAnnotator());
     }
 
-    private final class OntologyQualifierHierarchy extends GraphQualifierHierarchy {
+    @SuppressWarnings("deprecation")
+    private final class OntologyQualifierHierarchy extends org.checkerframework.framework.util.GraphQualifierHierarchy {
 
-        public OntologyQualifierHierarchy(MultiGraphFactory f, AnnotationMirror bottom) {
+        public OntologyQualifierHierarchy(
+                org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory f,
+                AnnotationMirror bottom
+        ) {
             super(f, bottom);
         }
 
