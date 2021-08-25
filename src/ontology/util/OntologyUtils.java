@@ -21,10 +21,11 @@ public class OntologyUtils {
 
     private static OntologyUtils singletonInstance;
 
-    public static final AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
+    /** The qualifiers. Can't be final because initialization requires a ProcessingEnvironment. */
+    public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
 
-    /** ExecutableElement for Ontology.values. */
-    private static final ExecutableElement ontologyValuesElement;
+    /** ExecutableElement for Ontology.values. Can't be final because initialization requires a ProcessingEnvironment. */
+    private static ExecutableElement ontologyValuesElement;
 
     /** The processing environment. */
     private final ProcessingEnvironment processingEnvironment;
