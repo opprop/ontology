@@ -24,7 +24,10 @@ public class OntologyUtils {
     /** The qualifiers. Can't be final because initialization requires a ProcessingEnvironment. */
     public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
 
-    /** ExecutableElement for Ontology.values. Can't be final because initialization requires a ProcessingEnvironment. */
+    /**
+     * ExecutableElement for Ontology.values. Can't be final because initialization requires a
+     * ProcessingEnvironment.
+     */
     private static ExecutableElement ontologyValuesElement;
 
     /** The processing environment. */
