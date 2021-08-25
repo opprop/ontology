@@ -21,9 +21,10 @@ public class OntologyUtils {
 
     private static OntologyUtils singletonInstance;
 
-    public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
+    public static final AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
 
-    private static ExecutableElement ontologyValueElement;
+    /** ExecutableElement for Ontology.values. */
+    private static final ExecutableElement ontologyValuesElement;
 
     /** The processing environment. */
     private final ProcessingEnvironment processingEnvironment;
@@ -54,7 +55,7 @@ public class OntologyUtils {
         ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
         POLY_ONTOLOGY = AnnotationBuilder.fromClass(elements, PolyOntology.class);
 
-        ontologyValueElement = TreeUtils.getMethod(Ontology.class, "values", processingEnv);
+        ontologyValuesElement = TreeUtils.getMethod(Ontology.class, "values", processingEnv);
 
         // Built-in ontic concepts for isomorphic types.
         LIST = elements.getTypeElement("java.util.List").asType();
@@ -124,7 +125,7 @@ public class OntologyUtils {
     public static OntologyValue[] getOntologyValues(AnnotationMirror type) {
         return AnnotationUtils.getElementValueEnumArray(
                 type,
-                ontologyValueElement,
+                ontologyValuesElement,
                 OntologyValue.class,
                 new OntologyValue[] {OntologyValue.TOP});
     }
