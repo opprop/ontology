@@ -1,9 +1,9 @@
 package ontology.util;
 
 import java.util.EnumSet;
-import java.util.List;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -14,13 +14,21 @@ import ontology.qual.PolyOntology;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.BugInCF;
+import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
 public class OntologyUtils {
 
     private static OntologyUtils singletonInstance;
 
+    /** The qualifiers. Can't be final because initialization requires a ProcessingEnvironment. */
     public static AnnotationMirror ONTOLOGY, ONTOLOGY_TOP, ONTOLOGY_BOTTOM, POLY_ONTOLOGY;
+
+    /**
+     * ExecutableElement for Ontology.values. Can't be final because initialization requires a
+     * ProcessingEnvironment.
+     */
+    private static ExecutableElement ontologyValuesElement;
 
     /** The processing environment. */
     private final ProcessingEnvironment processingEnvironment;
@@ -50,6 +58,8 @@ public class OntologyUtils {
                 OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
         ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
         POLY_ONTOLOGY = AnnotationBuilder.fromClass(elements, PolyOntology.class);
+
+        ontologyValuesElement = TreeUtils.getMethod(Ontology.class, "values", processingEnv);
 
         // Built-in ontic concepts for isomorphic types.
         LIST = elements.getTypeElement("java.util.List").asType();
@@ -117,9 +127,11 @@ public class OntologyUtils {
     }
 
     public static OntologyValue[] getOntologyValues(AnnotationMirror type) {
-        List<OntologyValue> ontologyValueList =
-                AnnotationUtils.getElementValueEnumArray(type, "values", OntologyValue.class, true);
-        return ontologyValueList.toArray(new OntologyValue[ontologyValueList.size()]);
+        return AnnotationUtils.getElementValueEnumArray(
+                type,
+                ontologyValuesElement,
+                OntologyValue.class,
+                new OntologyValue[] {OntologyValue.TOP});
     }
 
     public static EnumSet<OntologyValue> lubOfOntologyValues(
