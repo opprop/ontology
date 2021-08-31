@@ -44,12 +44,6 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
     }
 
     @Override
-    protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
-        TypeUseLocation[] topLocations = {TypeUseLocation.ALL};
-        defaults.addCheckedCodeDefaults(OntologyUtils.ONTOLOGY_TOP, topLocations);
-    }
-
-    @Override
     public TreeAnnotator createTreeAnnotator() {
         return new ListTreeAnnotator(super.createTreeAnnotator(), new OntologyTreeAnnotator());
     }
