@@ -12,10 +12,12 @@ import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationUtils;
 
 public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
@@ -39,6 +41,12 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
             org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory
                     factory) {
         return new OntologyQualifierHierarchy(factory, OntologyUtils.ONTOLOGY_BOTTOM);
+    }
+
+    @Override
+    protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
+        TypeUseLocation[] topLocations = {TypeUseLocation.ALL};
+        defaults.addCheckedCodeDefaults(OntologyUtils.ONTOLOGY_TOP, topLocations);
     }
 
     @Override
