@@ -1,12 +1,12 @@
 projects:
   jblas:
     giturl: https://github.com/opprop-benchmarks/jblas.git
-    build: mvn install
+    build: mvn compile
     clean: mvn clean
 
   exp4j:
     giturl: https://github.com/opprop-benchmarks/exp4j.git
-    build: mvn install
+    build: mvn compile
     clean: mvn clean
 
 #  Cannot compile with JDK11
