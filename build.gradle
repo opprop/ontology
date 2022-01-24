@@ -96,14 +96,14 @@ afterEvaluate {
                 'path.inference.script': "${cfiPath}/scripts/inference"
         ]
 
-        if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        if (isJava8) {
             systemProperties += [JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"]
         }
 
         environment "external_checker_classpath", "${ontologyPath}/build/classes/java/main:${ontologyPath}/build/libs/ontology.jar"
 
 
-        if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        if (isJava8) {
             jvmArgs "-Xbootclasspath/p:${cfiPath}/dist/javac.jar"
         }
 
@@ -145,6 +145,10 @@ tasks.clean {
 
 
 spotless {
+    if (isJava8) {
+        enforceCheck false
+    }
+
     java {
         googleJavaFormat('1.13.0').aosp()
     }
