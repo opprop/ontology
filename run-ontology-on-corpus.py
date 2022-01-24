@@ -31,7 +31,7 @@ def main(argv):
 
     projects = None
     with open (os.path.join(ONTOLOGY_DIR, args.corpus_file)) as projects_file:
-        projects = yaml.load(projects_file)["projects"]
+        projects = yaml.safe_load(projects_file)["projects"]
 
     for project_name, project_attrs in projects.items():
         project_dir = os.path.join(BENCHMARK_DIR, project_name)
