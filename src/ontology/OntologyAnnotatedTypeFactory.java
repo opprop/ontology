@@ -55,7 +55,7 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
     }
 
     @SuppressWarnings("deprecation")
-    private final class OntologyQualifierHierarchy
+    private static class OntologyQualifierHierarchy
             extends org.checkerframework.framework.util.GraphQualifierHierarchy {
 
         public OntologyQualifierHierarchy(
@@ -101,6 +101,7 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
             tops.add(OntologyUtils.ONTOLOGY_TOP);
         }
 
+        @Override
         public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
             if (AnnotationUtils.areSameByName(rhs, OntologyUtils.ONTOLOGY)
                     && AnnotationUtils.areSameByName(lhs, OntologyUtils.ONTOLOGY)) {

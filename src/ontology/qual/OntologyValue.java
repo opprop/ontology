@@ -5,7 +5,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-/** @author charleszhuochen */
+/** Enum of possible ontology values. */
 
 // TODO: this Enum class would be better if it is an inner Enum class of {@code Ontology} annotation
 // because it is a component of {@code Ontology} class
@@ -22,7 +22,7 @@ public enum OntologyValue {
     TORQUE_3D("torque_3d"),
     BOTTOM("BOTTOM");
 
-    private String value;
+    private final String value;
 
     private OntologyValue(String v) {
         this.value = v;
