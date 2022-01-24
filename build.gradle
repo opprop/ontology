@@ -1,7 +1,6 @@
 plugins {
-    // Plugin that applies Google-Java-format to the Java files in the project.
-    // https://github.com/sherter/google-java-format-gradle-plugin
-    id 'com.github.sherter.google-java-format' version '0.9'
+    id 'com.diffplug.spotless' version '6.2.0'
+    id 'net.ltgt.errorprone' version '2.0.2'
 }
 
 apply plugin: 'java'
@@ -12,6 +11,8 @@ ext {
     cfiPath = "${jsr308}/checker-framework-inference"
     afu = "${jsr308}/annotation-tools/annotation-file-utilities"
     ontologyPath = "${jsr308}/ontology"
+
+    isJava8 = JavaVersion.current() == JavaVersion.VERSION_1_8
 }
 
 println '==================================='
@@ -43,6 +44,9 @@ dependencies {
     // CF test lib dependency
     testImplementation fileTree(dir: "${cfPath}/framework-test/build/libs", include: "framework-test-*.jar")
     testImplementation 'junit:junit:4.13.2'
+
+    errorprone 'com.google.errorprone:error_prone_core:2.10.0'
+    errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
 }
 
 sourceSets {
@@ -139,24 +143,9 @@ tasks.clean {
     delete += "testdata"
 }
 
-/* Configuration for formatting */
-googleJavaFormat {
-    // toolVersion '1.3'
-    options style: 'AOSP'
-}
-tasks.googleJavaFormat {
-    group 'Formatting'
-    description = "Reformat Java source code with Google-Java-format"
-    exclude 'testing'
-    exclude 'testdata'
-    exclude 'annotated'
-    exclude 'worked-benchmarks'
-}
-tasks.verifyGoogleJavaFormat {
-    group 'Formatting'
-    description = "Check Java source code is in Google-Java-format"
-    exclude 'testing'
-    exclude 'testdata'
-    exclude 'annotated'
-    exclude 'worked-benchmarks'
+
+spotless {
+    java {
+        googleJavaFormat('1.13.0').aosp()
+    }
 }
