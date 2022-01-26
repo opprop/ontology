@@ -9,6 +9,7 @@ import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
 import java.io.File;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -105,11 +106,11 @@ public class OntologyStatisticUtil {
         }
 
         try {
-            PrintWriter pw = new PrintWriter(writePath);
+            PrintWriter pw = new PrintWriter(writePath, StandardCharsets.UTF_8.name());
             pw.write(sb.toString());
             pw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BugInCF("Unexpected problem!", e);
         }
     }
 
@@ -138,6 +139,7 @@ public class OntologyStatisticUtil {
     private static OntologyValue[] getOntologyValues(String hashcode) {
         List<OntologyValue> list = new ArrayList<>();
 
+        @SuppressWarnings("StringSplitter") // TODO: investigate
         String[] singleHashs = hashcode.split(",");
         for (String strHash : singleHashs) {
             OntologyValue value = hashToValueMap.get(Integer.valueOf(strHash));
@@ -149,9 +151,9 @@ public class OntologyStatisticUtil {
     /**
      * verify the solution whether is consistent with constraints
      *
-     * @param mergedResult
-     * @param constraints
-     * @param qualifierHierarchy
+     * @param mergedResult the inference result
+     * @param constraints the constraints
+     * @param qualifierHierarchy the qualifier hierarchy
      */
     public static void verifySolution(
             InferenceResult mergedResult,
@@ -281,6 +283,7 @@ public class OntologyStatisticUtil {
     private static void recordKeyValue(StringBuilder sb, String key, String value) {
         sb.append(key + "," + value + "\n");
     }
+
     /**
      * An inner class for recording statistic information of post-verification of Ontology
      * solutions.
@@ -342,22 +345,22 @@ public class OntologyStatisticUtil {
             }
 
             try {
-                PrintWriter pw = new PrintWriter(writePath);
+                PrintWriter pw = new PrintWriter(writePath, StandardCharsets.UTF_8.name());
                 pw.write(sb.toString());
                 pw.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new BugInCF("Unexpected problem!", e);
             }
         }
     }
 
     public static void printToFile(String fileName, String content) {
         try {
-            PrintWriter pw = new PrintWriter(fileName);
+            PrintWriter pw = new PrintWriter(fileName, StandardCharsets.UTF_8.name());
             pw.write(content);
             pw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BugInCF("Unexpected problem!", e);
         }
     }
 }

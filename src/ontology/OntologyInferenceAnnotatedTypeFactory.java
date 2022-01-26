@@ -2,7 +2,6 @@ package ontology;
 
 import checkers.inference.InferenceAnnotatedTypeFactory;
 import checkers.inference.InferenceChecker;
-import checkers.inference.InferenceQualifierHierarchy;
 import checkers.inference.InferenceTreeAnnotator;
 import checkers.inference.InferrableChecker;
 import checkers.inference.SlotManager;
@@ -14,9 +13,6 @@ import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
@@ -24,12 +20,9 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory;
-import org.checkerframework.framework.util.defaults.QualifierDefaults;
 
 public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFactory {
 
@@ -49,62 +42,6 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
                 constraintManager);
         OntologyUtils.initOntologyUtils(processingEnv);
         postInit();
-    }
-
-    @Override
-    public QualifierHierarchy createQualifierHierarchy(MultiGraphFactory factory) {
-        return new OntologyInferenceQualifierHierarchy(factory);
-    }
-
-    public class OntologyInferenceQualifierHierarchy extends InferenceQualifierHierarchy {
-
-        public OntologyInferenceQualifierHierarchy(MultiGraphFactory multiGraphFactory) {
-            super(multiGraphFactory);
-        }
-
-        @Override
-        protected Set<AnnotationMirror> findBottoms(
-                Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
-            newBottoms.remove(OntologyUtils.ONTOLOGY);
-            newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
-
-            // update supertypes
-            Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
-            supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
-            supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);
-
-            return newBottoms;
-        }
-
-        @Override
-        protected void finish(
-                QualifierHierarchy qualHierarchy,
-                Map<AnnotationMirror, Set<AnnotationMirror>> fullMap,
-                Map<AnnotationMirror, AnnotationMirror> polyQualifiers,
-                Set<AnnotationMirror> tops,
-                Set<AnnotationMirror> bottoms,
-                Object... args) {
-            super.finish(qualHierarchy, fullMap, polyQualifiers, tops, bottoms, args);
-
-            // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
-            assert fullMap.containsKey(OntologyUtils.ONTOLOGY);
-            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
-            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
-            fullMap.remove(OntologyUtils.ONTOLOGY);
-        }
-    }
-
-    /**
-     * Set the same default qualifier as in {@link OntologyAnnotatedTypeFactory}. Such a default is
-     * not necessary in inference, but to works around this CFI issue:
-     * https://github.com/opprop/checker-framework-inference/issues/310 TODO: remove this method
-     * when the CFI issue is fixed
-     */
-    @Override
-    protected void addCheckedCodeDefaults(QualifierDefaults defaults) {
-        TypeUseLocation[] topLocations = {TypeUseLocation.ALL};
-        defaults.addCheckedCodeDefaults(OntologyUtils.ONTOLOGY_TOP, topLocations);
     }
 
     @Override

@@ -24,8 +24,8 @@ public class OntologyChecker extends BaseInferrableChecker {
     }
 
     @Override
-    public OntologyAnnotatedTypeFactory createRealTypeFactory() {
-        return new OntologyAnnotatedTypeFactory(this);
+    public OntologyAnnotatedTypeFactory createRealTypeFactory(boolean infer) {
+        return new OntologyAnnotatedTypeFactory(this, infer);
     }
 
     @Override
