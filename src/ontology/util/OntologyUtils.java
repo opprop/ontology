@@ -11,7 +11,6 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
-import ontology.qual.PolyOntology;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.BugInCF;
@@ -59,7 +58,7 @@ public class OntologyUtils {
         ONTOLOGY_BOTTOM =
                 OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
         ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
-        POLY_ONTOLOGY = AnnotationBuilder.fromClass(elements, PolyOntology.class);
+        POLY_ONTOLOGY = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.POLY);
 
         ontologyValuesElement = TreeUtils.getMethod(Ontology.class, "values", processingEnv);
 
@@ -70,7 +69,10 @@ public class OntologyUtils {
     }
 
     public static void initOntologyUtils(ProcessingEnvironment processingEnv) {
-        if (singletonInstance == null) {
+        if (singletonInstance == null || processingEnv != singletonInstance.processingEnvironment) {
+            // Initialize the singleton instance if it's null or the processing env has changed.
+            // Note that the change of processing env can happen if we have both the initial
+            // type check and the final type check in a single execution.
             singletonInstance = new OntologyUtils(processingEnv);
         }
     }
@@ -136,22 +138,27 @@ public class OntologyUtils {
                 new OntologyValue[] {OntologyValue.TOP});
     }
 
+    public static EnumSet<OntologyValue> getOntologyValuesSet(AnnotationMirror type) {
+        OntologyValue[] values = getOntologyValues(type);
+        EnumSet<OntologyValue> set = EnumSet.noneOf(OntologyValue.class);
+        set.addAll(Arrays.asList(values));
+        return set;
+    }
+
     public static EnumSet<OntologyValue> lubOfOntologyValues(
             EnumSet<OntologyValue> valueSet1, EnumSet<OntologyValue> valueSet2) {
         EnumSet<OntologyValue> lub = EnumSet.noneOf(OntologyValue.class);
 
-        for (OntologyValue value1 : valueSet1) {
-            if (value1 == OntologyValue.TOP) {
-                lub.clear();
-                break;
-            }
-            if (valueSet2.contains(value1)) {
-                lub.add(value1);
-            }
-        }
-
-        if (lub.isEmpty()) {
+        if (valueSet1.contains(OntologyValue.POLY) && valueSet2.contains(OntologyValue.POLY)) {
+            lub.add(OntologyValue.POLY);
+        } else if (valueSet1.contains(OntologyValue.TOP)
+                || valueSet2.contains(OntologyValue.TOP)
+                || valueSet1.contains(OntologyValue.POLY)
+                || valueSet2.contains(OntologyValue.POLY)) {
             lub.add(OntologyValue.TOP);
+        } else {
+            lub.addAll(valueSet1);
+            lub.retainAll(valueSet2);
         }
 
         return lub;
