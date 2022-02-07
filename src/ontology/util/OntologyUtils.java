@@ -58,7 +58,8 @@ public class OntologyUtils {
         ONTOLOGY_BOTTOM =
                 OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.BOTTOM);
         ONTOLOGY = AnnotationBuilder.fromClass(elements, Ontology.class);
-        POLY_ONTOLOGY = OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.POLY);
+        POLY_ONTOLOGY =
+                OntologyUtils.createOntologyAnnotationByValues(processingEnv, OntologyValue.POLY);
 
         ontologyValuesElement = TreeUtils.getMethod(Ontology.class, "values", processingEnv);
 

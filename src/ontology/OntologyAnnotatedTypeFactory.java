@@ -4,6 +4,10 @@ import checkers.inference.BaseInferenceRealTypeFactory;
 import com.google.common.collect.ImmutableMap;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,11 +21,6 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.QualifierKind;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.BugInCF;
-
-import javax.lang.model.element.AnnotationMirror;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
 
 public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
@@ -60,18 +59,23 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
         @Override
         public boolean isSubtype(AnnotationMirror subQualifier, AnnotationMirror superQualifier) {
-            if (getQualifierKind(subQualifier) != ONTOLOGY_KIND || getQualifierKind(superQualifier) != ONTOLOGY_KIND) {
-                throw new BugInCF("unexpected annotation mirrors: %s, %s", subQualifier, superQualifier);
+            if (getQualifierKind(subQualifier) != ONTOLOGY_KIND
+                    || getQualifierKind(superQualifier) != ONTOLOGY_KIND) {
+                throw new BugInCF(
+                        "unexpected annotation mirrors: %s, %s", subQualifier, superQualifier);
             }
 
             Set<OntologyValue> subValues = OntologyUtils.getOntologyValuesSet(subQualifier);
             Set<OntologyValue> superValues = OntologyUtils.getOntologyValuesSet(superQualifier);
 
-            if (subValues.contains(OntologyValue.BOTTOM) || superValues.contains(OntologyValue.TOP)) {
+            if (subValues.contains(OntologyValue.BOTTOM)
+                    || superValues.contains(OntologyValue.TOP)) {
                 return true;
-            } else if (subValues.contains(OntologyValue.POLY) && superValues.contains(OntologyValue.POLY)) {
+            } else if (subValues.contains(OntologyValue.POLY)
+                    && superValues.contains(OntologyValue.POLY)) {
                 return true;
-            } else if (subValues.contains(OntologyValue.POLY) || superValues.contains(OntologyValue.POLY)) {
+            } else if (subValues.contains(OntologyValue.POLY)
+                    || superValues.contains(OntologyValue.POLY)) {
                 return false;
             } else {
                 return subValues.containsAll(superValues);
@@ -79,7 +83,8 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
         }
 
         @Override
-        public @Nullable AnnotationMirror leastUpperBound(AnnotationMirror a1, AnnotationMirror a2) {
+        public @Nullable AnnotationMirror leastUpperBound(
+                AnnotationMirror a1, AnnotationMirror a2) {
             if (getQualifierKind(a1) != ONTOLOGY_KIND || getQualifierKind(a2) != ONTOLOGY_KIND) {
                 throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);
             }
@@ -89,12 +94,13 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
             return OntologyUtils.createOntologyAnnotationByValues(
                     processingEnv,
-                    OntologyUtils.lubOfOntologyValues(a1Set, a2Set).toArray(new OntologyValue[]{})
-            );
+                    OntologyUtils.lubOfOntologyValues(a1Set, a2Set)
+                            .toArray(new OntologyValue[] {}));
         }
 
         @Override
-        public @Nullable AnnotationMirror greatestLowerBound(AnnotationMirror a1, AnnotationMirror a2) {
+        public @Nullable AnnotationMirror greatestLowerBound(
+                AnnotationMirror a1, AnnotationMirror a2) {
             if (getQualifierKind(a1) != ONTOLOGY_KIND || getQualifierKind(a2) != ONTOLOGY_KIND) {
                 throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);
             }
@@ -113,19 +119,19 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
             a1Set.addAll(a2Set); // computes the union of the two sets
             return OntologyUtils.createOntologyAnnotationByValues(
-                    processingEnv,
-                    a1Set.toArray(new OntologyValue[] {})
-            );
+                    processingEnv, a1Set.toArray(new OntologyValue[] {}));
         }
 
         @Override
         protected Map<QualifierKind, AnnotationMirror> createTopsMap() {
-            return ImmutableMap.of(getQualifierKind(OntologyUtils.ONTOLOGY), OntologyUtils.ONTOLOGY_TOP);
+            return ImmutableMap.of(
+                    getQualifierKind(OntologyUtils.ONTOLOGY), OntologyUtils.ONTOLOGY_TOP);
         }
 
         @Override
         protected Map<QualifierKind, AnnotationMirror> createBottomsMap() {
-            return ImmutableMap.of(getQualifierKind(OntologyUtils.ONTOLOGY), OntologyUtils.ONTOLOGY_BOTTOM);
+            return ImmutableMap.of(
+                    getQualifierKind(OntologyUtils.ONTOLOGY), OntologyUtils.ONTOLOGY_BOTTOM);
         }
 
         @Override
