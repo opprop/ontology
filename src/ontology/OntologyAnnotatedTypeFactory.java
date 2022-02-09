@@ -110,8 +110,8 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
             return OntologyUtils.createOntologyAnnotationByValues(
                     processingEnv,
-                    OntologyUtils.glbOfOntologyValues(a1Set, a2Set).toArray(new OntologyValue[]{})
-            );
+                    OntologyUtils.glbOfOntologyValues(a1Set, a2Set)
+                            .toArray(new OntologyValue[] {}));
         }
 
         @Override
