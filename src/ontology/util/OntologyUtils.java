@@ -158,11 +158,32 @@ public class OntologyUtils {
                 || valueSet2.contains(OntologyValue.POLY)) {
             lub.add(OntologyValue.TOP);
         } else {
+            // computes the intersection of the two sets
             lub.addAll(valueSet1);
             lub.retainAll(valueSet2);
         }
 
         return lub;
+    }
+
+    public static EnumSet<OntologyValue> glbOfOntologyValues(
+            EnumSet<OntologyValue> valueSet1, EnumSet<OntologyValue> valueSet2) {
+        EnumSet<OntologyValue> glb = EnumSet.noneOf(OntologyValue.class);
+
+        if (valueSet1.contains(OntologyValue.POLY) && valueSet2.contains(OntologyValue.POLY)) {
+            glb.add(OntologyValue.POLY);
+        } else if (valueSet1.contains(OntologyValue.BOTTOM)
+                || valueSet2.contains(OntologyValue.BOTTOM)
+                || valueSet1.contains(OntologyValue.POLY)
+                || valueSet2.contains(OntologyValue.POLY)) {
+            glb.add(OntologyValue.BOTTOM);
+        } else {
+            // computes the union of the two sets
+            glb.addAll(valueSet1);
+            glb.addAll(valueSet2);
+        }
+
+        return glb;
     }
 
     /**

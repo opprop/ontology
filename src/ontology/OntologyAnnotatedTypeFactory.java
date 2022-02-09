@@ -105,21 +105,13 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
                 throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);
             }
 
-            Set<OntologyValue> a1Set = OntologyUtils.getOntologyValuesSet(a1);
-            Set<OntologyValue> a2Set = OntologyUtils.getOntologyValuesSet(a2);
+            EnumSet<OntologyValue> a1Set = OntologyUtils.getOntologyValuesSet(a1);
+            EnumSet<OntologyValue> a2Set = OntologyUtils.getOntologyValuesSet(a2);
 
-            if (a1Set.contains(OntologyValue.POLY) && a2Set.contains(OntologyValue.POLY)) {
-                return OntologyUtils.POLY_ONTOLOGY;
-            } else if (a1Set.contains(OntologyValue.BOTTOM)
-                    || a2Set.contains(OntologyValue.BOTTOM)
-                    || a1Set.contains(OntologyValue.POLY)
-                    || a2Set.contains(OntologyValue.POLY)) {
-                return OntologyUtils.ONTOLOGY_BOTTOM;
-            }
-
-            a1Set.addAll(a2Set); // computes the union of the two sets
             return OntologyUtils.createOntologyAnnotationByValues(
-                    processingEnv, a1Set.toArray(new OntologyValue[] {}));
+                    processingEnv,
+                    OntologyUtils.glbOfOntologyValues(a1Set, a2Set).toArray(new OntologyValue[]{})
+            );
         }
 
         @Override
