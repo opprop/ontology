@@ -88,8 +88,7 @@ public class OntologyInferenceAnnotatedTypeFactory extends InferenceAnnotatedTyp
                 atm.replaceAnnotation(cs.getValue());
             }
 
-            variableAnnotator.visit(atm, newClassTree.getIdentifier());
-            return null;
+            return super.visitNewClass(newClassTree,  atm);
         }
 
         @Override
