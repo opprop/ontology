@@ -10,9 +10,10 @@ import org.checkerframework.framework.qual.PolymorphicQualifier;
 /**
  * A Polymorphic qualifier for {@code Ontology}.
  *
- * <p>See {@link
- * http://types.cs.washington.edu/checker-framework/current/checkers-manual.html#qualifier-polymorphism}
- * for information on the semantics of polymorphic qualifiers in the checker framework.
+ * <p>See the <a
+ * href="http://checker-framework.org/manual/checkers-manual.html#qualifier-polymorphism">Checker
+ * Framework Manual</a> for information on the semantics of polymorphic qualifiers in the checker
+ * framework.
  *
  * <p>
  *

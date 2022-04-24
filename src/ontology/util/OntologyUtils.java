@@ -1,5 +1,6 @@
 package ontology.util;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
@@ -48,6 +49,7 @@ public class OntologyUtils {
     /** TypeMirror for java.util.Map; */
     private final TypeMirror MAP;
 
+    @SuppressWarnings("StaticAssignmentInConstructor") // TODO: clean up whole class
     private OntologyUtils(ProcessingEnvironment processingEnv) {
         processingEnvironment = processingEnv;
         elements = processingEnv.getElementUtils();
@@ -164,11 +166,11 @@ public class OntologyUtils {
      */
     protected static void validateOntologyValues(OntologyValue... values) {
         if (values == null || values.length < 1) {
-            throw new BugInCF("ontology values are invalid: " + values);
+            throw new BugInCF("ontology values are invalid: " + Arrays.toString(values));
         }
         for (OntologyValue value : values) {
             if (value == null) {
-                throw new BugInCF("ontology values are invalid: " + values);
+                throw new BugInCF("ontology values are invalid: " + Arrays.toString(values));
             }
         }
     }
