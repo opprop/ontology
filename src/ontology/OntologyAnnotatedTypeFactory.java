@@ -1,24 +1,26 @@
 package ontology;
 
 import checkers.inference.BaseInferenceRealTypeFactory;
+import com.google.common.collect.ImmutableMap;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.ElementQualifierHierarchy;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.util.QualifierKind;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
-import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 
@@ -28,19 +30,9 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
         postInit();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public QualifierHierarchy createQualifierHierarchy() {
-        return org.checkerframework.framework.util.MultiGraphQualifierHierarchy
-                .createMultiGraphQualifierHierarchy(this);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public QualifierHierarchy createQualifierHierarchyWithMultiGraphFactory(
-            org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory
-                    factory) {
-        return new OntologyQualifierHierarchy(factory, OntologyUtils.ONTOLOGY_BOTTOM);
+        return new OntologyQualifierHierarchy();
     }
 
     @Override
@@ -54,74 +46,101 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
         return new ListTreeAnnotator(super.createTreeAnnotator(), new OntologyTreeAnnotator());
     }
 
-    @SuppressWarnings("deprecation")
-    private static class OntologyQualifierHierarchy
-            extends org.checkerframework.framework.util.GraphQualifierHierarchy {
+    private final class OntologyQualifierHierarchy extends ElementQualifierHierarchy {
 
-        public OntologyQualifierHierarchy(
-                org.checkerframework.framework.util.MultiGraphQualifierHierarchy.MultiGraphFactory
-                        f,
-                AnnotationMirror bottom) {
-            super(f, bottom);
+        private final QualifierKind ONTOLOGY_KIND;
+
+        public OntologyQualifierHierarchy() {
+            super(
+                    OntologyAnnotatedTypeFactory.this.getSupportedTypeQualifiers(),
+                    OntologyAnnotatedTypeFactory.this.elements);
+            this.ONTOLOGY_KIND = getQualifierKind(OntologyUtils.ONTOLOGY);
         }
 
         @Override
-        protected Set<AnnotationMirror> findBottoms(
-                Map<AnnotationMirror, Set<AnnotationMirror>> supertypes) {
-            Set<AnnotationMirror> newBottoms = super.findBottoms(supertypes);
-            newBottoms.remove(OntologyUtils.ONTOLOGY);
-            newBottoms.add(OntologyUtils.ONTOLOGY_BOTTOM);
-
-            // update supertypes
-            Set<AnnotationMirror> supertypesOfBtm = new HashSet<>();
-            supertypesOfBtm.add(OntologyUtils.ONTOLOGY_TOP);
-            supertypes.put(OntologyUtils.ONTOLOGY_BOTTOM, supertypesOfBtm);
-
-            return newBottoms;
-        }
-
-        @Override
-        protected void finish(
-                QualifierHierarchy qualHierarchy,
-                Map<AnnotationMirror, Set<AnnotationMirror>> fullMap,
-                Map<AnnotationMirror, AnnotationMirror> polyQualifiers,
-                Set<AnnotationMirror> tops,
-                Set<AnnotationMirror> bottoms,
-                Object... args) {
-            super.finish(qualHierarchy, fullMap, polyQualifiers, tops, bottoms, args);
-
-            // substitue ONTOLOGY with ONTOLOGY_TOP in fullMap
-            assert fullMap.containsKey(OntologyUtils.ONTOLOGY);
-            Set<AnnotationMirror> ontologyTopSupers = fullMap.get(OntologyUtils.ONTOLOGY);
-            fullMap.remove(OntologyUtils.ONTOLOGY);
-            fullMap.put(OntologyUtils.ONTOLOGY_TOP, ontologyTopSupers);
-
-            // update tops
-            tops.remove(OntologyUtils.ONTOLOGY);
-            tops.add(OntologyUtils.ONTOLOGY_TOP);
-        }
-
-        @Override
-        public boolean isSubtype(AnnotationMirror rhs, AnnotationMirror lhs) {
-            if (AnnotationUtils.areSameByName(rhs, OntologyUtils.ONTOLOGY)
-                    && AnnotationUtils.areSameByName(lhs, OntologyUtils.ONTOLOGY)) {
-                OntologyValue[] rhsValue = OntologyUtils.getOntologyValues(rhs);
-                OntologyValue[] lhsValue = OntologyUtils.getOntologyValues(lhs);
-                EnumSet<OntologyValue> rSet = EnumSet.noneOf(OntologyValue.class);
-                rSet.addAll(Arrays.asList(rhsValue));
-                EnumSet<OntologyValue> lSet = EnumSet.noneOf(OntologyValue.class);
-                lSet.addAll(Arrays.asList(lhsValue));
-
-                if (rSet.containsAll(lSet)
-                        || rSet.contains(OntologyValue.BOTTOM)
-                        || lSet.contains(OntologyValue.TOP)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return super.isSubtype(rhs, lhs);
+        public boolean isSubtype(AnnotationMirror subQualifier, AnnotationMirror superQualifier) {
+            if (getQualifierKind(subQualifier) != ONTOLOGY_KIND
+                    || getQualifierKind(superQualifier) != ONTOLOGY_KIND) {
+                throw new BugInCF(
+                        "unexpected annotation mirrors: %s, %s", subQualifier, superQualifier);
             }
+
+            Set<OntologyValue> subValues = OntologyUtils.getOntologyValuesSet(subQualifier);
+            Set<OntologyValue> superValues = OntologyUtils.getOntologyValuesSet(superQualifier);
+
+            if (subValues.contains(OntologyValue.BOTTOM)
+                    || superValues.contains(OntologyValue.TOP)) {
+                return true;
+            } else if (subValues.contains(OntologyValue.POLY)
+                    && superValues.contains(OntologyValue.POLY)) {
+                return true;
+            } else if (subValues.contains(OntologyValue.POLY)
+                    || superValues.contains(OntologyValue.POLY)) {
+                return false;
+            } else {
+                return subValues.containsAll(superValues);
+            }
+        }
+
+        @Override
+        public @Nullable AnnotationMirror leastUpperBound(
+                AnnotationMirror a1, AnnotationMirror a2) {
+            if (getQualifierKind(a1) != ONTOLOGY_KIND || getQualifierKind(a2) != ONTOLOGY_KIND) {
+                throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);
+            }
+
+            EnumSet<OntologyValue> a1Set = OntologyUtils.getOntologyValuesSet(a1);
+            EnumSet<OntologyValue> a2Set = OntologyUtils.getOntologyValuesSet(a2);
+
+            return OntologyUtils.createOntologyAnnotationByValues(
+                    processingEnv,
+                    OntologyUtils.lubOfOntologyValues(a1Set, a2Set)
+                            .toArray(new OntologyValue[] {}));
+        }
+
+        @Override
+        public @Nullable AnnotationMirror greatestLowerBound(
+                AnnotationMirror a1, AnnotationMirror a2) {
+            if (getQualifierKind(a1) != ONTOLOGY_KIND || getQualifierKind(a2) != ONTOLOGY_KIND) {
+                throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);
+            }
+
+            EnumSet<OntologyValue> a1Set = OntologyUtils.getOntologyValuesSet(a1);
+            EnumSet<OntologyValue> a2Set = OntologyUtils.getOntologyValuesSet(a2);
+
+            return OntologyUtils.createOntologyAnnotationByValues(
+                    processingEnv,
+                    OntologyUtils.glbOfOntologyValues(a1Set, a2Set)
+                            .toArray(new OntologyValue[] {}));
+        }
+
+        @Override
+        protected Map<QualifierKind, AnnotationMirror> createTopsMap() {
+            return ImmutableMap.of(
+                    getQualifierKind(OntologyUtils.ONTOLOGY), OntologyUtils.ONTOLOGY_TOP);
+        }
+
+        @Override
+        protected Map<QualifierKind, AnnotationMirror> createBottomsMap() {
+            return ImmutableMap.of(
+                    getQualifierKind(OntologyUtils.ONTOLOGY), OntologyUtils.ONTOLOGY_BOTTOM);
+        }
+
+        @Override
+        public @Nullable AnnotationMirror getPolymorphicAnnotation(AnnotationMirror start) {
+            if (getQualifierKind(start) != ONTOLOGY_KIND) {
+                return null;
+            }
+            return OntologyUtils.POLY_ONTOLOGY;
+        }
+
+        @Override
+        public boolean isPolymorphicQualifier(AnnotationMirror qualifier) {
+            if (getQualifierKind(qualifier) != ONTOLOGY_KIND) {
+                throw new BugInCF("unexpected annotation mirror %s", qualifier);
+            }
+
+            return OntologyUtils.getOntologyValuesSet(qualifier).contains(OntologyValue.POLY);
         }
     }
 

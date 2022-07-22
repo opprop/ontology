@@ -14,6 +14,7 @@ import java.util.Set;
 // the reason of this null pointer exception need to be investigated.
 public enum OntologyValue {
     TOP("TOP"),
+    POLY("poly"),
     SEQUENCE("sequence"),
     DICTIONARY("dictionary"),
     POSITION_3D("position_3d"),

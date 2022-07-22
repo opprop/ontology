@@ -1,5 +1,5 @@
 plugins {
-    id 'com.diffplug.spotless' version '6.2.1'
+    id 'com.diffplug.spotless' version '6.8.0'
     id 'net.ltgt.errorprone' version '2.0.2'
 }
 
@@ -13,6 +13,20 @@ ext {
     ontologyPath = "${jsr308}/ontology"
 
     isJava8 = JavaVersion.current() == JavaVersion.VERSION_1_8
+
+    // Keep in sync with checker-framework/build.gradle.
+    // TODO: find a way to directly use that variable.
+    compilerArgsForRunningCF = [
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+            "--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+            "--add-opens", "jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+    ]
 }
 
 println '==================================='
@@ -96,15 +110,12 @@ afterEvaluate {
                 'path.inference.script': "${cfiPath}/scripts/inference"
         ]
 
-        if (isJava8) {
-            systemProperties += [JDK_JAR: "${cfPath}/checker/dist/jdk8.jar"]
-        }
-
         environment "external_checker_classpath", "${ontologyPath}/build/classes/java/main:${ontologyPath}/build/libs/ontology.jar"
-
 
         if (isJava8) {
             jvmArgs "-Xbootclasspath/p:${cfiPath}/dist/javac.jar"
+        } else {
+            jvmArgs += compilerArgsForRunningCF
         }
 
         testLogging {
