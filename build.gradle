@@ -1,5 +1,19 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+            // Code formatting; defines targets "spotlessApply" and "spotlessCheck".
+            // https://github.com/diffplug/spotless/tags ; see tags starting "gradle/"
+            // Only works on JDK 11+.
+            classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.14.0'
+        }
+    }
+}
+
+
 plugins {
-    id 'com.diffplug.spotless' version '6.9.1'
     id 'net.ltgt.errorprone' version '2.0.2'
 }
 
@@ -13,6 +27,7 @@ ext {
     ontologyPath = "${jsr308}/ontology"
 
     isJava8 = JavaVersion.current() == JavaVersion.VERSION_1_8
+    isJava11plus = JavaVersion.current() >= JavaVersion.VERSION_11
 
     // Keep in sync with checker-framework/build.gradle.
     // TODO: find a way to directly use that variable.
@@ -154,13 +169,12 @@ tasks.clean {
     delete += "testdata"
 }
 
+if (isJava11plus) {
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
 
-spotless {
-    if (isJava8) {
-        enforceCheck false
-    }
-
-    java {
-        googleJavaFormat('1.13.0').aosp()
+        java {
+            googleJavaFormat().aosp()
+        }
     }
 }
