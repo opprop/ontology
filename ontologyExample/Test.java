@@ -2,11 +2,9 @@ import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 
 public class Test {
-    @Ontology(values = {OntologyValue.VELOCITY_3D})
-    Vector externalVelocity;
+    @Ontology(values = {OntologyValue.VELOCITY_3D}) Vector externalVelocity;
 
-    @Ontology(values = {OntologyValue.FORCE_3D})
-    Vector externalForce;
+    @Ontology(values = {OntologyValue.FORCE_3D}) Vector externalForce;
 
     public void applyVelocity(Vector velocity) {
         externalVelocity.add(velocity);
