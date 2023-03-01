@@ -14,7 +14,7 @@ buildscript {
 
 
 plugins {
-    id 'net.ltgt.errorprone' version '2.0.2'
+    id 'net.ltgt.errorprone' version '3.0.1'
 }
 
 apply plugin: 'java'
@@ -74,7 +74,7 @@ dependencies {
     testImplementation fileTree(dir: "${cfPath}/framework-test/build/libs", include: "framework-test-*.jar")
     testImplementation 'junit:junit:4.13.2'
 
-    errorprone 'com.google.errorprone:error_prone_core:2.10.0'
+    errorprone 'com.google.errorprone:error_prone_core:2.18.0'
     errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
 }
 
@@ -97,12 +97,18 @@ sourceSets {
     }
 }
 
-compileJava {
+tasks.withType(JavaCompile) { compilationTask ->
     options.compilerArgs = [
             '-implicit:class',
             '-Awarns',
             '-Xmaxwarns', '10000',
     ]
+
+    // Error Prone must be available in the annotation processor path
+    options.annotationProcessorPath = configurations.errorprone
+    // Enable Error Prone
+    options.errorprone.enabled = !isJava8
+    options.errorprone.disableWarningsInGeneratedCode = true
 }
 
 afterEvaluate {
