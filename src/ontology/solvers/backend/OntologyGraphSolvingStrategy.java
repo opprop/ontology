@@ -18,7 +18,15 @@ import checkers.inference.solver.frontend.LatticeBuilder;
 import checkers.inference.solver.frontend.TwoQualifiersLattice;
 import checkers.inference.solver.strategy.GraphSolvingStrategy;
 import checkers.inference.solver.util.SolverEnvironment;
+
 import com.sun.tools.javac.util.Pair;
+
+import ontology.qual.OntologyValue;
+import ontology.util.OntologyUtils;
+
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.BugInCF;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,12 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
-import ontology.qual.OntologyValue;
-import ontology.util.OntologyUtils;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyGraphSolvingStrategy extends GraphSolvingStrategy {
 

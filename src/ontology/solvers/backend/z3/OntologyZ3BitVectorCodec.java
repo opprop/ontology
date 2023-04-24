@@ -1,6 +1,13 @@
 package ontology.solvers.backend.z3;
 
 import checkers.inference.solver.backend.z3.Z3BitVectorCodec;
+
+import ontology.qual.OntologyValue;
+import ontology.util.OntologyUtils;
+
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.BugInCF;
+
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -8,12 +15,9 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
-import ontology.qual.OntologyValue;
-import ontology.util.OntologyUtils;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyZ3BitVectorCodec implements Z3BitVectorCodec {
 

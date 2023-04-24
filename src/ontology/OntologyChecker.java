@@ -7,6 +7,7 @@ import checkers.inference.SlotManager;
 import checkers.inference.dataflow.InferenceAnalysis;
 import checkers.inference.dataflow.InferenceTransfer;
 import checkers.inference.model.ConstraintManager;
+
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.framework.flow.CFTransfer;
 

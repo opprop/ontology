@@ -1,13 +1,16 @@
 package ontology;
 
 import checkers.inference.test.CFInferenceTest;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+
 import ontology.solvers.backend.OntologySolverEngine;
+
 import org.checkerframework.framework.test.TestUtilities;
 import org.checkerframework.javacutil.Pair;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OntologyTest extends CFInferenceTest {
 
