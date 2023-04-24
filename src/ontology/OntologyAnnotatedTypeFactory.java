@@ -1,15 +1,14 @@
 package ontology;
 
 import checkers.inference.BaseInferenceRealTypeFactory;
+
 import com.google.common.collect.ImmutableMap;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
+
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.TypeUseLocation;
@@ -21,6 +20,12 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.util.QualifierKind;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.BugInCF;
+
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.lang.model.element.AnnotationMirror;
 
 public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
 

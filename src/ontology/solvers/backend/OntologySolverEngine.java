@@ -6,6 +6,7 @@ import checkers.inference.solver.backend.z3.Z3Solver;
 import checkers.inference.solver.strategy.GraphSolvingStrategy;
 import checkers.inference.solver.strategy.SolvingStrategy;
 import checkers.inference.solver.util.NameUtils;
+
 import ontology.solvers.backend.z3.OntologyZ3SolverFactory;
 
 public class OntologySolverEngine extends SolverEngine {
