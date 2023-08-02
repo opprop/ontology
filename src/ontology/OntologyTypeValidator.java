@@ -2,23 +2,19 @@ package ontology;
 
 import checkers.inference.InferenceValidator;
 import checkers.inference.InferenceVisitor;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
+import javax.tools.Diagnostic;
 import ontology.qual.Ontology;
 import ontology.qual.OntologyValue;
 import ontology.util.OntologyUtils;
-
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.source.DiagMessage;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.lang.model.element.AnnotationMirror;
-import javax.tools.Diagnostic;
 
 /**
  * This class checks the well-formedness of ontology values used inside an {@link Ontology}

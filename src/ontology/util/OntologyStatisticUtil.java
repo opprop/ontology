@@ -7,13 +7,6 @@ import checkers.inference.model.Constraint;
 import checkers.inference.model.Slot;
 import checkers.inference.model.SubtypeConstraint;
 import checkers.inference.model.VariableSlot;
-
-import ontology.qual.OntologyValue;
-
-import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.BugInCF;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +19,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.lang.model.element.AnnotationMirror;
+import ontology.qual.OntologyValue;
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.BugInCF;
 
 public class OntologyStatisticUtil {
 
@@ -297,6 +293,7 @@ public class OntologyStatisticUtil {
     public static class PostVerificationStatisticRecorder {
         private Set<Constraint> missingSolutionCons;
         private Set<ViolatedConsDiagnostic> violatedConsDiags;
+
         /**
          * whether store verbose informations. currently this parameter doesn't exposed to outside
          * setting, which means one may need hard reset value here if trigger verbose. Modify it if
