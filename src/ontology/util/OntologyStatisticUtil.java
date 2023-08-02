@@ -293,6 +293,7 @@ public class OntologyStatisticUtil {
     public static class PostVerificationStatisticRecorder {
         private Set<Constraint> missingSolutionCons;
         private Set<ViolatedConsDiagnostic> violatedConsDiags;
+
         /**
          * whether store verbose informations. currently this parameter doesn't exposed to outside
          * setting, which means one may need hard reset value here if trigger verbose. Modify it if
