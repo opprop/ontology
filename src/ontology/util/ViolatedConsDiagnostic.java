@@ -1,10 +1,8 @@
 package ontology.util;
 
 import checkers.inference.model.SubtypeConstraint;
-
 import java.util.Collections;
 import java.util.List;
-
 import javax.lang.model.element.AnnotationMirror;
 
 public class ViolatedConsDiagnostic {
