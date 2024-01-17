@@ -1,8 +1,9 @@
 projects:
-  jblas:
-    giturl: https://github.com/opprop-benchmarks/jblas.git
-    build: mvn compile -B
-    clean: mvn clean -B
+  #  TODO: uncomment jblas as the mvn change have been merged
+  #  jblas:
+#    giturl: https://github.com/opprop-benchmarks/jblas.git
+#    build: mvn compile -B
+#    clean: mvn clean -B
 
   exp4j:
     giturl: https://github.com/opprop-benchmarks/exp4j.git
