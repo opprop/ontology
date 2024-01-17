@@ -7,7 +7,7 @@ buildscript {
             // Code formatting; defines targets "spotlessApply" and "spotlessCheck".
             // https://github.com/diffplug/spotless/tags ; see tags starting "gradle/"
             // Only works on JDK 11+.
-            classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.21.0'
+            classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.24.0'
         }
     }
 }
@@ -83,7 +83,7 @@ dependencies {
     testImplementation fileTree(dir: "${cfPath}/framework-test/build/libs", include: "framework-test-*.jar")
     testImplementation 'junit:junit:4.13.2'
 
-    errorprone 'com.google.errorprone:error_prone_core:2.21.1'
+    errorprone 'com.google.errorprone:error_prone_core:2.24.1'
     errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
 }
 
