@@ -25,3 +25,6 @@ missingAnno/
 superTypeArgTest/
 unsat/
 violateCons/
+
+# IDE files
+.idea/
