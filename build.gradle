@@ -83,7 +83,7 @@ dependencies {
     testImplementation fileTree(dir: "${cfPath}/framework-test/build/libs", include: "framework-test-*.jar")
     testImplementation 'junit:junit:4.13.2'
 
-    errorprone 'com.google.errorprone:error_prone_core:2.25.0'
+    errorprone 'com.google.errorprone:error_prone_core:2.26.1'
     errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
 }
 
