@@ -14,7 +14,6 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.source.DiagMessage;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.QualifierHierarchy;
 
 /**
  * This class checks the well-formedness of ontology values used inside an {@link Ontology}
@@ -30,10 +29,8 @@ public class OntologyTypeValidator extends InferenceValidator {
     }
 
     @Override
-    protected List<DiagMessage> isTopLevelValidType(
-            QualifierHierarchy qualifierHierarchy, AnnotatedTypeMirror type) {
-        List<DiagMessage> errorMsgs =
-                new ArrayList<>(super.isTopLevelValidType(qualifierHierarchy, type));
+    protected List<DiagMessage> isTopLevelValidType(AnnotatedTypeMirror type) {
+        List<DiagMessage> errorMsgs = new ArrayList<>(super.isTopLevelValidType(type));
 
         AnnotationMirror am = type.getAnnotation(Ontology.class);
         if (am != null) {

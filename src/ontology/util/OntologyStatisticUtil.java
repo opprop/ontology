@@ -223,7 +223,7 @@ public class OntologyStatisticUtil {
                 continue;
             }
 
-            if (!qualifierHierarchy.isSubtype(subtype, supertype)) {
+            if (!qualifierHierarchy.isSubtypeQualifiersOnly(subtype, supertype)) {
                 ViolatedConsDiagnostic consDiagRes =
                         new ViolatedConsDiagnostic(sConstraint, subtype, supertype);
 

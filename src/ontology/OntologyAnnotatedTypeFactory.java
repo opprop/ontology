@@ -53,12 +53,14 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
         public OntologyQualifierHierarchy() {
             super(
                     OntologyAnnotatedTypeFactory.this.getSupportedTypeQualifiers(),
-                    OntologyAnnotatedTypeFactory.this.elements);
+                    OntologyAnnotatedTypeFactory.this.elements,
+                    OntologyAnnotatedTypeFactory.this);
             this.ONTOLOGY_KIND = getQualifierKind(OntologyUtils.ONTOLOGY);
         }
 
         @Override
-        public boolean isSubtype(AnnotationMirror subQualifier, AnnotationMirror superQualifier) {
+        public boolean isSubtypeQualifiers(
+                AnnotationMirror subQualifier, AnnotationMirror superQualifier) {
             if (getQualifierKind(subQualifier) != ONTOLOGY_KIND
                     || getQualifierKind(superQualifier) != ONTOLOGY_KIND) {
                 throw new BugInCF(
@@ -83,7 +85,7 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
         }
 
         @Override
-        public @Nullable AnnotationMirror leastUpperBound(
+        public @Nullable AnnotationMirror leastUpperBoundQualifiers(
                 AnnotationMirror a1, AnnotationMirror a2) {
             if (getQualifierKind(a1) != ONTOLOGY_KIND || getQualifierKind(a2) != ONTOLOGY_KIND) {
                 throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);
@@ -99,7 +101,7 @@ public class OntologyAnnotatedTypeFactory extends BaseInferenceRealTypeFactory {
         }
 
         @Override
-        public @Nullable AnnotationMirror greatestLowerBound(
+        public @Nullable AnnotationMirror greatestLowerBoundQualifiers(
                 AnnotationMirror a1, AnnotationMirror a2) {
             if (getQualifierKind(a1) != ONTOLOGY_KIND || getQualifierKind(a2) != ONTOLOGY_KIND) {
                 throw new BugInCF("unexpected annotation mirrors: %s, %s", a1, a2);

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import ontology.solvers.backend.OntologySolverEngine;
 import org.checkerframework.framework.test.TestUtilities;
-import org.checkerframework.javacutil.Pair;
 import org.junit.runners.Parameterized.Parameters;
+import org.plumelib.util.IPair;
 
 public class OntologyTest extends CFInferenceTest {
 
@@ -27,11 +27,11 @@ public class OntologyTest extends CFInferenceTest {
     }
 
     @Override
-    public Pair<String, List<String>> getSolverNameAndOptions() {
+    public IPair<String, List<String>> getSolverNameAndOptions() {
         final String solverName = OntologySolverEngine.class.getCanonicalName();
         List<String> solverOptions = new ArrayList<>();
         solverOptions.add("solver=Z3");
-        return Pair.<String, List<String>>of(solverName, solverOptions);
+        return IPair.<String, List<String>>of(solverName, solverOptions);
     }
 
     @Parameters
