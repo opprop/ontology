@@ -8,10 +8,10 @@ WORKING_DIR=$(cd $(dirname "$0") && pwd)
 
 # export SHELLOPTS
 
-if [ -d "/tmp/plume-scripts" ] ; then
-  git -C /tmp/plume-scripts pull -q
+if [ -d "/tmp/git-scripts" ] ; then
+  git -C /tmp/git-scripts pull -q
 else
-  git -C /tmp clone --depth 1 -q https://github.com/plume-lib/plume-scripts.git
+  git -C /tmp clone --depth 1 -q https://github.com/eisop-plume-lib/git-scripts.git
 fi
 
 #default value is opprop. REPO_SITE may be set to other value for travis test purpose.
@@ -23,7 +23,7 @@ echo "------ Downloading everything from REPO_SITE: $REPO_SITE ------"
 if [ -d $JSR308/checker-framework-inference ] ; then
     (cd $JSR308/checker-framework-inference && git pull)
 else
-    /tmp/plume-scripts/git-clone-related $REPO_SITE checker-framework-inference $JSR308/checker-framework-inference
+    /tmp/git-scripts/git-clone-related $REPO_SITE checker-framework-inference $JSR308/checker-framework-inference
 fi
 
 (cd $JSR308/checker-framework-inference && ./.ci-build-without-test.sh)
@@ -32,7 +32,7 @@ fi
 if [ -d $JSR308/do-like-javac ] ; then
     (cd $JSR308/do-like-javac && git pull)
 else
-    /tmp/plume-scripts/git-clone-related $REPO_SITE do-like-javac $JSR308/do-like-javac
+    /tmp/git-scripts/git-clone-related $REPO_SITE do-like-javac $JSR308/do-like-javac
 fi
 
 ##### build ontology without testing
